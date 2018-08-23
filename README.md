@@ -12,6 +12,6 @@ Plan to do:
 1. download files concurrently with goroutine
 2. support resuming from break point function, if it is supported by server side.
 3. if file size exceeds 50Mb, use multi-goroutine to download it.
-  1) lock machanism
-  2) wait goroutines
+     1) lock machanism
+     2) wait goroutines
   
