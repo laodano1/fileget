@@ -34,6 +34,9 @@ Plan to do:
      1) lock machanism
      2) wait goroutines
 4. ftp protocol support
+     1) goftp dependency package is needed
+         godoc:  https://godoc.org/github.com/secsy/goftp
+         github: https://github.com/secsy/goftp
 5. ssh2 protocol support
   
 
