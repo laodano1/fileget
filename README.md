@@ -38,5 +38,7 @@ Plan to do:
          godoc:  https://godoc.org/github.com/secsy/goftp
          github: https://github.com/secsy/goftp
 5. ssh2 protocol support
+6. introduce dependency manager: glide
+
   
 
