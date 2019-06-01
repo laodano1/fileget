@@ -22,8 +22,6 @@ collections:
 debug:
   [item: 0]
 confileloc:
-#  [item: C:\Users\jinwu\go\src\jwCmdApp\cm.yaml]
   [item: ./cm.yaml]
 outputloc:
-#  [item: C:\Users\jinwu\go\src\jwCmdApp\target\]
   [item: ./]
