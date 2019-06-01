@@ -1,0 +1,29 @@
+interval:
+  [item: 10]   # second
+duration:
+  [item: 1]   # 0.5 minute
+collections:
+  - type:
+    name: pod
+    item:
+        pod-1
+        pod-2
+  - type:
+    name: node
+    item:
+        isdk-cluster-control-01
+        isdk-cluster-control-02
+        isdk-cluster-control-03
+        isdk-cluster-edge-01
+        isdk-cluster-edge-02
+        isdk-cluster-worker-01
+        isdk-cluster-worker-02
+        isdk-cluster-worker-03
+debug:
+  [item: 0]
+confileloc:
+#  [item: C:\Users\jinwu\go\src\jwCmdApp\cm.yaml]
+  [item: ./cm.yaml]
+outputloc:
+#  [item: C:\Users\jinwu\go\src\jwCmdApp\target\]
+  [item: ./]
