@@ -15,8 +15,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +39,7 @@ isdkMonitor is a CLI tool to monitor kubernetes node/pod resource
 		//fmt.Println(len(res.Pods))
 
 		for _, it := range res.Pods {
-			fmt.Printf("pod: %s\n", it)
+			res.Log.Printf("pod: %s\n", it)
 		}
 		res.MonitorKubeOutput("pod")
 		res.TearDown()

@@ -15,6 +15,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"os/signal"
 	"syscall"
+	"log"
 )
 
 type TypeItem struct {
@@ -44,6 +45,8 @@ type Resources struct {
 	Debug    bool
 	CFileLoc string
 	OpFileloc string
+	Log      *log.Logger
+	//LogChan  chan string
 }
 
 const (
@@ -71,30 +74,44 @@ func FileExists(path string) bool {
 }
 
 func (r *Resources) TearDown()  {
-	fmt.Println("wait monitor workers start")
+	r.Log.Println("wait monitor workers start")
 	r.HandleSignal()
+
 	r.Wg.Wait()
 	os.Remove(r.OpFileloc + strconv.Itoa(os.PathSeparator) + strconv.Itoa(os.Getpid()) + ".pid")
-	fmt.Println("wait monitor workers end\n\nBye bye!")
+
+	r.Log.Println("wait monitor workers end\tBye bye!")
 }
 
 func (r *Resources) Init() error {
 
 	yamlFile, err := ioutil.ReadFile(cfileloc)
 	if err != nil {
-		fmt.Printf("yamlFile.Get err   #%v\n", err)
+		r.Log.Printf("yamlFile.Get err   #%v\n", err)
 		return err
 	}
+
+	logFile, err := os.OpenFile("monitor.log", os.O_APPEND | os.O_CREATE | os.O_WRONLY , 0644)
+	if err != nil {
+		r.Log.Println(err)
+	}
+
+	//defer logFile.Close()
+
+	//r.Log.SetOutput(io.MultiWriter(os.Stdout, os.Stderr, logFile))
+
+	//r.Log = log.New(io.MultiWriter(os.Stdout, logFile), "", log.Ldate | log.Ltime | log.Lshortfile)
+	r.Log = log.New(logFile, "", log.Ldate | log.Ltime | log.Lshortfile)
 
 	//fmt.Println(string(yamlFile))
 
 	//err = yaml.Unmarshal(yamlFile, &tst)
 	err = yaml.Unmarshal(yamlFile, &col)
 	if err != nil {
-		fmt.Printf("yaml unmarshal failed! %s\n", err)
+		r.Log.Printf("yaml unmarshal failed! %s\n", err)
 		return err
 	} else {
-		fmt.Println("yaml unmarshal successfully!")
+		r.Log.Printf("yaml unmarshal successfully!")
 	}
 
 	//fmt.Println(col)
@@ -102,14 +119,14 @@ func (r *Resources) Init() error {
 	//get interval
 	itv, err := strconv.Atoi(col["interval"][0].Item)
 	if err != nil {
-		fmt.Println("convert interval error:", err)
+		r.Log.Println("convert interval error:", err)
 	}
 	r.Interval = time.Duration(itv) * time.Second
 
 	// get duration
 	drt, err := strconv.Atoi(col["duration"][0].Item)
 	if err != nil {
-		fmt.Println("convert interval error:", err)
+		r.Log.Println("convert interval error:", err)
 	}
 	r.Duration = time.Duration(drt * 30)  * time.Second
 
@@ -124,18 +141,18 @@ func (r *Resources) Init() error {
 	}
 
 
-	fmt.Printf("interval: %v\n", r.Interval)
-	fmt.Printf("duration: %v\n", r.Duration)
-	fmt.Printf("cfile location: %v\n", r.CFileLoc)
-	fmt.Printf("output location: %v\n", r.OpFileloc)
+	r.Log.Printf("interval: %v\n", r.Interval)
+	r.Log.Printf("duration: %v\n", r.Duration)
+	r.Log.Printf("cfile location: %v\n", r.CFileLoc)
+	r.Log.Printf("output location: %v\n", r.OpFileloc)
 
 	if FileExists(r.CFileLoc) {
-		fmt.Println(r.CFileLoc, "do exist!")
+		r.Log.Println(r.CFileLoc, "do exist!")
 
 		// extract data from it
 		r.ExtractConfig(r.CFileLoc)
 	} else {
-		fmt.Println(r.CFileLoc, "doesn't exist!")
+		r.Log.Println(r.CFileLoc, "doesn't exist!")
 	}
 
 	return nil
@@ -150,14 +167,14 @@ func (r *Resources) HandleSignal()  {
 
 	f, err := os.OpenFile(r.OpFileloc + strconv.Itoa(os.PathSeparator) + strconv.Itoa(os.Getpid()) + ".pid", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		fmt.Printf("Create file %s failed!\n", f.Name())
+		r.Log.Printf("Create file %s failed!\n", f.Name())
 	}
 
 	go func() {
 		for {
 			select {
 			case <- sigs:
-				fmt.Println("Termination signal received! Bye bye!")
+				r.Log.Printf("Termination signal received! Bye bye!")
 				f.Close()
 				os.Remove(r.OpFileloc + strconv.Itoa(os.PathSeparator) + strconv.Itoa(os.Getpid()) + ".pid")
 				os.Exit(2)
@@ -263,7 +280,8 @@ func InsertData(db *sql.DB, vals []string)  {
 		memery        = vals[2]
 	}
 
-	timeStamp := time.Now().UTC().Add(4 * 60 * time.Minute + 10 * time.Minute).Format(time.RFC3339)
+	//timeStamp := time.Now().UTC().Add(4 * 60 * time.Minute + 10 * time.Minute).Format(time.RFC3339)
+	timeStamp := time.Now().UTC().Format(time.RFC3339)
 
 
 	if strings.HasPrefix(vals[0], "isdk-cluster") {  // node
@@ -290,7 +308,6 @@ func InsertData(db *sql.DB, vals []string)  {
 			//fmt.Println("db sql prepare successfully.")
 		}
 
-
 		_, err = insForm.Exec(timeStamp[:19], name, cpu, memery)
 		//_, err = insForm.Exec("2019-06-04T12:25:49", "isdk-cluster-control-03", 580, 20, 2586, 90)
 		if err != nil {
@@ -303,47 +320,62 @@ func InsertData(db *sql.DB, vals []string)  {
 }
 
 func (r *Resources) CmdOutput(list []string, cmd string)  {
-
-	err, db := DialMysql(user, password, hostIP, port, database)
-	if err != nil {
-		panic(err.Error()) // Just for example purpose. You should use proper error handling instead of panic
-	}  else {
-		//fmt.Println("Database created successfully")
-	}
-
-	// use given database
-	_, err = db.Exec("USE forgrafana")
-	if err != nil {
-		panic(err.Error())
+	var db *sql.DB
+	var err error
+	if r.Debug {
+		r.Log.Println("in CmdOutput.")
 	} else {
-		fmt.Println("DB 'forgrafana' selected successfully!")
+		err, db = DialMysql(user, password, hostIP, port, database)
+		if err != nil {
+			r.Log.Panic(err.Error()) // Just for example purpose. You should use proper error handling instead of panic
+		}  else {
+			//fmt.Println("Database created successfully")
+		}
+
+		// use given database
+		_, err = db.Exec("USE forgrafana")
+		if err != nil {
+			panic(err.Error())
+		} else {
+			r.Log.Println("DB 'forgrafana' selected successfully!")
+		}
 	}
+
 
 	for i, v := range list {
 		//r.Wg.Add(1)
-		go func(id int, name string) {
-			var outpfExist bool = true
+		go func(r *Resources, id int, name string) {
+			//var outpfExist bool = false
+			var f *os.File
+			var err error
 			t := time.NewTicker(r.Interval)
 
 			tm := time.NewTimer(r.Duration)
-			if !outpfExist {   // only not exist, then add title
+
+			if r.Debug {
+				var outputFile string = r.OpFileloc + name + ".csv"
+
+				f, err = os.OpenFile(outputFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+				if err != nil {
+					r.Log.Println( fmt.Sprintf("%d | Create file %s failed!\n", id, f.Name()) )
+				}
+
 				if strings.HasPrefix(name, "isdk-cluster") {  //node
-					var outputFile string = r.OpFileloc + name + ".csv"
-
 					if IsEmptyFile(outputFile) {
-						outpfExist = false
+						//outpfExist = false
+						f.WriteString("TIME,NAME,CPU(m cores),CPU%,MEMORY(Mi bytes),MEMORY%\n")
 					} else {
-						outpfExist = true
-					}
-
-					f, err := os.OpenFile(outputFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-					if err != nil {
-						fmt.Printf("Create file %s failed!\n", f.Name())
+						//outpfExist = true
 					}
 					//f.WriteString("TIME,NAME,CPU(m cores),CPU%,MEMORY(Mi bytes),MEMORY%\n")
 
 				} else {  // pod
-					//f.WriteString("TIME,NAME,CPU(m cores),MEMORY(Mi bytes)\n")
+					if IsEmptyFile(outputFile) {
+						//outpfExist = false
+						f.WriteString("TIME,NAME,CPU(m cores),MEMORY(Mi bytes)\n")
+					} else {
+						//outpfExist = true
+					}
 				}
 			}
 
@@ -357,32 +389,32 @@ func (r *Resources) CmdOutput(list []string, cmd string)  {
 					if r.Debug {
 						kubeOut = []byte(time.Now().Format(time.RFC3339))
 						str = string(kubeOut)
+						now := time.Now().Format(time.RFC3339)
+						now = now[:19]
+
+						vals = ConvertCmdOutput(kubeOut, name, &str)
+						r.Log.Println( fmt.Sprintf("%d | %s,%s", id, now, strings.Join(vals, ",")) )
+						f.WriteString(fmt.Sprintf("%s,%s\n", now, strings.Join(vals, ",")))
+						//fmt.Printf("%55v | #%d worker gets top info\n", time.Now(), id)
+
 					} else {
 						vals = ConvertCmdOutput(kubeOut, name, &str)
+						InsertData(db, vals)
 					}
 
-					now := time.Now().Format(time.RFC3339)
-					now = now[:19]
-
-					//fmt.Println(fmt.Sprintf("%s, %s\n", now, strings.Join(vals, ",")))
-
-					InsertData(db, vals)
-					//f.WriteString(now + "," + str + "\n")
-					//fmt.Printf("%55v | #%d worker gets top info\n", time.Now(), id)
-
 				case <- tm.C:
-					fmt.Printf("time is up, #%d monitor worker ends!\n", id )
+					r.Log.Println( fmt.Sprintf("time is up, #%d monitor worker ends!", id ) )
 					//f.Close()
 					r.Wg.Done()
 					return
 				}
 			}
-		}(i, v)
+		}(r, i, v)
 	}
 }
 
 func (r *Resources) MonitorKubeOutput(rType string)  {
-	fmt.Printf("in MonitorKubeOutput type: %s\n", rType)
+	r.Log.Printf("in MonitorKubeOutput type: %s\n", rType)
 	switch strings.ToLower(rType) {
 	case "all" :
 		r.Nodes = append(r.Nodes, r.Pods...)
@@ -402,6 +434,7 @@ func (r *Resources) MonitorKubeOutput(rType string)  {
 // extract data from cm.yaml
 func (r *Resources) ExtractConfig(path string) error {
 	//
+	r.Log.Println("start to extract config file.")
 	for _, tpItem := range col["collections"] {
 		var tmp TypeItem
 

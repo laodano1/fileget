@@ -46,7 +46,7 @@ isdkMonitor is a CLI tool to monitor kubernetes node/pod resource.
 			//fmt.Printf("%s\n%s\n", res.Nodes, res.Pods)
 			res.MonitorKubeOutput("all")
 		} else {
-			fmt.Printf("monitored resource type: %s\n", typeVal)
+			res.Log.Printf("monitored resource type: %s\n", typeVal)
 			switch strings.ToUpper(typeVal) {
 			case "POD" :
 				//for _, v := range res.Pods {
@@ -59,7 +59,7 @@ isdkMonitor is a CLI tool to monitor kubernetes node/pod resource.
 				//}
 				res.MonitorKubeOutput("node")
 			default:
-				fmt.Println("bad type value.")
+				res.Log.Println("bad type value.")
 			}
 		}
 		res.TearDown()
