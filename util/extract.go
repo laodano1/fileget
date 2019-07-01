@@ -13,9 +13,10 @@ import (
 	"regexp"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"log"
+	"context"
 	"os/signal"
 	"syscall"
-	"log"
 )
 
 type TypeItem struct {
@@ -26,14 +27,7 @@ type TypeItem struct {
 
 type Type map[string][]TypeItem
 	//
-//type Collections struct {
-//	Interval []string `yaml: "interval"`
-//	Duration []string `yaml: "duration"`
-//	//Types    map[string][]Type `yaml: "Collections"`
-//	Types    []interface{} `yaml: "Collections"`
-//}
 type Collections map[string][]TypeItem
-//type Collections map[string][]interface{}
 
 	// store local config file
 type Resources struct {
@@ -96,8 +90,6 @@ func (r *Resources) Init() error {
 		r.Log.Println(err)
 	}
 
-	//defer logFile.Close()
-
 	//r.Log.SetOutput(io.MultiWriter(os.Stdout, os.Stderr, logFile))
 
 	//r.Log = log.New(io.MultiWriter(os.Stdout, logFile), "", log.Ldate | log.Ltime | log.Lshortfile)
@@ -128,7 +120,8 @@ func (r *Resources) Init() error {
 	if err != nil {
 		r.Log.Println("convert interval error:", err)
 	}
-	r.Duration = time.Duration(drt * 30)  * time.Second
+	//r.Duration = time.Duration(drt * 30 )  * time.Second
+	r.Duration = time.Duration(drt)  * time.Minute
 
 	r.CFileLoc  = col["confileloc"][0].Item
 	r.OpFileloc = col["outputloc"][0].Item
@@ -140,20 +133,13 @@ func (r *Resources) Init() error {
 		r.Debug = false
 	}
 
-
 	r.Log.Printf("interval: %v\n", r.Interval)
 	r.Log.Printf("duration: %v\n", r.Duration)
 	r.Log.Printf("cfile location: %v\n", r.CFileLoc)
 	r.Log.Printf("output location: %v\n", r.OpFileloc)
+	r.Log.Printf("output location: %v\n", r.Debug)
 
-	if FileExists(r.CFileLoc) {
-		r.Log.Println(r.CFileLoc, "do exist!")
-
-		// extract data from it
-		r.ExtractConfig(r.CFileLoc)
-	} else {
-		r.Log.Println(r.CFileLoc, "doesn't exist!")
-	}
+	r.GetNodePodNames()
 
 	return nil
 	//fmt.Printf("%s\n%s\n", res.Nodes, res.Pods)
@@ -162,8 +148,8 @@ func (r *Resources) Init() error {
 func (r *Resources) HandleSignal()  {
 
 	// handle system signals
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGKILL, syscall.SIGTERM)
+	sigs := make(chan os.Signal, 2)
+	signal.Notify(sigs, syscall.SIGINT, os.Kill, os.Interrupt, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGABRT, syscall.SIGSEGV, syscall.SIGFPE)
 
 	f, err := os.OpenFile(r.OpFileloc + strconv.Itoa(os.PathSeparator) + strconv.Itoa(os.Getpid()) + ".pid", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -173,10 +159,11 @@ func (r *Resources) HandleSignal()  {
 	go func() {
 		for {
 			select {
-			case <- sigs:
-				r.Log.Printf("Termination signal received! Bye bye!")
+			case sig := <- sigs:
+				r.Log.Printf("System signal '%v' received! Bye bye!", sig)
 				f.Close()
 				os.Remove(r.OpFileloc + strconv.Itoa(os.PathSeparator) + strconv.Itoa(os.Getpid()) + ".pid")
+				time.Sleep(100 * time.Millisecond)
 				os.Exit(2)
 			}
 		}
@@ -210,24 +197,65 @@ func IsEmptyFile(path string) bool {
 	}
 	return true
 }
+//
+//func (r *Resources) GetNodePodResource() {
+//	config, err := rest.InClusterConfig()
+//	if err != nil {
+//		panic(err.Error())
+//	}
+//	// creates the clientset
+//	clientset, err := kubernetes.NewForConfig(config)
+//	if err != nil {
+//		panic(err.Error())
+//	}
+//
+//	pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
+//	if err != nil {
+//		panic(err.Error())
+//	}
+//	fmt.Printf("There are %d pods in the cluster\n", len(pods.Items))
+//	for _, item := range pods.Items {
+//		if strings.HasPrefix(item.Name, "isdk-ftp-pm-deployment") {
+//			r.Pods = append(r.Pods, item.Name)
+//		}
+//	}
+//
+//	nodes, err := clientset.CoreV1().Nodes().List(metav1.ListOptions{})
+//	if err != nil {
+//		panic(err.Error())
+//	}
+//	fmt.Printf("There are %d nodes in the cluster\n", len(nodes.Items))
+//	for _, item := range nodes.Items {
+//		if strings.HasPrefix(item.Name, "isdk-cluster") {
+//			r.Nodes = append(r.Nodes, item.Name)
+//		}
+//	}
+//
+//}
 
 //
-func ConvertCmdOutput(kubeOut []byte, name string, str *string) []string  {
+func (r *Resources) ConvertCmdOutput(kubeOut []byte, name string, str *string) []string  {
 	var kubeCmd *exec.Cmd
 	if strings.HasPrefix(name, "isdk-cluster") {
-		kubeCmd = exec.Command("kubectl", "top", "node", name)
+		kubeCmd = exec.Command("sh", "-c", "kubectl top node " + name + " | grep isdk")
+		//r.Log.Printf("kubectl top node '%s'\n", name)
 	} else {
-		kubeCmd = exec.Command("kubectl", "top", "pod", name)
-		//fmt.Printf("kubectl top pod %s\n", name)
+		//kubeCmd = exec.Command("kubectl", "top", "pod", name)
+		kubeCmd = exec.Command("sh", "-c", "kubectl top pod " + name + " | grep isdk")
+		//r.Log.Printf("kubectl top pod '%s'\n", name)
 	}
 
 	kubeOut, err := kubeCmd.Output()
 	if err != nil {
-		panic("cmd failed: " + err.Error())
+		r.Log.Printf("cmd (for %s) failed : %s\n", name, err.Error())
+		return []string{}
+	} else {
+		r.Log.Printf("cmd (for %s) pass!\n", name)
 	}
 
 	regexp.Compile("[ ]+")
-	*str = strings.Split(string(kubeOut), "\n")[1]
+	//*str = strings.Split(string(kubeOut), "\n")[1]
+	*str = string(kubeOut)
 	// replace multiple blanks to one
 	ReplMB(str, "[ ]+", " ")
 	// replace one blank to a comma
@@ -322,6 +350,17 @@ func InsertData(db *sql.DB, vals []string)  {
 func (r *Resources) CmdOutput(list []string, cmd string)  {
 	var db *sql.DB
 	var err error
+
+	//config, err := rest.InClusterConfig()
+	//if err != nil {
+	//	panic(err.Error())
+	//}
+	// creates the clientset
+	//clientset, err := kubernetes.NewForConfig(config)
+	//if err != nil {
+	//	panic(err.Error())
+	//}
+
 	if r.Debug {
 		r.Log.Println("in CmdOutput.")
 	} else {
@@ -333,14 +372,14 @@ func (r *Resources) CmdOutput(list []string, cmd string)  {
 		}
 
 		// use given database
-		_, err = db.Exec("USE forgrafana")
+		dbUse := "USE forgrafana"
+		_, err = db.Exec(dbUse)
 		if err != nil {
 			panic(err.Error())
 		} else {
 			r.Log.Println("DB 'forgrafana' selected successfully!")
 		}
 	}
-
 
 	for i, v := range list {
 		//r.Wg.Add(1)
@@ -350,10 +389,11 @@ func (r *Resources) CmdOutput(list []string, cmd string)  {
 			var err error
 			t := time.NewTicker(r.Interval)
 
-			tm := time.NewTimer(r.Duration)
+			//tm := time.NewTimer(r.Duration)
+			ctx, _ := context.WithTimeout(context.Background(), r.Duration)
 
 			if r.Debug {
-				var outputFile string = r.OpFileloc + name + ".csv"
+				outputFile := r.OpFileloc + name + ".csv"
 
 				f, err = os.OpenFile(outputFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 				if err != nil {
@@ -392,17 +432,25 @@ func (r *Resources) CmdOutput(list []string, cmd string)  {
 						now := time.Now().Format(time.RFC3339)
 						now = now[:19]
 
-						vals = ConvertCmdOutput(kubeOut, name, &str)
-						r.Log.Println( fmt.Sprintf("%d | %s,%s", id, now, strings.Join(vals, ",")) )
-						f.WriteString(fmt.Sprintf("%s,%s\n", now, strings.Join(vals, ",")))
-						//fmt.Printf("%55v | #%d worker gets top info\n", time.Now(), id)
+						vals = r.ConvertCmdOutput(kubeOut, name, &str)
 
+						//pods, err := clientset.CoreV1().Pods("default").Get(v, metav1.GetOptions{})
+						//if err != nil {
+						//	r.Log.Println(err.Error())
+						//}
+
+						//r.Log.Println( fmt.Sprintf("%d | %s,%s", id, now, strings.Join(vals, ",")) )
+						if len(vals) != 0 {
+							f.WriteString(fmt.Sprintf("%s,%s\n", now, strings.Join(vals, ",")))
+						}
+						//fmt.Printf("%55v | #%d worker gets top info\n", time.Now(), id)
 					} else {
-						vals = ConvertCmdOutput(kubeOut, name, &str)
+						vals = r.ConvertCmdOutput(kubeOut, name, &str)
 						InsertData(db, vals)
 					}
 
-				case <- tm.C:
+				//case <- tm.C:
+				case <- ctx.Done():
 					r.Log.Println( fmt.Sprintf("time is up, #%d monitor worker ends!", id ) )
 					//f.Close()
 					r.Wg.Done()
@@ -431,47 +479,29 @@ func (r *Resources) MonitorKubeOutput(rType string)  {
 	}
 }
 
-// extract data from cm.yaml
-func (r *Resources) ExtractConfig(path string) error {
-	//
-	r.Log.Println("start to extract config file.")
-	for _, tpItem := range col["collections"] {
-		var tmp TypeItem
 
-		tmp.Name = tpItem.Name
-		tmp.Item = tpItem.Item
-		//fmt.Println(tpItem)
-		//fmt.Printf("%s:%s", tmp.TypeName, tmp.Item)
-
-		switch strings.ToUpper(tmp.Name) {
-		case "POD" :
-			pods := strings.Split(tmp.Item, " ")
-			for _, it := range pods {
-				//fmt.Printf("pod: '%s' will be monitored!\n", it)
-				r.Pods = append(r.Pods, it)
-			}
-
-		case "NODE" :
-			if strings.ToUpper(tmp.Item) == "ALL" {
-				//fmt.Println("'All' Node will be monitored!")
-				//nodeChkFlag = true
-			} else {
-				//fmt.Printf("node: '%s' will be monitored!", tmp.Item)
-				nodes := strings.Split(tmp.Item, " ")
-				for _, it := range nodes {
-					//fmt.Printf("node '%s' will be monitored!\n", it)
-					r.Nodes = append(r.Nodes, it)
-				}
-			}
-
-		default:
-			fmt.Println("bad type value in cm.yaml! Only node/pod are supported!")
-		}
+func (r *Resources) DoCommand(cmd string) []string {
+	//kubeCmd := exec.Command("sh", "-c", "kubectl get node | grep isdk-cluster | grep -v NotReady | awk -F ' ' '{print $1}'")
+	kubeCmd := exec.Command("sh", "-c", cmd)
+	kubeOut, err := kubeCmd.Output()
+	if err != nil {
+		r.Log.Panic("get node failed: " + err.Error())
 	}
 
-	//fmt.Printf("%s\n", r.Nodes)
-	//fmt.Printf("%s\n", r.Pods)
-	//fmt.Println(r)
+	str1 := strings.TrimSpace(string(kubeOut))
+	str1 = strings.TrimLeft(str1, " ")
+	str1 = strings.TrimRight(str1, " ")
+	items := strings.Split(str1, "\n")
+	//for _, v := range items {
+	//	r.Log.Printf("node: '%s'\n", v)
+	//}
+	return items
+}
 
-	return nil
+func (r *Resources) GetNodePodNames()  {
+	podCmd := "kubectl get pod -l app=isdk-ftp-pm | grep isdk | awk -F ' ' '{print $1}'"
+	r.Pods = append(r.Pods, r.DoCommand(podCmd)...)
+
+	nodeCmd := "kubectl get node | grep -v NotReady | grep isdk | awk -F ' ' '{print $1}'"
+	r.Nodes = append(r.Nodes, r.DoCommand(nodeCmd)...)
 }
