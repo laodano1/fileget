@@ -5,7 +5,11 @@ import (
 	"github.com/davyxu/cellnet/peer"
 	"github.com/davyxu/cellnet/proc"
 	"github.com/davyxu/golog"
+	"jw/common/util"
 	"runtime"
+
+	_ "github.com/davyxu/cellnet/peer/gorillaws"
+	_ "github.com/davyxu/cellnet/proc/gorillaws"
 )
 
 var (
@@ -18,6 +22,7 @@ var (
 func main()  {
 	logger = golog.New("my.robot")
 	logger.SetParts()
+	go util.ShowMemStat(10, logger)
 
 	queue := cellnet.NewEventQueue()
 
@@ -26,9 +31,10 @@ func main()  {
 	proc.BindProcessorHandler(p, "gorillaws.ltv", func(ev cellnet.Event) {
 		switch msg := ev.Message().(type) {
 		case *cellnet.SessionConnected:
+			logger.Infof("session(%v) connected, %v", ev.Session().ID(), msg.SystemMessage)
 
 		case *cellnet.SessionClosed:
-
+			logger.Infof("Session(%v) closed", ev.Session().ID())
 		}
 	})
 

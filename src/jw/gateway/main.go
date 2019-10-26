@@ -8,29 +8,25 @@ import (
 	_ "github.com/davyxu/cellnet/proc/gorillaws"
 	"github.com/davyxu/golog"
 	"jw/common/util"
-	"runtime"
 )
 
 type (
-	config struct {
-		peerType string
-		name string
-		add  string
-		queue cellnet.EventQueue
-	}
+	//config struct {
+	//	peerType string
+	//	name string
+	//	add  string
+	//	queue cellnet.EventQueue
+	//}
 )
 
-var (
+const (
 	srvAdd = ":8888"
-	logger *golog.Logger
-	memStat *runtime.MemStats
 )
 
 
 func main() {
-	logger = golog.New("gateway")
+	logger := golog.New("gateway")
 	logger.SetParts()
-
 
 	go util.ShowMemStat(10, logger)
 
@@ -50,7 +46,7 @@ func main() {
 
 		//接受客户端连接过来
 		case *cellnet.SessionAccepted:
-			logger.Infof("Session(%v) Accepted, peer: %v, msg: %v", ev.Session().ID(), ev.Session().Peer(), msg)
+			logger.Infof("Session(%v) Accepted, msg: %v", ev.Session().ID(), msg)
 
 		//会话断开
 		case *cellnet.SessionClosed:
