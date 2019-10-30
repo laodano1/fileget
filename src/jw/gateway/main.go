@@ -52,6 +52,9 @@ func main() {
 		case *cellnet.SessionClosed:
 			logger.Infof("Session(%v) Closed", ev.Session().ID())
 
+		case *cellnet.SessionConnectError :
+			logger.Infof("Session(%v) Session Connect Error", ev.Session().ID())
+
 		//接受别的消息类型
 		//case :
 
