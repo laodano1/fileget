@@ -40,21 +40,22 @@ func newDefaultApp() (app *application) {
 	return
 }
 
-func (a *application) Start() {
+func (a *application) SrvRigister() {
 	//注册到consul的服务器内容
 	logger.Infof("fill in register contents")
 	reg := &api.AgentServiceRegistration{
 		ID: "jinwei-srv-:5000",
 		Name: "jw.health.v1",
 		Port: 9000,
-		Address: "192.168.1.228",
+		Address: "192.168.1.156",
 		Check: &api.AgentServiceCheck{
 			CheckID:                        "111",
 			Name:                           "srv-chk-name",
 			Interval:                       "2s",
-			Timeout:                        "",
-			GRPC:                           "192.168.1.156:9000",
-			DeregisterCriticalServiceAfter: "2m",
+			//TTL:                            "15m",
+			//Timeout:                        "",
+			HTTP:                           "http://192.168.1.156:9000",
+			DeregisterCriticalServiceAfter: "1m",
 		},
 	}
 
@@ -67,7 +68,7 @@ func (a *application) Start() {
 	//logger.Infof("Bye bye!")
 }
 
-func (a *application) newService() {
+func (a *application) srvStart() {
 	logger.Infof("new http server with echo")
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
@@ -80,7 +81,10 @@ func (a *application) newService() {
 
 func main() {
 	app := newDefaultApp()
-	app.Start()
+	app.SrvRigister()
+	app.srvStart()
+
+	//app.sd.Health().Service()
 
 	logger.Errorf("%v", app.srv.Start(":9000"))
 }
