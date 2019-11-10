@@ -1,4 +1,4 @@
-module jw/srv.dis
+module jw/app/server2
 
 go 1.13
 

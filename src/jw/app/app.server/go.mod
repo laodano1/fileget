@@ -1,8 +1,8 @@
-module jw/gateway
+module jw/app/app.server
 
 go 1.13
 
-replace jw/common => /../common
+replace jw/common => /../../common
 
 require (
 	github.com/davyxu/cellnet v4.1.0+incompatible

@@ -8,15 +8,16 @@ import (
 var logger = golog.New("service.discovery-2")
 
 func main() {
+
 	logger.Infof("New consul client")
 	config := api.DefaultConfig()
-	config.Address = "192.168.1.178:8500"
+	config.Address = "192.168.1.146:8500"
 	client, err := api.NewClient(config)
 	if err != nil {
 		logger.Errorf("new client error: %v", err)
 	}
 
-	services, metainfo, err := client.Health().Service("jw.health.v1", "", true, &api.QueryOptions{
+	services, metainfo, err := client.Health().Service("jw.health-1", "", true, &api.QueryOptions{
 		//Datacenter:        "",
 		//AllowStale:        false,
 		//RequireConsistent: false,

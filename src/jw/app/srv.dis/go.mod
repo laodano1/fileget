@@ -1,10 +1,11 @@
-module jw/server2
+module jw/app/srv.dis
 
 go 1.13
 
 require (
 	github.com/armon/go-metrics v0.0.0-20190430140413-ec5e00d3c878 // indirect
 	github.com/davyxu/golog v0.1.0
+	github.com/docker/docker-ce v0.0.0-20191008001329-a872fc2f86c0
 	github.com/gin-gonic/gin v1.4.0
 	github.com/hashicorp/consul/api v1.2.0
 	github.com/hashicorp/go-msgpack v0.5.5 // indirect

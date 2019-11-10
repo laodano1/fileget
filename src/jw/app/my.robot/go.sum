@@ -1,4 +1,8 @@
+github.com/davyxu/cellnet v4.1.0+incompatible h1:zDRqhkFRhBTD7ajra2888aoRLN1qlv8LV8+qHg/emO4=
 github.com/davyxu/cellnet v4.1.0+incompatible/go.mod h1:YyjRD4BinuDQmXWX7iHjPtnVf3qp2EzVN2/7P/8GKXE=
+github.com/davyxu/golog v0.1.0 h1:SsV3m2x37sCzFaQzq5OHc5S+PE2VMiL7XUx34JCa7mo=
 github.com/davyxu/golog v0.1.0/go.mod h1:YwChkFY5dCYt77yuPlWjcR6KlWqVJNbz3WkwC/8WgQk=
+github.com/davyxu/goobjfmt v0.1.0 h1:/Kz4X/UL4Jf5xOaQhP5DxzNtcwsfJqsz6ceoePeHBgA=
 github.com/davyxu/goobjfmt v0.1.0/go.mod h1:KKrytCtCXny2sEg3ojQfJ4NThhBP8hKw/qM9vhDwgog=
+github.com/gorilla/websocket v1.4.1 h1:q7AeDBpnBk8AogcD4DSag/Ukw/KV+YhzLj2bP5HvKCM=
 github.com/gorilla/websocket v1.4.1/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=

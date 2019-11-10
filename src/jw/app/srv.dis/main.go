@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type (
@@ -18,12 +19,16 @@ type (
 
 )
 
+var (
+	consulHost = "192.168.1.146:8500"
+)
+
 var logger = golog.New("service.discovery")
 
-func newDefaultApp() (app *application) {
+func newDefaultApp(name string) (app *application) {
 	app = new(application)
 	config := api.DefaultConfig()
-	config.Address = "192.168.1.178:8500"
+	config.Address = consulHost
 
 	logger.Infof("New consul client")
 	client, err := api.NewClient(config)
@@ -31,7 +36,7 @@ func newDefaultApp() (app *application) {
 		logger.Errorf("new client error: %v", err)
 	}
 
-	app.Name = "jw-echo-9000"
+	app.Name = name
 	app.sd = client
 	logger.Infof("New client agent")
 	//agent := client.Agent()
@@ -40,32 +45,30 @@ func newDefaultApp() (app *application) {
 	return
 }
 
-func (a *application) SrvRigister() {
+func (a *application) SrvRigister(srvName string, port string) {
 	//注册到consul的服务器内容
 	logger.Infof("fill in register contents")
+	portNum, _ :=  strconv.Atoi(port)
 	reg := &api.AgentServiceRegistration{
-		ID: "jinwei-srv-:5000",
-		Name: "jw.health.v1",
-		Port: 9000,
-		Address: "192.168.1.156",
+		ID: "jinwei-srv",
+		Name: srvName,
+		Port: portNum,
+		//Address: "192.168.1.156",
 		Check: &api.AgentServiceCheck{
 			CheckID:                        "111",
 			Name:                           "srv-chk-name",
 			Interval:                       "2s",
 			//TTL:                            "15m",
 			//Timeout:                        "",
-			HTTP:                           "http://192.168.1.156:9000",
-			DeregisterCriticalServiceAfter: "1m",
+			HTTP:                           "http://192.168.1.156:" + port,
+			DeregisterCriticalServiceAfter: "10s",
 		},
 	}
-
 	logger.Infof("register to consul")
 	//注册到consul
 	if err := a.sd.Agent().ServiceRegister(reg); err != nil {
-		log.Fatal("register failure:", err)
+		log.Fatal("register failure: ", err)
 	}
-	//time.Sleep(1 * time.Minute)
-	//logger.Infof("Bye bye!")
 }
 
 func (a *application) srvStart() {
@@ -76,16 +79,22 @@ func (a *application) srvStart() {
 	})
 
 	a.srv = e
-	//return
 }
 
 func main() {
-	app := newDefaultApp()
-	app.SrvRigister()
+	app := newDefaultApp( "jw-echo-9000")
+	app.SrvRigister("jw.health-1", "9000")
 	app.srvStart()
 
 	//app.sd.Health().Service()
-
 	logger.Errorf("%v", app.srv.Start(":9000"))
+	//go logger.Errorf("%v", app.srv.Start(":9000"))
+
+	//app2 := newDefaultApp( "jw-echo-9001")
+	//app2.SrvRigister("jw.health-2", "9001")
+	//app2.srvStart()
+	//
+	////app.sd.Health().Service()
+	//go logger.Errorf("%v", app.srv.Start(":9001"))
 }
 

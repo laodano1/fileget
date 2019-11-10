@@ -1,8 +1,8 @@
-module jw/my.robot
+module jw/app/gateway
 
 go 1.13
 
-replace jw/common => /../common
+replace jw/common => /../../common
 
 require (
 	github.com/davyxu/cellnet v4.1.0+incompatible
