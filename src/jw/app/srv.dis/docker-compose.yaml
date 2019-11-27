@@ -1,0 +1,45 @@
+version: "3.0"
+
+services:
+   # consul server，对外暴露的ui接口为8500，只有在2台consul服务器的情况下集群才起作用
+   consulserver:
+     image: consul:latest
+     hostname: consulserver
+     ports:
+        - "8300"
+        - "8400"
+        - "8500:8500"
+        - "53"
+        #command: consul agent -server -ui-dir /ui -data-dir /tmp/consul --bootstrap-expect=3
+     command: agent -server -bootstrap -ui -client=0.0.0.0
+
+
+   mysql:
+     image: mysql:latest
+     container_name: mysql
+     ports:
+        - "3306:3306"
+     volumes:
+       - /root/for_db:/var/lib/mysql
+     environment:
+        MYSQL_ROOT_PASSWORD: 123456
+
+
+   jenkins:
+      image: jenkins/jenkins:2.200
+      container_name: jenkins
+      ports:
+        - "8080:8080"
+        - "50000:50000"
+      volumes:
+        - /root/for_jenkins:/var/jenkins_home
+
+
+   redis:
+      image: redis:latest
+      container_name: redis
+      ports:
+        - "6379:6379"
+
+
+
