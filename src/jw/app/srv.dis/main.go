@@ -13,15 +13,15 @@ import (
 
 type (
 	application struct {
-		Name string
-		sdcli   *api.Client // service discovery client
-		sdsrv   *echo.Echo  // for sd http server
-		srv     *echo.Echo    // server echo http server
+		Name  string
+		sdcli *api.Client // service discovery client
+		sdsrv *echo.Echo  // for sd http server
+		srv   *echo.Echo  // server echo http server
 	}
 )
 
 var (
-	consulHost = "10.0.0.31:8500"
+	consulHost = "192.168.1.146:8500"
 )
 
 var logger = golog.New("service.discovery")
@@ -54,14 +54,14 @@ func (a *application) SrvRigister(srvName string, port string) {
 	meta["cd"] = "123"
 	meta["nokia"] = "345"
 	reg := &api.AgentServiceRegistration{
-		ID:   "jw-srv-10.0.0.31:" + port,
-		Name: srvName,
-		Port: portNum,
+		ID:      "jw-srv-10.0.0.31:" + port,
+		Name:    srvName,
+		Port:    portNum,
 		Address: "10.0.0.31",
-		Meta:  meta,
+		Meta:    meta,
 		Check: &api.AgentServiceCheck{
-			CheckID:  port,
-			Name:     "srv-chk-name",
+			CheckID:                        port,
+			Name:                           "srv-chk-name",
 			TTL:                            "2s",
 			DeregisterCriticalServiceAfter: "60s",
 		},
@@ -73,12 +73,12 @@ func (a *application) SrvRigister(srvName string, port string) {
 		cnt := 0
 		for {
 			select {
-			case <- tk:
+			case <-tk:
 				cnt++
 				a.sdcli.Agent().PassTTL(reg.Check.CheckID, fmt.Sprintf("hello -> %d", cnt))
-			//case  <- td:
-			//
-			//	return
+				//case  <- td:
+				//
+				//	return
 			}
 		}
 	}()
@@ -102,8 +102,7 @@ func (a *application) srvStart() {
 	go startSRV()
 }
 
-
-func listHandler(response http.ResponseWriter, request *http.Request)  {
+func listHandler(response http.ResponseWriter, request *http.Request) {
 	response.Write([]byte("Hello hello!"))
 }
 
@@ -117,18 +116,19 @@ func startSRV() {
 }
 
 func main() {
-	app := newDefaultApp("jw-app", consulHost)   // app name
+	app := newDefaultApp("jw-app", consulHost) // app name
 
 	done := make(chan bool)
 	go func() {
-		tk := time.Tick(30 * time.Second)
+		tk := time.Tick(20 * time.Second)
 		regPort := 8888
+		app.SrvRigister("wangke-agent", fmt.Sprintf("%d", regPort)) // service register
 		for {
 			select {
-			case <- tk:
-				app.SrvRigister("wangke-agent", fmt.Sprintf("%d", regPort))  // service register
+			case <-tk:
 				regPort++
-			case <- done:
+				app.SrvRigister("wangke-agent", fmt.Sprintf("%d", regPort)) // service register
+			case <-done:
 				return
 			}
 		}
@@ -138,12 +138,10 @@ func main() {
 	app.srvStart()
 	//wg.Wait()
 
-	
-
-	//time.Sleep(3 * time.Minute)
-	time.AfterFunc(3 * time.Minute, func() {
-		done <- true
-	})
+	time.Sleep(3 * time.Minute)
+	//time.AfterFunc(3 * time.Minute, func() {
+	//	done <- true
+	//})
 	log.Println("Bye bye!!!")
 	//
 	////app.sd.Health().Service()

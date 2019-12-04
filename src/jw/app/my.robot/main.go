@@ -1,11 +1,9 @@
 package main
 
 import (
-	"github.com/davyxu/cellnet"
-	"github.com/davyxu/cellnet/peer"
-	"github.com/davyxu/cellnet/proc"
 	"github.com/davyxu/golog"
-	"jw/common/util"
+	"github.com/hashicorp/consul/api"
+	"log"
 	"runtime"
 
 	_ "github.com/davyxu/cellnet/peer/gorillaws"
@@ -13,38 +11,36 @@ import (
 )
 
 var (
-	srvAdd = ":8888"
-	logger *golog.Logger
+	srvAdd  = ":8888"
+	logger  *golog.Logger
 	memStat *runtime.MemStats
 )
 
+var (
+	consulHost = "192.168.1.146:8500"
+)
 
-func main()  {
+func main() {
 	logger = golog.New("my.robot")
 	logger.SetParts()
-	go util.ShowMemStat(10, logger)
 
-	queue := cellnet.NewEventQueue()
+	config := api.DefaultConfig()
+	config.Address = consulHost
 
-	p := peer.NewGenericPeer("gorillaws.Connector", "my-robot-cli", srvAdd, queue)
+	cli, err := api.NewClient(config)
+	if err != nil {
+		log.Println("new api client error:", err)
+		return
+	}
 
-	proc.BindProcessorHandler(p, "gorillaws.ltv", func(ev cellnet.Event) {
-		switch msg := ev.Message().(type) {
-		case *cellnet.SessionConnected:
-			logger.Infof("session(%v) connected, %v", ev.Session().ID(), msg.SystemMessage)
+	as, err := cli.Agent().Services()
+	if err != nil {
+		log.Println("Get Services error:", err)
+		return
+	}
 
-		case *cellnet.SessionClosed:
-			logger.Infof("Session(%v) closed", ev.Session().ID())
-		}
-	})
-
-	p.Start()
-
-	queue.StartLoop()
-
-	queue.Wait()
+	for name, s := range as {
+		log.Printf("service name: %s, meta: %v, service: %v\n", name, s.Meta, s.Service)
+	}
 
 }
-
-
-
