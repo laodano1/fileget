@@ -43,4 +43,20 @@ func main() {
 		log.Printf("service name: %s, meta: %v, service: %v\n", name, s.Meta, s.Service)
 	}
 
+	nodes, qMeta, err := cli.Catalog().Nodes(nil)
+	if err != nil {
+		logger.Debugf("catalog nodes error: %v", err)
+	}
+
+	logger.Debugf("query meta: %v, nodes: %v", qMeta, len(nodes))
+
+	for _, n := range nodes {
+		cn, _, err := cli.Catalog().Node(n.Node, nil)
+		if err != nil {
+			logger.Debugf("catalog node error: %v", err)
+		}
+
+		logger.Debugf("node id: %v, cn node Services: %v", cn.Node.Node, cn.Services)
+
+	}
 }
