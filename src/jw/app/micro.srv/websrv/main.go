@@ -5,6 +5,7 @@ import (
 	"github.com/micro/go-micro/web"
 	"log"
 	"net/http"
+	"time"
 )
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -27,11 +28,11 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func homepage(c *gin.Context) {
-	c.String(http.StatusOK, "hellllll worlllld")
+	c.String(http.StatusOK, "hellllll worlllld | "+time.Now().Format(time.RFC3339Nano))
 }
 
 func aboutpage(c *gin.Context) {
-	c.String(http.StatusOK, "about page")
+	c.String(http.StatusOK, "about page | "+time.Now().Format(time.RFC3339Nano))
 }
 
 func main() {
@@ -44,6 +45,8 @@ func main() {
 	)
 
 	router := gin.Default()
+	gin.SetMode(gin.ReleaseMode)
+
 	router.HandleMethodNotAllowed = true
 	router.NoMethod(func(c *gin.Context) {
 		c.JSON(http.StatusMethodNotAllowed, gin.H{"result": false, "error": "Method Not Allowed"})
