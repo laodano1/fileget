@@ -23,8 +23,11 @@ type PutValue struct {
 	Data  []byte  `json:"data"`
 }
 
+type ConsuOpt struct {
+	ConsCli *api.Client
+}
 
-func CreateKey() {
+func (co *ConsuOpt) CreateKey() {
 	k := fmt.Sprintf("test/agent-%v", + time.Now().UnixNano())
 
 	pv := PutValue{
@@ -56,15 +59,9 @@ func CreateKey() {
 	logger.Infof("get server status: '%v'", resp.Status)
 }
 
-func GetKeys() {
-	consuCfg := api.DefaultConfig()
-	consuCfg.Address = consulHost
-	conCli, err := api.NewClient(consuCfg)
-	if err != nil {
-		logger.Errorf("new consul client error: %v", err)
-	}
+func (co *ConsuOpt) GetKeys() {
 
-	kvs, _, err := conCli.KV().List("test", &api.QueryOptions{})
+	kvs, _, _ := co.ConsCli.KV().List("test", &api.QueryOptions{})
 	for _, v := range kvs {
 		tpv := &PutValue{}
 		json.Unmarshal(v.Value, tpv)
@@ -72,27 +69,32 @@ func GetKeys() {
 	}
 }
 
-func DelKeys() {
-	consuCfg := api.DefaultConfig()
-	consuCfg.Address = consulHost
-	conCli, err := api.NewClient(consuCfg)
-	if err != nil {
-		logger.Errorf("new consul client error: %v", err)
-	}
-
-	kvs, _, err := conCli.KV().List("test", &api.QueryOptions{})
+func (co *ConsuOpt) DelKeys() {
+	kvs, _, _ := co.ConsCli.KV().List("test", &api.QueryOptions{})
 	for _, v := range kvs {
-		conCli.KV().Delete(v.Key, &api.WriteOptions{})
+		co.ConsCli.KV().Delete(v.Key, &api.WriteOptions{})
 		tpv := &PutValue{}
 		json.Unmarshal(v.Value, tpv)
 		logger.Infof("delete key: %v, value: %v", v.Key, tpv.Code)
 	}
 }
 
+func NewConOpt() *ConsuOpt {
+	consuCfg := api.DefaultConfig()
+	consuCfg.Address = consulHost
+	conCli, err := api.NewClient(consuCfg)
+	if err != nil {
+		logger.Errorf("new consul client error: %v", err)
+	}
+	return &ConsuOpt{ConsCli: conCli}
+}
+
 func main() {
 	logger.EnableColor(true)
 	logger.SetColor("red")
-	CreateKey()
-	GetKeys()
-	//DelKeys()
+
+	co := NewConOpt()
+	co.CreateKey()
+	co.GetKeys()
+	//co.DelKeys()
 }
