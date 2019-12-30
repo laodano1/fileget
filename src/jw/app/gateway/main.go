@@ -7,7 +7,7 @@ import (
 	"github.com/davyxu/cellnet/proc"
 	_ "github.com/davyxu/cellnet/proc/gorillaws"
 	"github.com/davyxu/golog"
-	"jw/common/util"
+	"common/util"
 )
 
 type (

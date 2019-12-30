@@ -1,11 +1,11 @@
-module jw/app/my.robot
+module app/my.robot
 
 go 1.13
 
-replace jw/common => /../../common
+replace common => /../../common
 
 require (
+	common v0.0.0
 	github.com/davyxu/cellnet v4.1.0+incompatible
 	github.com/davyxu/golog v0.1.0
-	jw/common v0.0.0
 )

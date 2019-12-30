@@ -7,7 +7,7 @@ import (
 	"github.com/davyxu/cellnet/proc"
 	_ "github.com/davyxu/cellnet/proc/gorillaws"
 	"github.com/davyxu/golog"
-	"jw/common/util"
+	"common/util"
 )
 
 const (
@@ -16,6 +16,7 @@ const (
 
 func main() {
 	logger := golog.New("app.server")
+	logger.SetLevel(golog.Level_Info)
 	logger.SetParts()
 
 	go util.ShowMemStat(10, logger)

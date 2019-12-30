@@ -21,7 +21,8 @@ type (
 )
 
 var (
-	consulHost = "10.0.0.31:8500"
+	consulHost = "192.168.11.67:8500/"
+	//consulHost = "10.0.0.31:8500"
 )
 
 var logger = golog.New("service.discovery")
@@ -51,18 +52,19 @@ func (a *application) SrvRigister(srvName string, port string) {
 	portNum, _ := strconv.Atoi(port)
 
 	meta := make(map[string]string)
-	meta["cd"] = "123"
-	meta["nokia"] = "345"
+	meta["cd"] = "test1"
+	meta["nk"] = "test2"
 	reg := &api.AgentServiceRegistration{
 		ID:   "jw-srv-10.0.0.31:" + port,
 		Name: srvName,
 		Port: portNum,
 		Address: "10.0.0.31",
 		Meta:  meta,
+		Tags: []string{"gggaaammmeee", "网关"},
 		Check: &api.AgentServiceCheck{
 			CheckID:  port,
 			Name:     "srv-chk-name",
-			TTL:                            "2s",
+			TTL:                            "3s",
 			DeregisterCriticalServiceAfter: "60s",
 		},
 	}
@@ -91,14 +93,6 @@ func (a *application) SrvRigister(srvName string, port string) {
 }
 
 func (a *application) srvStart() {
-	//logger.Infof("new http server with 1")
-	//e := echo.New()
-	//e.GET("/", func(c echo.Context) error {
-	//	return c.String(http.StatusOK, "Hello, World!")
-	//})
-	//
-	//a.sdsrv = e
-
 	go startSRV()
 }
 
@@ -116,7 +110,7 @@ func startSRV() {
 	}
 }
 
-func main() {
+func main1() {
 	app := newDefaultApp("jw-app", consulHost)   // app name
 
 	done := make(chan bool)
@@ -138,12 +132,13 @@ func main() {
 	app.srvStart()
 	//wg.Wait()
 
-	
+	//app.sdcli.Agent().
 
-	//time.Sleep(3 * time.Minute)
-	time.AfterFunc(3 * time.Minute, func() {
+
+	time.Sleep(3 * time.Minute)
+	//time.AfterFunc(3 * time.Minute, func() {
 		done <- true
-	})
+	//})
 	log.Println("Bye bye!!!")
 	//
 	////app.sd.Health().Service()

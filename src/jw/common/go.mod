@@ -1,4 +1,4 @@
-module jw/common
+module common
 
 go 1.13
 

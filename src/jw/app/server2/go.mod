@@ -1,4 +1,4 @@
-module jw/app/server2
+module app/server2
 
 go 1.13
 
