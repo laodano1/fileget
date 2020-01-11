@@ -1,0 +1,45 @@
+syntax = "proto3";
+package gameprovide;
+option go_package = "proto/gameprovide";
+
+service Websocket {
+    // 用户上线
+    rpc Connect (ConnectReq) returns (ConnectRsp) {
+    }
+    // 用户断线
+    rpc Disconnect (DisconnectReq) returns (DisconnectRsp) {
+    }
+    // 推送消息
+    rpc Message (MessageReq) returns (MessageRsp) {
+    }
+}
+
+message ConnectReq {
+    int64 UserId = 1;
+    string WsId = 2;
+    string Service = 3;
+    string Token = 4;
+}
+
+message ConnectRsp {
+
+}
+
+message DisconnectReq {
+    int64 UserId = 1;
+    string Token = 2;
+}
+
+message DisconnectRsp {
+
+}
+
+message MessageReq {
+    int64 UserId = 1;
+    bytes Data = 2;
+    string Token = 3;
+}
+
+message MessageRsp {
+
+}
