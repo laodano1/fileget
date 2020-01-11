@@ -21,8 +21,8 @@ type (
 )
 
 var (
-	consulHost = "192.168.11.67:8500/"
-	//consulHost = "10.0.0.31:8500"
+	//consulHost = "192.168.11.67:8500/"
+	consulHost = "10.0.0.34:8500"
 )
 
 var logger = golog.New("service.discovery")

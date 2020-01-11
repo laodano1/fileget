@@ -11,7 +11,8 @@ import (
 )
 
 var (
-	consulHost = "http://10.0.0.143:8500"
+	//consulHost = "http://192.168.11.79:8500"
+	consulHost = "http://10.0.0.34:8500"
 	logger = golog.New("consul-operation")
 
 )
@@ -89,12 +90,40 @@ func NewConOpt() *ConsuOpt {
 	return &ConsuOpt{ConsCli: conCli}
 }
 
+func (co *ConsuOpt) GetAndDelDeadServies() {
+
+	checks, err := co.ConsCli.Agent().Checks()
+	if err != nil {
+		logger.Debugf("client.Agent().Checks() error: %v\n", err)
+		panic("client.Agent().Checks() error: %v\n")
+	}
+	var okServices string
+	for name, ac := range checks {
+		//if ac.ServiceName == "wanke-gamesvr" && ac.Status == api.HealthCritical {
+		//if ac.ServiceName == "game-600101" && ac.Status == api.HealthCritical {
+		if ac.ServiceName == "game-600102" && ac.Status == api.HealthCritical {
+			//log.Debugf("name: %27v, agent check: %-10v\n", name, ac.Status)
+			okServices = name + " " + okServices
+			logger.Debugf("service name: %v", name)
+			err := co.ConsCli.Agent().ServiceDeregister(name)
+			if err != nil {
+				logger.Debugf("deregister service '%v' failed1", name)
+				panic(err)
+			}
+		}
+	}
+
+
+}
+
 func main() {
 	logger.EnableColor(true)
 	logger.SetColor("red")
 
 	co := NewConOpt()
-	co.CreateKey()
-	co.GetKeys()
+	//co.CreateKey()
+	//co.GetKeys()
 	//co.DelKeys()
+	co.GetAndDelDeadServies()
+
 }
