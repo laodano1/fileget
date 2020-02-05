@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package gameprovide;
+option go_package = "app/gameprovide";
+
+service Communication {
+    rpc Connection(Request) returns (Response) {}
+}
+
+message Request {
+    string name   = 1;
+    int64  userId = 2;
+}
+
+message Response {
+    string name   = 1;
+    int64  userId = 2;
+}
+
+
+
