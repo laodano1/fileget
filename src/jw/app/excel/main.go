@@ -9,6 +9,7 @@ import (
 	"github.com/tealeg/xlsx"
 	"html/template"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -37,13 +38,13 @@ var tmplStr = `
 	<!--img style="width:50%;height:100px;" src="https://cn.bing.com/th?id=OHR.SneezeSpring_EN-CN8669316656_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp" class="img-fluid" alt="cover image">
     < table-striped table-responsive-sm bg-info bg-success -->
 	
-	<ul class="nav nav-tabs tab-content">
+	<ul class="nav nav-tabs" id="myTab" role="tablist">
 		{{range $idx, $name := .SheetNames}}
 	  <li class="nav-item">
 		{{if eq $idx 0 }}
-		<a class="nav-link active" href="#">{{ . }}</a>
+		<a class="nav-link active" data-toggle="tab"  href="#tab-pane-{{$idx}}" role="tab">{{ . }}</a>
         {{else}}
-		<a class="nav-link" href="#">{{ . }}</a>
+		<a class="nav-link" data-toggle="tab"  href="#tab-pane-{{$idx}}" role="tab" >{{ . }}</a>
 		{{end}}
 	  </li>
 		{{end}}
@@ -51,7 +52,11 @@ var tmplStr = `
 	<div class="tab-content">
 		{{$myExcelCnt := .Sheets}}
 		{{range $idx, $name := .SheetNames}}
-		<div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+		{{if eq $idx 0}}
+		<div id="tab-pane-{{$idx}}" class="tab-pane active" role="tabpanel">
+		{{else}}
+		<div id="tab-pane-{{$idx}}" class="tab-pane" role="tabpanel">
+		{{end}}
 			<table class="table table-bordered table-hover table-responsive-sm ">
 			  <thead class="thead-light">
 				<tr>
@@ -82,8 +87,15 @@ var tmplStr = `
 		{{end}}
 	</div>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	
+	<script>
+		$(function () {
+			$('#myTab li:first-child a').tab('show')
+		  })
+	</script>
+
 </body>
 </html>
 `
@@ -155,7 +167,7 @@ func homepage(ctx *gin.Context) {
 	tmpl := template.Must(template.New("").Parse(tmplStr)) // Create a template
 	dt := &gin.H{
 		"SheetNames": sheetNames,
-		"Title":      excelFile,
+		"Title":      strings.Split(excelFile, ".")[0],
 		"Sheets":     me,
 		//"THead":      me.Sheets[0].Rows[0].Cells,
 		//"TBody":      me.Sheets[0].Rows[1:],
