@@ -37,7 +37,7 @@ var tmplStr = `
 	<!--img style="width:50%;height:100px;" src="https://cn.bing.com/th?id=OHR.SneezeSpring_EN-CN8669316656_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp" class="img-fluid" alt="cover image">
     < table-striped table-responsive-sm bg-info bg-success -->
 	
-	<ul class="nav nav-tabs">
+	<ul class="nav nav-tabs tab-content">
 		{{range $idx, $name := .SheetNames}}
 	  <li class="nav-item">
 		{{if eq $idx 0 }}
@@ -48,31 +48,39 @@ var tmplStr = `
 	  </li>
 		{{end}}
 	</ul>
-	<h1>{{.SheetName}}</h1>
-    <table class="table table-bordered table-hover table-responsive-sm ">
-	  <thead class="thead-light">
-		<tr>
-			{{range .THead}}
-				<th style='text-align: center;' scope="col">
-					{{ . }}
-				</th>
-			{{end}}
-		</tr>
-	  </thead>
-	  <tbody>
-		{{range $row := .TBody}}
-			<tr>
-				{{range $cell := $row.Cells}}
-					{{if ne $cell ""}}
-					<td style='text-align: center;'>
-						{{ $cell }}
-					</td>
-				    {{end}}
+	<div class="tab-content">
+		{{$myExcelCnt := .Sheets}}
+		{{range $idx, $name := .SheetNames}}
+		<div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+			<table class="table table-bordered table-hover table-responsive-sm ">
+			  <thead class="thead-light">
+				<tr>
+					{{range (index (index $myExcelCnt.Sheets $idx).Rows 0).Cells}}
+					<th style='text-align: center;' scope="col">
+						{{ . }}
+					</th>
+					{{end}}
+				</tr>
+			  </thead>
+			  <tbody>
+				{{range $idx, $row := (index $myExcelCnt.Sheets $idx).Rows}}
+				{{if ne $idx 0}}
+					<tr>
+						{{range $cell := $row.Cells}}
+							{{if ne $cell ""}}
+							<td style='text-align: center;'>
+								{{ $cell }}
+							</td>
+							{{end}}
+						{{end}}
+					</tr>
 				{{end}}
-			</tr>
+				{{end}}
+			  </tbody>
+			</table>
+		</div>
 		{{end}}
-	  </tbody>
-	</table>
+	</div>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
@@ -148,8 +156,9 @@ func homepage(ctx *gin.Context) {
 	dt := &gin.H{
 		"SheetNames": sheetNames,
 		"Title":      excelFile,
-		"THead":      me.Sheets[0].Rows[0].Cells,
-		"TBody":      me.Sheets[0].Rows[1:],
+		"Sheets":     me,
+		//"THead":      me.Sheets[0].Rows[0].Cells,
+		//"TBody":      me.Sheets[0].Rows[1:],
 	}
 
 	htmlRender := render.HTML{
