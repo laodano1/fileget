@@ -53,6 +53,6 @@ func main() {
 
 	log.Println("response from server")
 
-	_, err = c.Disconnect(ctx, &message.DisconnectReq{UserId: 222, Token: "32reraef23r"})
+	//_, err = c.Disconnect(ctx, &message.DisconnectReq{UserId: 222, Token: "32reraef23r"})
 
 }
