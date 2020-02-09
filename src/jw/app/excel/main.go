@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin/render"
 	"github.com/tealeg/xlsx"
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
@@ -18,11 +19,14 @@ type myRow struct {
 }
 
 type mySheet struct {
+	Name string  `json:"name"`
 	Rows []myRow `json:"sheet"`
 }
 
 type myExcel struct {
-	Sheets []mySheet `json:"sheets"`
+	Name       string
+	SheetNames []string
+	Sheets     []mySheet `json:"sheets"`
 }
 
 var tmplStr = `
@@ -48,6 +52,16 @@ var tmplStr = `
 		{{end}}
 	  </li>
 		{{end}}
+		<div class="dropdown">
+		  <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Dropdown button
+		  </button>
+		  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+			<a class="dropdown-item" href="#">Action</a>
+			<a class="dropdown-item" href="#">Another action</a>
+			<a class="dropdown-item" href="#">Something else here</a>
+		  </div>
+		</div>
 	</ul>
 	<div class="tab-content">
 		{{$myExcelCnt := .Sheets}}
@@ -100,74 +114,85 @@ var tmplStr = `
 </html>
 `
 
+type allExcels struct {
+	cnt map[string]*myExcel //string: file name
+}
+
 var (
+	excelFiles []string
 	excelFile  = "mytest.xlsx"
-	me         *myExcel
+	//me          *myExcel
 	logger     = golog.New("myExcel")
 	sheetNames []string
+
+	excelSuffix = ".xlsx"
 )
 
-func ExtractExcelFile(path string, addPrefix bool) (me *myExcel, err error) {
-	//var xlFile *xlsx.File
-	xlFile, err := xlsx.OpenFile(path)
-	if err != nil {
-		logger.Errorf("open excel file error: %v", err)
-		return nil, err
-	}
-
-	me = &myExcel{}
-	me.Sheets = make([]mySheet, 0)
-	sheetNames = make([]string, 0)
-
-	for _, sheet := range xlFile.Sheets {
-		logger.Infof("sheet name: '%v'", sheet.Name)
-		sheetNames = append(sheetNames, sheet.Name)
-		ms := mySheet{}
-		ms.Rows = make([]myRow, 0)
-		for r, row := range sheet.Rows {
-			mr := myRow{}
-			mr.Cells = make([]string, 0)
-			for i, cell := range row.Cells {
-				if r != 0 {
-					if cell.IsTime() {
-						cell.SetFormat("yyyy-mm-dd hh:mm:ss")
-						v, err := cell.FormattedValue()
-						if err != nil {
-							logger.Errorf("format value failed: %v", err)
-							return nil, err
-						}
-						if addPrefix {
-							mr.Cells = append(mr.Cells, fmt.Sprintf("%v:%v", sheet.Rows[0].Cells[i], v))
-						} else {
-							mr.Cells = append(mr.Cells, fmt.Sprintf("%v", v))
-						}
-
-						//logger.Infof("%s", v)
-					} else {
-						//logger.Infof("%s", cell.Value)
-						if addPrefix {
-							mr.Cells = append(mr.Cells, fmt.Sprintf("%v:%v", sheet.Rows[0].Cells[i], cell.Value))
-						} else {
-							mr.Cells = append(mr.Cells, fmt.Sprintf("%v", cell.Value))
-						}
-					}
-				} else {
-					mr.Cells = append(mr.Cells, cell.Value)
-				}
-			}
-			ms.Rows = append(ms.Rows, mr)
+func (ae *allExcels) ExtractExcelFile(addPrefix bool) (err error) {
+	for path, me := range ae.cnt {
+		//me = new(myExcel)
+		xlFile, err := xlsx.OpenFile(path)
+		if err != nil {
+			logger.Errorf("open excel file error: %v", err)
+			return err
 		}
-		me.Sheets = append(me.Sheets, ms)
+
+		me.Sheets = make([]mySheet, 0)
+		me.Name = path
+		me.SheetNames = make([]string, 0)
+		excelFiles = append(excelFiles, path)
+
+		for _, sheet := range xlFile.Sheets {
+			logger.Infof("excel: %-14v, sheet name: %-9v", path, sheet.Name)
+			me.SheetNames = append(me.SheetNames, sheet.Name)
+			ms := mySheet{}
+			ms.Name = sheet.Name
+			ms.Rows = make([]myRow, 0)
+			for r, row := range sheet.Rows {
+				mr := myRow{}
+				mr.Cells = make([]string, 0)
+				for i, cell := range row.Cells {
+					if r != 0 {
+						if cell.IsTime() {
+							cell.SetFormat("yyyy-mm-dd hh:mm:ss")
+							v, err := cell.FormattedValue()
+							if err != nil {
+								logger.Errorf("format value failed: %v", err)
+								return err
+							}
+							if addPrefix {
+								mr.Cells = append(mr.Cells, fmt.Sprintf("%v:%v", sheet.Rows[0].Cells[i], v))
+							} else {
+								mr.Cells = append(mr.Cells, fmt.Sprintf("%v", v))
+							}
+
+							//logger.Infof("%s", v)
+						} else {
+							//logger.Infof("%s", cell.Value)
+							if addPrefix {
+								mr.Cells = append(mr.Cells, fmt.Sprintf("%v:%v", sheet.Rows[0].Cells[i], cell.Value))
+							} else {
+								mr.Cells = append(mr.Cells, fmt.Sprintf("%v", cell.Value))
+							}
+						}
+					} else {
+						mr.Cells = append(mr.Cells, cell.Value)
+					}
+				}
+				ms.Rows = append(ms.Rows, mr)
+			}
+			me.Sheets = append(me.Sheets, ms)
+		}
 	}
 
 	return
 }
 
-func homepage(ctx *gin.Context) {
+func (me *myExcel) pageHandle(ctx *gin.Context) {
 	tmpl := template.Must(template.New("").Parse(tmplStr)) // Create a template
 	dt := &gin.H{
-		"SheetNames": sheetNames,
-		"Title":      strings.Split(excelFile, ".")[0],
+		"SheetNames": me.SheetNames,
+		"Title":      strings.Split(me.Name, ".")[0],
 		"Sheets":     me,
 		//"THead":      me.Sheets[0].Rows[0].Cells,
 		//"TBody":      me.Sheets[0].Rows[1:],
@@ -185,6 +210,21 @@ func init() {
 
 }
 
+func (ae *allExcels) GetAllExcelFiles() {
+
+	fileInfors, err := ioutil.ReadDir(".")
+	if err != nil {
+		logger.Errorf("cannot read dir, error: %v", err)
+		panic(err)
+	}
+
+	for _, fileInfo := range fileInfors {
+		if strings.HasSuffix(fileInfo.Name(), excelSuffix) {
+			ae.cnt[fileInfo.Name()] = new(myExcel)
+		}
+	}
+}
+
 func main() {
 	var addPrefix bool
 	var reload bool
@@ -192,9 +232,12 @@ func main() {
 	flag.BoolVar(&reload, "reload", false, "if reload")
 
 	flag.Parse()
+	var AllExcels allExcels
+	AllExcels.cnt = make(map[string]*myExcel)
 
 	var err error
-	me, err = ExtractExcelFile(excelFile, false)
+	AllExcels.GetAllExcelFiles()
+	err = AllExcels.ExtractExcelFile(addPrefix)
 	if err != nil {
 		logger.Errorf("extract excel file failed: %v", err)
 	}
@@ -204,7 +247,8 @@ func main() {
 		for {
 			select {
 			case <-tk:
-				me, err = ExtractExcelFile(excelFile, addPrefix)
+				AllExcels.GetAllExcelFiles()
+				err = AllExcels.ExtractExcelFile(addPrefix)
 				if err != nil {
 					logger.Errorf("extract excel file failed: %v", err)
 				}
@@ -226,7 +270,11 @@ func main() {
 		return
 	})
 
-	router.GET("/", homepage)
+	for fileName, e := range AllExcels.cnt {
+		pathStr := fmt.Sprintf("/%v", strings.Split(fileName, ".")[0])
+		router.GET(pathStr, e.pageHandle)
+		logger.Infof("gin handle in http path: %v", pathStr)
+	}
 
 	logger.Infof("start to listen on :9999")
 	if err := router.Run(":9999"); err != nil {
