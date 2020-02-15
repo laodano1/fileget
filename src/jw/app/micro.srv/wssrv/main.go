@@ -35,24 +35,71 @@ var tmplStr = `
 	</div>
 	<input id="input" type="text" />
 	<button onclick="send()">Send</button>
+	<button onclick="connectttt()">Connect</button>
+	<button onclick="clooose()">Close</button>
 	<pre id="output"></pre>
 	<script>
-		var input = document.getElementById("input");
+		var input  = document.getElementById("input");
 		var output = document.getElementById("output");
 		var socket = new WebSocket("ws://localhost:9999/ws");
+		startt()
+
+		function startt() {
+			socket.onopen = function (e) {
+				output.innerHTML = "Status: Connected\n";
+			};
+		
+			socket.onmessage = function (e) {
+				output.innerHTML += "Server: " + e.data + "\n";
+			};
 	
-		socket.onopen = function () {
-			output.innerHTML += "Status: Connected\n";
-		};
+			socket.onclose = function (e) {
+				output.innerHTML = "session closed!";
+				console.log("onclose invoked!")
+			};
 	
-		socket.onmessage = function (e) {
-			output.innerHTML += "Server: " + e.data + "\n";
-		};
-	
+			socket.onerror = function(event) {
+				console.log("onerror invoked!" + e)
+			};
+		}
+		
+
 		function send() {
 			socket.send(input.value);
+			console.log("send() invoked!")
 			input.value = "";
-		}
+		};
+
+		function clooose() {
+			socket.close();
+			output.value = "session closed!";
+		};
+
+		function connectttt() {
+			console.log("connectttt() invoked!")
+			switch (socket.readyState) {
+			  case WebSocket.CONNECTING:
+				// do something
+				break;
+			  case WebSocket.OPEN:
+				// do something
+				break;
+			  case WebSocket.CLOSING:
+				// do something
+				break;
+			  case WebSocket.CLOSED:
+				// do something
+				socket = new WebSocket("ws://localhost:9999/ws");
+				startt()
+				break;
+			  default:
+				// this never happens
+				break;
+			}
+			
+			output.value = "session connected!";
+		};
+
 	</script>
 </body>
 `
