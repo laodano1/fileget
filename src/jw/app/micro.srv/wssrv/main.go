@@ -115,12 +115,47 @@ func wsFunc(c *gin.Context) {
 	if err != nil {
 		lg.Errorf("upgrade failed: %v", err)
 	}
-	defer wsConn.Close()
+	//defer wsConn.Close()
+
+	wsConn.SetCloseHandler(func(code int, text string) (err error) {
+		switch code {
+		case websocket.CloseAbnormalClosure, websocket.CloseInternalServerErr:
+			lg.Errorf("websocket closed with error: %v", text)
+
+		case websocket.CloseNormalClosure:
+			lg.Infof("websocket close successfully: %v", text)
+		default:
+			lg.Infof("in SetCloseHandler default branch!")
+		}
+		return
+	})
+
+	wsConn.SetPingHandler(func(appData string) (err error) {
+		if err := wsConn.WriteMessage(websocket.TextMessage, []byte(appData)); err != nil {
+			lg.Errorf("PingHandler write message error: %v", err)
+		}
+		lg.Infof("in SetPingHandler")
+		return
+	})
+
+	wsConn.SetPongHandler(func(appData string) (err error) {
+		if err := wsConn.WriteMessage(websocket.TextMessage, []byte(appData)); err != nil {
+			lg.Errorf("PongHandler write message error: %v", err)
+		}
+		lg.Infof("in SetPongHandler")
+		return
+	})
 
 	for {
 		mt, message, err := wsConn.ReadMessage()
-		if err != nil {
-			lg.Errorf("ReadMessage failed: %v", err)
+		if ce, ok := err.(*websocket.CloseError); ok {
+			switch ce.Code {
+			case websocket.CloseAbnormalClosure, websocket.CloseInternalServerErr:
+				lg.Errorf("ws close with error: %v", ce.Text)
+			case websocket.CloseMessage:
+				lg.Infof("socket closed!")
+			}
+			return
 		}
 
 		lg.Infof("client sent message: '%s'", fmt.Sprintf("server received data: %v", string(message)))
