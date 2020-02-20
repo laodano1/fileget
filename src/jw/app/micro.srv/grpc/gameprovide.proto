@@ -1,11 +1,17 @@
 syntax = "proto3";
-package gameprovide;
-option go_package = "proto/gameprovide";
+package rpcTst;
+option go_package = "proto/aaa";
 
-service Websocket {
-    // 用户上线
-    rpc Connect (ConnectReq) returns (ConnectRsp) {
-    }
+service MyServer {
+    // 用户上线a
+    rpc ConnectA (stream ConnectReq) returns (ConnectRsp) {}
+
+    // 用户上线b
+    rpc ConnectB ( ConnectReq) returns (stream ConnectRsp) {}
+
+    // 用户上线c
+    rpc ConnectC (stream ConnectReq) returns (stream ConnectRsp) {}
+
     // 用户断线
     rpc Disconnect (DisconnectReq) returns (DisconnectRsp) {
     }
