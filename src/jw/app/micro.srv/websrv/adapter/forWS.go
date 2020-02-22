@@ -32,13 +32,16 @@ func gameOperation(c *gin.Context) {
 	}
 	//defer wsConn.Close()
 
+	done := make(chan int)
+
 	wsConn.SetCloseHandler(func(code int, text string) (err error) {
 		switch code {
 		case websocket.CloseAbnormalClosure, websocket.CloseInternalServerErr:
 			lg.Errorf("websocket closed with error: %v", text)
-
+			done <- wsCloseAbnormal
 		case websocket.CloseNormalClosure:
 			lg.Infof("websocket close successfully: %v", text)
+			done <- wsCloseNormal
 		default:
 			lg.Infof("in SetCloseHandler default branch!")
 		}
@@ -61,6 +64,16 @@ func gameOperation(c *gin.Context) {
 		return
 	})
 
+	cli, err := NewWSCli("10.0.0.146", "/game")
+	if err != nil {
+		lg.Errorf("new websocket dial failed: %v", err)
+	}
+
+	readMsgOperation(wsConn, cli)
+	writeMsgOperation(wsConn, cli)
+}
+
+func readMsgOperation(wsConn *websocket.Conn, cli *towardBackendWsCli) {
 	for {
 		mt, message, err := wsConn.ReadMessage()
 		if ce, ok := err.(*websocket.CloseError); ok {
@@ -73,13 +86,25 @@ func gameOperation(c *gin.Context) {
 			return
 		}
 
-		lg.Infof("client sent message: '%s'", fmt.Sprintf("server received data: %v", string(message)))
+		lg.Infof("client sent message: '%s', mt: %v", fmt.Sprintf("server received data: %v", string(message)), mt)
 
-		//err = wsConn.WriteMessage(mt, []byte(fmt.Sprintf("server received data: %v", message)))
-		err = wsConn.WriteMessage(mt, message)
+		cli.readAFromBackend()
+		// TODO: write to recv channel
+
+	}
+}
+
+func writeMsgOperation(wsConn *websocket.Conn, cli *towardBackendWsCli) {
+	for {
+		msg := []byte{}
+		err := wsConn.WriteMessage(websocket.TextMessage, msg)
 		if err != nil {
 			lg.Errorf("WriteMessage failed: %v", err)
 		}
+
+		cli.write2Backend()
+		// TODO: write to send channel
+
 	}
 }
 
