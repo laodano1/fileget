@@ -9,6 +9,7 @@ require (
 	github.com/gin-gonic/gin v1.3.0
 	github.com/golang/protobuf v1.3.2
 	github.com/gorilla/websocket v1.4.1
+	github.com/hashicorp/consul/api v1.2.0
 	github.com/hashicorp/go-immutable-radix v1.1.0 // indirect
 	github.com/hashicorp/go-msgpack v0.5.5 // indirect
 	github.com/hashicorp/serf v0.8.3 // indirect
