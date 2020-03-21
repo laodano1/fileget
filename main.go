@@ -14,8 +14,8 @@
 
 package main
 
-import "jwCmdApp/cmd"
+//import "jwCmdApp/cmd"
 
 func main() {
-	cmd.Execute()
+	//cmd.Execute()
 }
