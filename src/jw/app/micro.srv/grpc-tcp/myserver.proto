@@ -1,0 +1,56 @@
+syntax = "proto3";
+package myserver;
+option go_package = "proto/myserver";
+
+
+service MyServer {
+    // 用户上线a
+//    rpc ConnectA (stream ConnectReq) returns (ConnectRsp) {}
+
+    // 用户上线b
+//    rpc ConnectB ( ConnectReq) returns (stream ConnectRsp) {}
+
+    // 用户上线c
+//    rpc ConnectC (stream ConnectReq) returns (stream ConnectRsp) {}
+
+    // 用户上线a
+    rpc ConnectA (ConnectReq) returns (ConnectRsp) {}
+
+    // 用户断线
+    rpc Disconnect (DisconnectReq) returns (DisconnectRsp) {}
+    // 推送消息
+    rpc Message (MessageReq) returns (MessageRsp) {}
+}
+
+message ConnectReq {
+    int64 UserId = 1;
+    string WsId = 2;
+    string Service = 3;
+    string Token = 4;
+}
+
+message ConnectRsp {
+    bool confirm = 1;
+}
+
+message DisconnectReq {
+    int64 UserId = 1;
+    string WsId = 2;
+    string Service = 3;
+    string Token = 4;
+}
+
+message DisconnectRsp {
+    bool confirm = 1;
+}
+
+message MessageReq {
+    int64 UserId = 1;
+    string WsId = 2;
+    string Service = 3;
+    string Token = 4;
+}
+
+message MessageRsp {
+    bool confirm = 1;
+}

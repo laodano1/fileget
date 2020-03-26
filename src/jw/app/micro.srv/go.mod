@@ -20,6 +20,7 @@ require (
 	github.com/ugorji/go v1.1.5-pre // indirect
 	golang.org/x/net v0.0.0-20191112182307-2180aed22343 // indirect
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
+	google.golang.org/grpc v1.25.1
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 )

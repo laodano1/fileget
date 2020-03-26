@@ -4,10 +4,10 @@ import (
 	"app/micro.srv/grpc/proto/aaa"
 	"context"
 	"github.com/davyxu/golog"
-	"github.com/hashicorp/consul/api"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-plugins/registry/consul"
+	"github.com/micro/go-plugins/transport/tcp"
 )
 
 type myTServerHandler struct{}
@@ -23,7 +23,6 @@ type myTServerHandler struct{}
 //Message(context.Context, *MessageReq, *MessageRsp) error
 
 func (msh *myTServerHandler) ConnectA(ctx context.Context, cas aaa.MyServer_ConnectAStream) (err error) {
-
 	return
 }
 
@@ -50,20 +49,20 @@ func (msh *myTServerHandler) Message(ctx context.Context, mreq *aaa.MessageReq, 
 var (
 	logger = golog.New("grpc stream")
 	PORT   = ":7777"
-	cs = "10.0.0.119:8500"
+	cs = "10.0.0.60:8500"
 )
 
 func GetGWIP(name, chkid string) {
-	cfg := api.DefaultConfig()
-	cfg.Address = cs
-	cli, _ := api.NewClient(cfg)
+	//cfg := api.DefaultConfig()
+	//cfg.Address = cs
+	//cli, _ := api.NewClient(cfg)
 
 
-	ms, _ := cli.Agent().Services()
-	for sName, _ := range ms {
-		logger.Debugf("1. agent check: %v", sName)
-
-	}
+	//ms, _ := cli.Agent().Services()
+	//for sName, _ := range ms {
+	//	logger.Debugf("1. agent check: %v", sName)
+	//
+	//}
 
 	//mp, _ := cli.Agent().Checks()
 	//for chkId, _ := range mp {
@@ -81,13 +80,15 @@ func main() {
 		micro.Name("grpc test"),
 		micro.Address(PORT),
 		micro.Registry(consul.NewRegistry(registry.Addrs(cs))),
+		//micro.Transport(grpc.NewTransport()),
+		micro.Transport(tcp.NewTransport()),
 
 		//micro.Registry(etcd.NewRegistry(registry.Addrs())),
 		//micro.Registry(kubernetes.NewRegistry(registry.Addrs())),
 	)
 
 	logger.Debugf("server: %v", service.Server().Options().Id)
-	GetGWIP(service.Name(), service.Server().Options().Id)
+	//GetGWIP(service.Name(), service.Server().Options().Id)
 
 	aaa.RegisterMyServerHandler(service.Server(), new(myTServerHandler))
 
