@@ -1,8 +1,8 @@
 package main
 
 import (
-	"app/micro.srv/grpc-tcp/proto/myserver"
 	"context"
+	"fileget/src/jw/app/micro.srv/grpc-tcp/proto/myserver"
 	"github.com/davyxu/golog"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/registry"

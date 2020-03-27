@@ -7,7 +7,6 @@ import (
 	"github.com/davyxu/cellnet/proc"
 	_ "github.com/davyxu/cellnet/proc/gorillaws"
 	"github.com/davyxu/golog"
-	"common/util"
 )
 
 type (
@@ -28,7 +27,7 @@ func main() {
 	logger := golog.New("gateway")
 	logger.SetParts()
 
-	go util.ShowMemStat(10, logger)
+	//go util.ShowMemStat(10, logger)
 
 	// 创建一个事件处理队列，整个服务器只有这一个队列处理事件，服务器属于单线程服务器
 	queue := cellnet.NewEventQueue()

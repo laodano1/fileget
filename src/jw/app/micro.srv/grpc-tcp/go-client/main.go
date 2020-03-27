@@ -1,8 +1,8 @@
 package main
 
 import (
-	"app/micro.srv/grpc-tcp/proto/myserver"
 	"context"
+	"fileget/src/jw/app/micro.srv/grpc-tcp/proto/myserver"
 	"github.com/davyxu/golog"
 	"github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/registry"
@@ -70,7 +70,7 @@ func CallRPC()  {
 
 	// calling remote address
 	//wg := &sync.WaitGroup{}
-	cnt := 100
+	cnt := 10
 	//wg.Add(cnt)
 	sigCh := make(chan bool, 100)
 	for i := 0; i < cnt; i++ {
@@ -89,7 +89,7 @@ func CallRPC()  {
 		select {
 		case <- sigCh :
 			i++
-			if i == 10 {
+			if i == cnt {
 				lg.Debugf("bye bye")
 				return
 			}
