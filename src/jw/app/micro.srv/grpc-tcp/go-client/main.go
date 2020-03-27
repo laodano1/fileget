@@ -66,14 +66,36 @@ func CallRPC()  {
 		)
 	}
 
-	//reqMsg := c.NewRequest("grpc-tcp", "MyServer.Message", nil)
-	//reqCntA := c.NewRequest("grpc-tcp", "MyServer.ConnectA", nil)
-	//reqDisc := c.NewRequest("grpc-tcp", "MyServer.Disconnect", nil)
+
 
 	// calling remote address
-	Invoke(c, "MyServer.ConnectA")
-	Invoke(c, "MyServer.Disconnect")
-	Invoke(c, "MyServer.Message")
+	//wg := &sync.WaitGroup{}
+	cnt := 100
+	//wg.Add(cnt)
+	sigCh := make(chan bool, 100)
+	for i := 0; i < cnt; i++ {
+		go func() {
+			Invoke(c, "MyServer.ConnectA")
+			Invoke(c, "MyServer.Disconnect")
+			Invoke(c, "MyServer.Message")
+			sigCh <- true
+			//wg.Done()
+		}()
+	}
+	//wg.Wait()
+	//time.Sleep(2100 * time.Microsecond)
+	var i int
+	for {
+		select {
+		case <- sigCh :
+			i++
+			if i == 10 {
+				lg.Debugf("bye bye")
+				return
+			}
+		}
+	}
+
 }
 
 // calling remote address
