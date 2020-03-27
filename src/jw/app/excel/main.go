@@ -259,6 +259,7 @@ func (ae *allExcels) GetAllExcelFiles() {
 func main() {
 	var addPrefix bool
 	var reload bool
+	PORT := ":9999"
 	flag.BoolVar(&addPrefix, "ap", false, "if add prefix of cell value")
 	flag.BoolVar(&reload, "reload", false, "if reload")
 
@@ -273,7 +274,7 @@ func main() {
 		logger.Errorf("extract excel file failed: %v", err)
 	}
 
-	gin.SetMode(gin.ReleaseMode)
+	//gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 	router.HandleMethodNotAllowed = true
 	router.NoMethod(func(c *gin.Context) {
@@ -318,8 +319,8 @@ func main() {
 
 	}()
 
-	logger.Infof("start to listen on :9999")
-	if err := router.Run(":9999"); err != nil {
+	logger.Infof("start to listen on " + PORT)
+	if err := router.Run(PORT); err != nil {
 		logger.Errorf("gin router run failed: %v", err)
 	}
 
