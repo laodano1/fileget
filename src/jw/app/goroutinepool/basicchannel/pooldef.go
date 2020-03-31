@@ -41,6 +41,7 @@ func (p *pool) initPool(workNum int) {
 	p.WorkNum  = workNum
 	p.OffDuty  = make(chan bool, workNum)
 	p.RollCall = make(chan bool, workNum)
+	p.JobChan  = make(chan task)
 	p.Done = make(chan bool)
 	for i := 0; i < workNum; i++ {
 		logger.Debugf("init worker: %v", i)
@@ -95,8 +96,8 @@ func (p *pool) takeWork(intiTaskNum int) {
 		for i := 0; i < intiTaskNum; i++ {
 			fmt.Printf("%v ", i)
 			t := task{
-				t:func() {
-					logger.Debugf("this is a task 0! %v", time.Now().Format(time.RFC3339Nano))
+				t: func() {
+					 logger.Debugf("this is a task 0! %v", time.Now().Format(time.RFC3339Nano))
 				}}
 			p.JobChan <- t
 		}
