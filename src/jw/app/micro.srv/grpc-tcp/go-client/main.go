@@ -63,9 +63,10 @@ func CallRPC()  {
 			client.Transport(tcp.NewTransport()),
 			client.Registry(consul.NewRegistry(registry.Addrs(cs))),
 			//client.WrapCall(wrap),
+			client.Retries(3),   // retry times
+
 		)
 	}
-
 
 
 	// calling remote address
