@@ -37,6 +37,28 @@ var (
 //	}
 //	return
 //}
+//
+//func () {
+//	var reqPT reflect.Type
+//	var reqFV reflect.Value
+//	var dealReq interface{}
+//	var req interface{}
+//	if dealReq != nil {
+//		reqFV = reflect.ValueOf(dealReq)
+//		reqPT = reqFV.Type().In(1).Elem()
+//	}
+//	reqv := reflect.New(reqPT)
+//	req = reqv.Interface()
+//	g.rg.Handle(method, path, func(c *gin.Context) {
+//		r := reqFV.Call([]reflect.Value{reflect.ValueOf(c), reqv})
+//		if err := r[1].Interface(); err != nil {
+//			perror.Send(c, err.(error), "makeReq")
+//			return
+//		}
+//	}
+//}
+
+
 
 func main() {
 	//lg.SetParts()
