@@ -16,7 +16,7 @@ var hptemplate = `
   <body>
     <h2>This is Sample Tool!</h2>
 	<div class="progress" style="left:20%;width:60%; margin: 2px;">
-		<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width:40%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+		<div id="pb1" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width:100px" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
 	</div>
 	
 	<div >
@@ -30,6 +30,14 @@ var hptemplate = `
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	<script>
+		
+		setInterval(function() {
+			var wd = $( '#pb1' ).width();
+			console.log("progress width: ", wd)
+			$( '#pb1' ).width(wd + 2);
+		}, 1000)
+    </script>
   </body>
 </html>
 
