@@ -5,11 +5,13 @@ import (
 	_ "github.com/davyxu/cellnet/proc/gorillaws"
 	"github.com/davyxu/golog"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/render"
+	"html/template"
 	"net/http"
 )
 
 const (
-	srvAdd = ":8888"
+	srvAdd = ":9999"
 )
 
 func haha(ctx *gin.Context) {
@@ -17,12 +19,25 @@ func haha(ctx *gin.Context) {
 }
 
 func homepage(ctx *gin.Context) {
-	ctx.String(http.StatusOK, "this is homepage!")
+	tmpl := template.Must(template.New("aaa").Parse(hptemplate))
+
+	dt := gin.H{
+		"title": "hello world",
+		"log": "this is log",
+	}
+
+	rd := render.HTML{
+		Template: tmpl,
+		Name:     "aaa",
+		Data:     dt,
+	}
+	ctx.Render(http.StatusOK, rd)
+	//ctx.String(http.StatusOK, "this is homepage!")
 }
 
 func main() {
-	logger := golog.New("app.server")
-	logger.SetParts()
+	logger := golog.New("my-web-server")
+	//logger.SetParts()
 
 	router := gin.Default()
 	router.GET("/", homepage)
@@ -33,7 +48,9 @@ func main() {
 		c.String(http.StatusOK, "Hello %s", name)
 	})
 
-	router.Run(srvAdd)
+	if err := router.Run(srvAdd); err != nil {
+		logger.Errorf("router run failed: %v", err)
+	}
 	//
 	//
 	//go util.ShowMemStat(10, logger)
