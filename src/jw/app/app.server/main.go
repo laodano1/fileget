@@ -7,7 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
 	"html/template"
+	"math/rand"
 	"net/http"
+	"runtime"
 	"time"
 )
 
@@ -34,11 +36,15 @@ func (s *webSrvObj)  hp(c *gin.Context) {
 	} else {
 		//for i, v := range s.cor.acs.asMap {
 		for i := 0; i < s.cor.acs.cliNum; i++{
+			if _, ok :=  s.cor.acs.asMap[i]; !ok {
+				continue
+			}
 			st := gin.H{
 				"cid"   : i,
 				"log": "this is log",
 				"phase" : s.cor.acs.asMap[i].phase,
 			}
+
 			sts = append(sts, st)
 		}
 	}
@@ -76,9 +82,9 @@ func (cho *chObj) startClients() {
 
 	for i := 0; i < 10; i++ {
 		go func(id int) {
-			//rand.Seed(time.Now().UnixNano())
-			//for rand.Intn(6)
-			itv := time.Now().Nanosecond() % 8
+			rand.Seed(time.Now().UnixNano())
+			rand.Seed(time.Now().UnixNano())
+			itv := rand.Intn(100) % (rand.Intn(100) % 9 + 1)
 			if itv < 4 {
 				itv += 3
 			}
@@ -94,12 +100,26 @@ func (cho *chObj) startClients() {
 			for {
 				select {
 				case <- tk:
-					p %= 4
-					cho.stch <- &clientStatus{
+					item := &clientStatus{
 						id: id,
-						phase: ph[p],
+					}
+					if p >= 4 {
+						item.phase = "Done"
+					}  else {
+						item.phase = ph[p]
 					}
 					p++
+					//p %= 4
+					cho.stch <- item
+					if p > 4 {
+						logger.Debugf("client(%v) is off work!", id)
+						time.AfterFunc(4 * time.Second, func() {
+							logger.Debugf("delete client(%v) from map", id)
+							delete(cho.acs.asMap, id)
+							cho.acs.cliNum--
+						})
+						return
+					}
 				}
 			}
 		}(i)
@@ -129,6 +149,20 @@ func newChObj() *chObj {
 	}
 }
 
+func getGoroutineNum()  {
+	tk := time.Tick(1 * time.Second)
+	for {
+		select {
+		case <- tk:
+			logger.Debugf("current go routine number: %v", runtime.NumGoroutine())
+		}
+	}
+}
+
+func (s *webSrvObj) startFromWebClient(c *gin.Context) {
+	s.cor.startClients()
+	c.String(http.StatusOK, "start clients!")
+}
 
 func main() {
 
@@ -138,9 +172,11 @@ func main() {
 	co  := newChObj()    // message queue
 	co.startClients()    // start workers
 	go co.dealCliStatus()
+	go getGoroutineNum()
 	mws.cor = co
 
 	mws.e.GET("/", mws.hp)
+	mws.e.GET("/st", mws.startFromWebClient)
 
 	mws.e.GET("/user/:name", func(c *gin.Context) {
 		name := c.Param("name")
