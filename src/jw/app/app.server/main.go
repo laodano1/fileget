@@ -32,11 +32,12 @@ func (s *webSrvObj)  hp(c *gin.Context) {
 	if s.cor.acs.cliNum <= 0 {
 
 	} else {
-		for i, v := range s.cor.acs.asMap {
+		//for i, v := range s.cor.acs.asMap {
+		for i := 0; i < s.cor.acs.cliNum; i++{
 			st := gin.H{
 				"cid"   : i,
 				"log": "this is log",
-				"phase" : v.phase,
+				"phase" : s.cor.acs.asMap[i].phase,
 			}
 			sts = append(sts, st)
 		}
@@ -93,11 +94,12 @@ func (cho *chObj) startClients() {
 			for {
 				select {
 				case <- tk:
+					p %= 4
 					cho.stch <- &clientStatus{
 						id: id,
 						phase: ph[p],
 					}
-					p = p + 1 % 4
+					p++
 				}
 			}
 		}(i)

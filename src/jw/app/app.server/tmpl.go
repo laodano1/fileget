@@ -17,9 +17,9 @@ var hptemplate = `
   <body>
     <h3 style="margin: 2px;">This is Sample Tool!</h3>
 	<div style="left:5%;margin: 2px;"><b>Total client number: {{ .clientNum }}</b></div>
-	<div class="container-fluid container-lg" style="left:5%;margin: 2px;">
+	<div class="container-fluid" style="left:5%;margin: 2px;">
 		{{range $idx, $status := .allStatus}}
-		<div class="card border-dark mb-3" style="max-width: 18rem;">
+		<div class="card border-dark mb-3" style="width: 200px;">
 		  <div class="card-header">Client: {{ $status.cid }}</div>
 		  <div class="card-body text-dark">
 			<h5 class="card-title"></h5>
