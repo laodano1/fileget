@@ -8,89 +8,144 @@ import (
 	"github.com/gin-gonic/gin/render"
 	"html/template"
 	"net/http"
+	"time"
 )
 
 const (
 	srvAdd = ":9999"
 )
 
-func haha(ctx *gin.Context) {
-	ctx.String(http.StatusOK, "hello world in gin!")
+var logger = golog.New("my-web-server")
+
+func newWebSrv() *webSrvObj {
+	return &webSrvObj{
+		name:   "my-gin",
+		e:      gin.Default(),
+	}
 }
 
-func homepage(ctx *gin.Context) {
+func (s *webSrvObj)  hp(c *gin.Context) {
 	tmpl := template.Must(template.New("aaa").Parse(hptemplate))
+
+	var sts []gin.H
+
+	if s.cor.acs.cliNum <= 0 {
+
+	} else {
+		for i, v := range s.cor.acs.asMap {
+			st := gin.H{
+				"cid"   : i,
+				"log": "this is log",
+				"phase" : v.phase,
+			}
+			sts = append(sts, st)
+		}
+	}
 
 	dt := gin.H{
 		"title": "hello world",
 		"log": "this is log",
+		"clientNum": s.cor.acs.cliNum,
+		"allStatus": sts,
 	}
 
+	//
 	rd := render.HTML{
 		Template: tmpl,
 		Name:     "aaa",
 		Data:     dt,
 	}
-	ctx.Render(http.StatusOK, rd)
-	//ctx.String(http.StatusOK, "this is homepage!")
+	c.Render(http.StatusOK, rd)
+
+	//c.IndentedJSON(http.StatusOK, sts)
+
 }
 
+//func (s *webSrvObj)  allClientStatus() {
+//
+//
+//}
+
+//func (s *webSrvObj)  getAllClientStatus(ctx *gin.Context) {
+//
+//	ctx.String(http.StatusOK, fmt.Sprintf("%v", s.))
+//}
+
+func (cho *chObj) startClients() {
+
+	for i := 0; i < 10; i++ {
+		go func(id int) {
+			//rand.Seed(time.Now().UnixNano())
+			//for rand.Intn(6)
+			itv := time.Now().Nanosecond() % 8
+			if itv < 4 {
+				itv += 3
+			}
+			logger.Debugf("random interval: %v", itv)
+			tk := time.Tick(time.Duration(itv) * time.Second)
+			ph := map[int]string{
+				0: "开",
+				1: "叫",
+				2: "抢",
+				3: "出",
+			}
+			p := 0
+			for {
+				select {
+				case <- tk:
+					cho.stch <- &clientStatus{
+						id: id,
+						phase: ph[p],
+					}
+					p = p + 1 % 4
+				}
+			}
+		}(i)
+	}
+
+	//dt := `{"status":"OK"}`
+	//c.JSON(http.StatusOK, dt)
+}
+
+func (cho *chObj) dealCliStatus()  {
+	cho.acs.asMap = make(map[int]*clientStatus)
+	for {
+		select {
+		case item := <- cho.stch:
+			if  _, ok := cho.acs.asMap[item.id]; !ok {
+				cho.acs.cliNum++
+			}
+			cho.acs.asMap[item.id] = item
+
+		}
+	}
+}
+
+func newChObj() *chObj {
+	return &chObj{
+		stch: make(chan *clientStatus),
+	}
+}
+
+
 func main() {
-	logger := golog.New("my-web-server")
+
 	//logger.SetParts()
+	gin.ForceConsoleColor()
+	mws := newWebSrv()   // web server
+	co  := newChObj()    // message queue
+	co.startClients()    // start workers
+	go co.dealCliStatus()
+	mws.cor = co
 
-	router := gin.Default()
-	router.GET("/", homepage)
-	router.GET("/haha", haha)
+	mws.e.GET("/", mws.hp)
 
-	router.GET("/user/:name", func(c *gin.Context) {
+	mws.e.GET("/user/:name", func(c *gin.Context) {
 		name := c.Param("name")
 		c.String(http.StatusOK, "Hello %s", name)
 	})
 
-	if err := router.Run(srvAdd); err != nil {
+	if err := mws.e.Run(srvAdd); err != nil {
 		logger.Errorf("router run failed: %v", err)
 	}
-	//
-	//
-	//go util.ShowMemStat(10, logger)
-	//
-	//// 创建一个事件处理队列，整个服务器只有这一个队列处理事件，服务器属于单线程服务器
-	//queue := cellnet.NewEventQueue()
-	//
-	////监听端口
-	//p := peer.NewGenericPeer("gorillaws.Acceptor", "my-app-server", srvAdd, queue)
-	//
-	////绑定事件处理
-	//// 绑定固定回调处理器, procName-"第二个参数"来源于RegisterProcessor注册的处理器，形如: 'gorillaws.ltv'
-	//proc.BindProcessorHandler(p, "gorillaws.ltv", func(ev cellnet.Event) {
-	//	switch msg := ev.Message().(type) {
-	//	////连接上了
-	//	//case *cellnet.SessionConnected:
-	//	//	logger.Infof("Session(%v) connected.", ev.Session().ID())
-	//
-	//	//接受客户端连接过来
-	//	case *cellnet.SessionAccepted:
-	//		logger.Infof("Session(%v) Accepted, msg: %v", ev.Session().ID(), msg)
-	//
-	//	//会话断开
-	//	case *cellnet.SessionClosed:
-	//		logger.Infof("Session(%v) Closed", ev.Session().ID())
-	//
-	//		//接受别的消息类型
-	//		//case :
-	//
-	//	}
-	//
-	//})
-	//
-	////开始监听
-	//p.Start()
-	//
-	////开启事件队列循环
-	//queue.StartLoop()
-	//
-	//// 阻塞等待事件队列结束退出( 在另外的goroutine调用queue.StopLoop() )
-	//queue.Wait()
-
 }
