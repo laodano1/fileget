@@ -13,7 +13,7 @@ import (
 var (
 	logger = golog.New("grpc-tcp")
 	PORT   = ":7777"
-	cs = "10.0.0.60:8500"
+	cs = "10.0.0.204:31536"
 )
 
 type mySvr struct{}

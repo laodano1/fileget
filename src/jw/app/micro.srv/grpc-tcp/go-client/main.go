@@ -14,7 +14,7 @@ import (
 
 var (
 	Host   = "10.0.0.20:7777"
-	cs = "10.0.0.60:8500"
+	cs = "10.0.0.204:31536"
     lg = golog.New("grpc-client")
     cli client.Client
 )
@@ -136,9 +136,11 @@ func Invoke(c client.Client, endpoint string)  {
 		lg.Debugf("unknown endpoint!")
 		return
 	}
-	if err := c.Call(context.Background(), req, rsp, client.WithAddress(Host)); err != nil {
+	//if err := c.Call(context.Background(), req, rsp, client.WithAddress(Host)); err != nil {
+	if err := c.Call(context.Background(), req, rsp); err != nil {
 		lg.Errorf("call with error： %v", err)
 		return
 	}
+	//lg.Debugf("server: %v", c.Options().CallOptions.Address)
 	lg.Debugf("rpc response: %v", rsp)
 }
