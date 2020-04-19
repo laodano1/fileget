@@ -7,110 +7,72 @@ import (
 	"github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-plugins/registry/consul"
-	"github.com/micro/go-plugins/transport/tcp"
+	"strings"
+	"sync/atomic"
+	"time"
 )
-
-
 
 var (
-	Host   = "10.0.0.20:7777"
-	cs = "10.0.0.60:8500"
-    lg = golog.New("grpc-client")
-    cli client.Client
+	Host = "10.0.0.131:7777"
+	cs   = "10.0.0.131:8500"
+	lg   = golog.New("grpc-client")
+	cli  client.Client
 )
-//
-//func Message(grpcSrv string, endpoint string, req *myserver.MessageReq) (err error) {
-//	lg.EnableColor(true)
-//	//opt1 := client.Registry(consul.NewRegistry(registry.Addrs("localhost:8500")))
-//	//opt2 := client.ContentType("application/json") //.Codec("application/json", codec.NewCodec)
-//	//client.Codec("application/json", codec.NewCodec)
-//	if cli == nil {
-//		cli = client.NewClient()
-//	}
-//
-//	//request := c.NewRequest("wanke.platform.api.gate", "Websocket.Message", req)
-//	request := cli.NewRequest("wanke.platform.api.gate", endpoint, req)
-//
-//	var rsp json.RawMessage
-//	if err = cli.Call(context.Background(), request, &rsp, client.WithAddress(grpcSrv),); err != nil {
-//		err = errors.New(fmt.Sprintf("go micro grpc call failed: %v", err))
-//	}
-//	return
-//}
-//
-//func () {
-//	var reqPT reflect.Type
-//	var reqFV reflect.Value
-//	var dealReq interface{}
-//	var req interface{}
-//	if dealReq != nil {
-//		reqFV = reflect.ValueOf(dealReq)
-//		reqPT = reqFV.Type().In(1).Elem()
-//	}
-//	reqv := reflect.New(reqPT)
-//	req = reqv.Interface()
-//	g.rg.Handle(method, path, func(c *gin.Context) {
-//		r := reqFV.Call([]reflect.Value{reflect.ValueOf(c), reqv})
-//		if err := r[1].Interface(); err != nil {
-//			perror.Send(c, err.(error), "makeReq")
-//			return
-//		}
-//	}
-//}
-
-
 
 func main() {
-	//lg.SetParts()
-	//mreq := &myserver.MessageReq{
-	//	UserId:               9876,
-	//	WsId:                 "111",
-	//	Service:              "srv-112233",
-	//	Token:                "aaa",
-	//}
-	//err := Message(Host, "Websocket.Message", mreq)
-	//if err != nil {
-	//	lg.Errorf("invoke grpc message interface failed: %v", err)
-	//	return
-	//}
-	//lg.Debugf("invoke grpc message successfully!")
 	CallRPC()
 }
 
-func CallRPC()  {
+func CallRPC() {
 
 	var c client.Client
 	if c == nil {
+		lg.Debugf("create a new go micro client! | %v", time.Now().Format(time.RFC3339Nano))
 		c = client.NewClient(
-			client.Transport(tcp.NewTransport()),
-			client.Registry(consul.NewRegistry(registry.Addrs(cs))),
-			//client.WrapCall(wrap),
-			client.Retries(3),   // retry times
 
+			//client.Transport(tcp.NewTransport()),
+			client.Registry(consul.NewRegistry(registry.Addrs(cs))),
+		//client.WrapCall(wrap),<
+		//client.Retries(3), // retry times
 		)
 	}
 
+	mysCli := myserver.NewMyServerService("grpc-tcp", c)
 
 	// calling remote address
 	//wg := &sync.WaitGroup{}
-	cnt := 10
+	cnt := 100
 	//wg.Add(cnt)
+	var fromCnt int32
 	sigCh := make(chan bool, 100)
 	for i := 0; i < cnt; i++ {
-		go func() {
-			Invoke(c, "MyServer.ConnectA")
-			Invoke(c, "MyServer.Disconnect")
-			Invoke(c, "MyServer.Message")
+		go func(id int) {
+			msgRsp, err := mysCli.Message(context.Background(), &myserver.MessageReq{
+				UserId:  0,
+				WsId:    "",
+				Service: "service1",
+				Token:   "token1",
+				//}, client.WithAddress(Host))
+			})
+			if err != nil {
+				lg.Errorf("Call Message interface failed: %v", err)
+			} else {
+				lg.Debugf("rpc response(%2v): %v", id, msgRsp)
+				if strings.Contains(msgRsp.Host, "156:77") {
+					fromCnt = atomic.AddInt32(&fromCnt, 1)
+					lg.Debugf("====================== from cnt: %v", atomic.LoadInt32(&fromCnt))
+				}
+			}
 			sigCh <- true
 			//wg.Done()
-		}()
+		}(i)
 	}
 	//wg.Wait()
 	//time.Sleep(2100 * time.Microsecond)
 	var i int
 	for {
 		select {
-		case <- sigCh :
+		case <-sigCh:
 			i++
 			if i == cnt {
 				lg.Debugf("bye bye")
@@ -122,23 +84,24 @@ func CallRPC()  {
 }
 
 // calling remote address
-func Invoke(c client.Client, endpoint string)  {
+func Invoke(c client.Client, endpoint string, id int) {
 	var rsp interface{}
 	req := c.NewRequest("grpc-tcp", endpoint, nil)
 	switch endpoint {
-	case "MyServer.ConnectA" :
+	case "MyServer.ConnectA":
 		rsp = &myserver.ConnectRsp{}
-	case "MyServer.Disconnect" :
+	case "MyServer.Disconnect":
 		rsp = &myserver.DisconnectRsp{}
-	case "MyServer.Message" :
+	case "MyServer.Message":
 		rsp = &myserver.MessageRsp{}
 	default:
 		lg.Debugf("unknown endpoint!")
 		return
 	}
-	if err := c.Call(context.Background(), req, rsp, client.WithAddress(Host)); err != nil {
-		lg.Errorf("call with error： %v", err)
+	//if err := c.Call(context.Background(), req, rsp, client.WithAddress(Host)); err != nil {
+	if err := c.Call(context.Background(), req, rsp); err != nil {
+		lg.Errorf("call(%2v) with error： %v", id, err)
 		return
 	}
-	lg.Debugf("rpc response: %v", rsp)
+
 }
