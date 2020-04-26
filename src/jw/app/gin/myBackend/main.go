@@ -8,11 +8,15 @@ const (
 
 var (
 	lg = golog.New("my-backend")
+	exeAbsPath string
 )
 
 
 func main() {
-	bk := NewBK()
+	bk, err := NewBK()
+	if err != nil {
+		lg.Errorf("%v", err)
+	}
 	bk.addRoutes()
     bk.StartBK(add)
 }

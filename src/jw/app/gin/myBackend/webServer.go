@@ -1,21 +1,27 @@
 package main
 
 import (
+	"fileget/src/jw/app/gin/myBackend/utis"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
 	"html/template"
 	"net/http"
 	"os"
-	"path/filepath"
 )
 
-func NewBK() *myBackend {
+func NewBK() (*myBackend, error) {
 	gin.ForceConsoleColor()
 	e := gin.Default()
-	e.Static("/css", "./template/css")
-	e.Static("/js", "./template/js")
-	e.Static("/images", "./template/images")
+	//var err error
+	exeAbsPath, _ = utis.GetFullPathDir()
+
+	// set static files
+	e.Static("/css", fmt.Sprintf("%v%ctemplate%ccss", exeAbsPath, os.PathSeparator, os.PathSeparator))
+	e.Static("/js", fmt.Sprintf("%v%ctemplate%cjs", exeAbsPath, os.PathSeparator, os.PathSeparator))
+	e.Static("/images", fmt.Sprintf("%v%ctemplate%cimages", exeAbsPath, os.PathSeparator, os.PathSeparator))
+	e.Static("/fonts", fmt.Sprintf("%v%ctemplate%cfonts", exeAbsPath, os.PathSeparator, os.PathSeparator))
+
 	e.HandleMethodNotAllowed = true
 	e.NoMethod(func(c *gin.Context) {
 		c.JSON(http.StatusMethodNotAllowed, gin.H{"result": false, "error": "Method Not Allowed"})
@@ -30,7 +36,7 @@ func NewBK() *myBackend {
 	return &myBackend{
 		name: "my backend",
 		e:     e,
-	}
+	}, nil
 }
 
 func (m *myBackend) StartBK(add string) (err error) {
@@ -40,35 +46,23 @@ func (m *myBackend) StartBK(add string) (err error) {
 		return
 	}
 	return
-
 }
 
 func homepage(c *gin.Context) {
-
-	exeAbsPath, err := os.Executable()
-	if err != nil {
-		lg.Errorf("get os.Executable failed: %v", err)
-	}
-	//
-
-
-	// Working Directory
-	//wd, err := os.Getwd()
+	//var err error
+	//exeAbsPath, err = utis.GetFullPathDir()
 	//if err != nil {
 	//	lg.Errorf("%v", err)
+	//	c.JSON(http.StatusInternalServerError, &gin.H{"result": "failed", "description": err.Error()})
 	//}
-	lg.Debugf("os.Executable path: %v", exeAbsPath)
 
-	dir := filepath.Dir(exeAbsPath)
-	fullPth := fmt.Sprintf("%v%ctemplate\\index.html", dir, os.PathSeparator)
-	lg.Debugf("template path: %v", fullPth)
 
-	//template.ParseFiles("index.html")
+	fullPth := fmt.Sprintf("%v%ctemplate\\index.html", exeAbsPath, os.PathSeparator)
+	//lg.Debugf("template path: %v", fullPth)
+
 
 	tp := template.Must(template.New("homepage").ParseFiles(fullPth))
-	//if err != nil {
-	//	lg.Errorf("parse file failed: %v", err)
-	//}
+
 	//
 	dt := &gin.H{
 		"title" : "hello world",
