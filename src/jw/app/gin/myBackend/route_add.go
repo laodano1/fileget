@@ -99,7 +99,13 @@ func (m *myBackend) addRoutes() {
 
 	jsprg := m.e.Group("/jpin")
 	m.staticHandle("/jpin")
-	jsprg.Handle("GET", "/dtch", m.generalHandle("lyear_forms_checkbox.html"))
+	jsprg.Handle("GET", "/dtpkr", m.generalHandle("lyear_js_datepicker.html"))
+	jsprg.Handle("GET", "/sldr", m.generalHandle("lyear_js_sliders.html"))
+	jsprg.Handle("GET", "/clpk", m.generalHandle("lyear_js_colorpicker.html"))
+	jsprg.Handle("GET", "/chts", m.generalHandle("lyear_js_chartjs.html"))
+	jsprg.Handle("GET", "/jcf", m.generalHandle("lyear_js_jconfirm.html"))
+	jsprg.Handle("GET", "/tg",  m.generalHandle("lyear_js_tags_input.html"))
+	jsprg.Handle("GET", "/ntf", m.generalHandle("lyear_js_notify.html"))
 
 }
 
