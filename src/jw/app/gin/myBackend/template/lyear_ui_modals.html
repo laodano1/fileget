@@ -1,9 +1,10 @@
+{{ define "ui_modals" }}
 <!DOCTYPE html>
 <html lang="zh">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>模态框 - (Light Year Admin)后台管理系统模板</title>
+<title>{{ .title }}</title>
 <link rel="icon" href="images/favicon.ico" type="image/ico">
 <meta name="keywords" content="后台模板,后台管理系统,HTML模板">
 <meta name="description" content="是一个基于Bootstrap v3.3.7的后台管理系统的HTML模板。">
@@ -32,28 +33,28 @@
               <a href="javascript:void(0)"><i class="mdi mdi-palette"></i> UI 元素</a>
               <ul class="nav nav-subnav">
                 <li> <a href="/uie/button">按钮</a> </li>
-                <li> <a href="lyear_ui_cards.html">卡片</a> </li>
-                <li> <a href="lyear_ui_grid.html">格栅</a> </li>
-                <li> <a href="lyear_ui_icons.html">图标</a> </li>
-                <li> <a href="lyear_ui_tables.html">表格</a> </li>
-                <li class="active"> <a href="lyear_ui_modals.html">模态框</a> </li>
-                <li> <a href="lyear_ui_tooltips_popover.html">提示 / 弹出框</a> </li>
-                <li> <a href="lyear_ui_alerts.html">警告框</a> </li>
-                <li> <a href="lyear_ui_pagination.html">分页</a> </li>
-                <li> <a href="lyear_ui_progress.html">进度条</a> </li>
-                <li> <a href="lyear_ui_tabs.html">标签页</a> </li>
-                <li> <a href="lyear_ui_typography.html">排版</a> </li>
-                <li> <a href="lyear_ui_step.html">步骤</a> </li>
-                <li> <a href="lyear_ui_other.html">其他</a> </li>
+                <li> <a href="/uie/cards">卡片</a> </li>
+                <li> <a href="/uie/grids">格栅</a> </li>
+                <li> <a href="/uie/icons">图标</a> </li>
+                <li> <a href="/uie/tables">表格</a> </li>
+                <li class="active"> <a href="/uie/modals">模态框</a> </li>
+                <li> <a href="/uie/popover">提示 / 弹出框</a> </li>
+                <li> <a href="/uie/alerts">警告框</a> </li>
+                <li> <a href="/uie/pagination">分页</a> </li>
+                <li> <a href="/uie/progress">进度条</a> </li>
+                <li> <a href="/uie/tabs">标签页</a> </li>
+                <li> <a href="/uie/typography">排版</a> </li>
+                <li> <a href="/uie/steps">步骤</a> </li>
+                <li> <a href="/uie/other">其他</a> </li>
               </ul>
             </li>
             <li class="nav-item nav-item-has-subnav">
               <a href="javascript:void(0)"><i class="mdi mdi-format-align-justify"></i> 表单</a>
               <ul class="nav nav-subnav">
                 <li> <a href="/forms/elements">基本元素</a> </li>
-                <li> <a href="lyear_forms_radio.html">单选框</a> </li>
-                <li> <a href="lyear_forms_checkbox.html">复选框</a> </li>
-                <li> <a href="lyear_forms_switch.html">开关</a> </li>
+                <li> <a href="/forms/radio">单选框</a> </li>
+                <li> <a href="/forms/checkbox">复选框</a> </li>
+                <li> <a href="/forms/switch">开关</a> </li>
               </ul>
             </li>
             <li class="nav-item nav-item-has-subnav">
@@ -435,3 +436,4 @@ $('#exampleModal').on('show.bs.modal', function (event) {
 </script>
 </body>
 </html>
+{{ end }}
