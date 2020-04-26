@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func homepage(c *gin.Context) {
@@ -105,12 +106,50 @@ func (m *myBackend)  staticHandle(group string)  {
 	m.e.Static(fmt.Sprintf("%v/fonts", group),  fmt.Sprintf("%v%ctemplate%cfonts", exeAbsPath, os.PathSeparator, os.PathSeparator))
 }
 
+
+func (m *myBackend) generalHandle(tmplFileName string) func(c *gin.Context) {
+
+	return func(c *gin.Context) {
+		fullPth := fmt.Sprintf("%v%ctemplate%c%v", exeAbsPath, os.PathSeparator, os.PathSeparator, tmplFileName)
+		//lg.Debugf("button tmpl: %v", fullPth)
+
+		nitem := strings.Split(strings.Split(tmplFileName, ".")[0], "_")
+		tp := template.Must(template.New(fmt.Sprintf("%v_%v", nitem[1], nitem[2])).ParseFiles(fullPth))
+		//
+		dt := &gin.H{
+			"title" : fmt.Sprintf("%v %v", nitem[1], nitem[2]),
+		}
+
+		rd := render.HTML{
+			Template: tp,
+			Name:     fmt.Sprintf("%v_%v", nitem[1], nitem[2]),
+			Data:     dt,
+		}
+
+		c.Render(http.StatusOK, rd)
+	}
+
+}
+
 func (m *myBackend) addRoutes() {
 	m.e.GET("/", homepage)
 
 	uierg := m.e.Group("/uie")
 	m.staticHandle("/uie")
-	uierg.Handle("GET", "/button", buttons)
+	uierg.Handle("GET", "/button",   m.generalHandle("lyear_ui_buttons.html"))
+	uierg.Handle("GET", "/cards",    m.generalHandle("lyear_ui_cards.html"))
+	uierg.Handle("GET", "/grids",    m.generalHandle("lyear_ui_grid.html"))
+	uierg.Handle("GET", "/icons",    m.generalHandle("lyear_ui_icons.html"))
+	uierg.Handle("GET", "/tables",   m.generalHandle("lyear_ui_tables.html"))
+	uierg.Handle("GET", "/modals",   m.generalHandle("lyear_ui_modals.html"))
+	uierg.Handle("GET", "/popover",  m.generalHandle("lyear_ui_tooltips_popover.html"))
+	uierg.Handle("GET", "/alerts",     m.generalHandle("lyear_ui_alerts.html"))
+	uierg.Handle("GET", "/pagination", m.generalHandle("lyear_ui_pagination.html"))
+	uierg.Handle("GET", "/progress",  m.generalHandle("lyear_ui_progress.html"))
+	uierg.Handle("GET", "/tabs",      m.generalHandle("lyear_ui_tabs.html"))
+	uierg.Handle("GET", "/steps",      m.generalHandle("lyear_ui_step.html"))
+	uierg.Handle("GET", "/typography", m.generalHandle("lyear_ui_typography.html"))
+	uierg.Handle("GET", "/other",      m.generalHandle("lyear_ui_other.html"))
 
 	formserg := m.e.Group("/forms")
 	m.staticHandle("/forms")
