@@ -1,9 +1,10 @@
+{{ define "button" }}
 <!DOCTYPE html>
 <html lang="zh">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>按钮 - (Light Year Admin)后台管理系统模板</title>
+<title>{{ .title }}</title>
 <link rel="icon" href="favicon.ico" type="image/ico">
 <meta name="keywords" content="后台模板,后台管理系统,HTML模板">
 <meta name="description" content="是一个基于Bootstrap v3.3.7的后台管理系统的HTML模板。">
@@ -21,17 +22,17 @@
        
       <!-- logo -->
       <div id="logo" class="sidebar-header">
-        <a href="index.html"><img src="images/logo-sidebar.png" title="" alt="" /></a>
+        <a href="/"><img src="images/logo-sidebar.png" title="" alt="" /></a>
       </div>
       <div class="lyear-layout-sidebar-scroll">
         
         <nav class="sidebar-main">
           <ul class="nav nav-drawer">
-            <li class="nav-item"> <a href="index.html"><i class="mdi mdi-home"></i> 后台首页</a> </li>
+            <li class="nav-item"> <a href="/"><i class="mdi mdi-home"></i> 后台首页</a> </li>
             <li class="nav-item nav-item-has-subnav active open">
               <a href="javascript:void(0)"><i class="mdi mdi-palette"></i> UI 元素</a>
               <ul class="nav nav-subnav">
-                <li class="active"> <a href="lyear_ui_buttons.html">按钮</a> </li>
+                <li class="active"> <a href="/uie/button">按钮</a> </li>
                 <li> <a href="lyear_ui_cards.html">卡片</a> </li>
                 <li> <a href="lyear_ui_grid.html">格栅</a> </li>
                 <li> <a href="lyear_ui_icons.html">图标</a> </li>
@@ -842,3 +843,4 @@
 <script type="text/javascript" src="js/main.min.js"></script>
 </body>
 </html>
+{{ end }}
