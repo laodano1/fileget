@@ -1,10 +1,11 @@
+{{ define "elements" }}
 <!DOCTYPE html>
 <html lang="zh">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <title>表单 - (Light Year Admin)后台管理系统模板</title>
-<link rel="icon" href="favicon.ico" type="image/ico">
+<link rel="icon" href="images/favicon.ico" type="image/ico">
 <meta name="keywords" content="后台模板,后台管理系统,HTML模板">
 <meta name="description" content="是一个基于Bootstrap v3.3.7的后台管理系统的HTML模板。">
 <meta name="author" content="yinqi">
@@ -50,7 +51,7 @@
             <li class="nav-item nav-item-has-subnav active open">
               <a href="javascript:void(0)"><i class="mdi mdi-format-align-justify"></i> 表单</a>
               <ul class="nav nav-subnav">
-                <li class="active"> <a href="lyear_forms_elements.html">基本元素</a> </li>
+                <li class="active"> <a href="/forms/elements">基本元素</a> </li>
                 <li> <a href="lyear_forms_radio.html">单选框</a> </li>
                 <li> <a href="lyear_forms_checkbox.html">复选框</a> </li>
                 <li> <a href="lyear_forms_switch.html">开关</a> </li>
@@ -59,7 +60,7 @@
             <li class="nav-item nav-item-has-subnav">
               <a href="javascript:void(0)"><i class="mdi mdi-file-outline"></i> 示例页面</a>
               <ul class="nav nav-subnav">
-                <li> <a href="lyear_pages_doc.html">文档列表</a> </li>
+                <li> <a href="/examples/doclist">文档列表</a> </li>
                 <li> <a href="lyear_pages_gallery.html">图库列表</a> </li>
                 <li> <a href="lyear_pages_config.html">网站配置</a> </li>
                 <li> <a href="lyear_pages_rabc.html">设置权限</a> </li>
@@ -72,7 +73,7 @@
             <li class="nav-item nav-item-has-subnav">
               <a href="javascript:void(0)"><i class="mdi mdi-language-javascript"></i> JS 插件</a>
               <ul class="nav nav-subnav">
-                <li> <a href="lyear_js_datepicker.html">日期选取器</a> </li>
+                <li> <a href="/jpin/dtch">日期选取器</a> </li>
                 <li> <a href="lyear_js_sliders.html">滑块</a> </li>
                 <li> <a href="lyear_js_colorpicker.html">选色器</a> </li>
                 <li> <a href="lyear_js_chartjs.html">Chart.js</a> </li>
@@ -85,7 +86,7 @@
         </nav>
         
         <div class="sidebar-footer">
-          <p class="copyright">Copyright &copy; 2019. <a target="_blank" href="http://lyear.itshubao.com">IT书包</a> All rights reserved. More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></p>
+          
         </div>
       </div>
       
@@ -462,7 +463,7 @@
               <div class="card-header"><h4>普通表单</h4></div>
               <div class="card-body">
                 
-                <form action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                <form action="/forms/elements" method="post" onsubmit="return false;">
                   <div class="form-group">
                     <label for="example-nf-email">邮箱</label>
                     <input class="form-control" type="email" id="example-nf-email" name="example-nf-email" placeholder="请输入邮箱..">
@@ -483,7 +484,7 @@
               <div class="card-header"><h4>内联表单</h4></div>
               <div class="card-body">
                 
-                <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                <form class="form-inline" action="/forms/elements" method="post" onsubmit="return false;">
                   <div class="form-group">
                     <label class="sr-only" for="example-if-email">邮箱</label>
                     <input class="form-control" type="email" id="example-if-email" name="example-if-email" placeholder="请输入邮箱..">
@@ -504,7 +505,7 @@
               <div class="card-header"><h4>水平排列的表单</h4></div>
               <div class="card-body">
                 
-                <form class="form-horizontal" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                <form class="form-horizontal" action="/forms/elements" method="post" onsubmit="return false;">
                   <div class="form-group">
                     <label class="col-md-3 control-label" for="example-hf-email">邮箱</label>
                     <div class="col-md-7">
@@ -531,7 +532,7 @@
               <div class="card-header"><h4>输入框大小</h4></div>
               <div class="card-body">
                 
-                <form action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                <form action="/forms/elements" method="post" onsubmit="return false;">
                   <div class="form-group">
                     <label for="example-input-small">偏小输入框</label>
                     <input class="form-control input-sm" type="text" id="example-input-small" name="example-input-small" placeholder=".input-sm">
@@ -660,7 +661,7 @@
               <div class="card-header"><h4>输入框组</h4></div>
               <div class="card-body">
 
-                <form action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                <form action="/forms/elements" method="post" onsubmit="return false;">
                   <div class="input-group m-b-10">
                     <span class="input-group-addon" id="basic-addon1">@</span>
                     <input type="text" class="form-control" placeholder="用户名" aria-describedby="basic-addon1">
@@ -852,3 +853,4 @@
 <script type="text/javascript" src="js/main.min.js"></script>
 </body>
 </html>
+{{ end }}
