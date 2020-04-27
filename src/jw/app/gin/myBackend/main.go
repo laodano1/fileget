@@ -17,8 +17,8 @@ var (
 
 func main() {
 	var mode string
-	//flag.StringVar(&mode, "m", "book", "working mode. support: book | prod")
-	flag.StringVar(&mode, "m", "prod", "working mode. support: book | prod")
+	flag.StringVar(&mode, "m", "book", "working mode. support: book | prod")
+	//flag.StringVar(&mode, "m", "prod", "working mode. support: book | prod")
 	flag.Parse()
 	bk, err := NewBK()
 	if err != nil {
