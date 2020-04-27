@@ -17,7 +17,12 @@ var sbr = `
 		{"name":"mp3", "href": "/mp3"}, 
 		{"name": "mp4", "href": "/mp4"}, 
 		{"name": "mkv", "href": "/mkv"}
-	]
+	],
+    "pageCnt": [
+        {"pageObjs": []},
+        {"pageObjs": [{"name": "tesla", "href": "/video/tesla.mp4"}] },
+        {"pageObjs": [{"name": "ye-wen-4", "href": "/video/ye-wen-4.mkv"}] }
+     ] 
    }]
 }
 `

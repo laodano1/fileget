@@ -7,6 +7,15 @@ type myBackend struct {
 	name  string
 }
 
+type pageItem struct {
+	Name string `json:"name"`
+	Href  string   `json:"href"`
+}
+
+type pageContent struct {
+	PageObjs  []pageItem `json:"pageObjs"`
+}
+
 type sbSubItem struct {
 	Name string `json:"name"`
 	Href string `json:"href"`
@@ -15,15 +24,14 @@ type sbSubItem struct {
 type sidebarMainItem struct {
 	Name     string      `json:"name"`
 	SubItems []sbSubItem `json:"subItems"`
+	PageCnt  []pageContent `json:"pageCnt"`
 }
 
 type sidebar struct {
 	List  []sidebarMainItem `json:"list"`
 }
 
-type pageContent struct {
 
-}
 
 
 

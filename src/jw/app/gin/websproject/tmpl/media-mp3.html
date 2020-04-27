@@ -29,12 +29,13 @@
         <nav class="sidebar-main">
           <ul class="nav nav-drawer">
             <!--li class="nav-item active"> <a href="/"><i class="mdi mdi-home"></i> 后台首页 </a> </li-->
+
             {{ range $idx, $item := .sidebarlists }}
-            <li class="nav-item nav-item-has-subnav">
+            <li class="nav-item nav-item-has-subnav  active open">
               <a href="javascript:void(0)"><i class="mdi mdi-palette"></i> {{ $item.Name }}</a>
               <ul class="nav nav-subnav">
                 {{ range $i, $subitem := $item.SubItems }}
-                <li> <a href="/{{ tolowwer  $item.Name }}{{ $subitem.Href }}">{{ $subitem.Name }}</a> </li>
+                <li> <a href="/{{ toLower  $item.Name }}{{ $subitem.Href }}">{{ $subitem.Name }}</a> </li>
                 {{ end }}
               </ul>
             </li>
@@ -218,32 +219,35 @@
     <main class="lyear-layout-content">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-sm-6">
-            <div class="card ">
-              <div class="card-header bg-success">
-                <h4><b>tesla</b></h4>
+          {{ if isEmpty .pagecontent }}
+            <section class="error-page">
+              <div class="error-box">
+                <div class="error-body text-center">
+                  <h1>404</h1>
+                  <h4>很抱歉，但是那个页面看起来已经不存在了。</h4>
+                  <a href="/" class="btn btn-primary ">返回首页</a>
+                </div>
               </div>
-              <div class="card-body text-center">
-                <video width="100%" src="/video/tesla.mp4" controls="controls" >
-                  您的浏览器不支持 video 标签。
-                </video>
-                <a href="/video/tesla.mp4">tesla</a>
+            </section>
+          {{ else }}
+            {{ range $idx, $pitem := .pagecontent }}
+              <div class="col-sm-6">
+                <div class="card ">
+                  <div class="card-header bg-success">
+                    <h4><b>{{ $pitem.Name }}</b></h4>
+                  </div>
+                  <div class="card-body text-center">
+                    <video width="100%" height="20%" src="{{ $pitem.Href }}" controls="controls" >
+                      您的浏览器不支持 video 标签。
+                    </video>
+                    <a href="{{ $pitem.Href }}">{{ $pitem.Name }}</a>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="card ">
-              <div class="card-header bg-success">
-                <h4><b>ye-wen-4</b></h4>
-              </div>
-              <div class="card-body text-center">
-                <video width="100%" src="/video/ye-wen-4.mkv" controls="controls" >
-                  您的浏览器不支持 video 标签。
-                </video>
-                <a href="/video/ye-wen-4.mkv">ye-wen-4</a>
-              </div>
-            </div>
-          </div>
+            {{end}}
+          {{ end }}
+
+
         </div>
 
         <!--div class="row">
