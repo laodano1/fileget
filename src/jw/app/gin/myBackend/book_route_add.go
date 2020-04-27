@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func homepage(c *gin.Context) {
+func guidelineHP(c *gin.Context) {
 	fullPth := fmt.Sprintf("%v%ctemplate%cindex.html", exeAbsPath, os.PathSeparator, os.PathSeparator)
 	tp := template.Must(template.New("homepage").ParseFiles(fullPth))
 	//
@@ -59,8 +59,8 @@ func (m *myBackend) generalHandle(tmplFileName string) func(c *gin.Context) {
 
 }
 
-func (m *myBackend) addRoutes() {
-	m.e.GET("/", homepage)
+func (m *myBackend) addGuideLineRoutes() {
+	m.e.GET("/", guidelineHP)
 
 	uierg := m.e.Group("/uie")
 	m.staticHandle("/uie")
