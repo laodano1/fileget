@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	add = ":9999"
+	add = ":10000"
 )
 
 var (
@@ -25,9 +25,9 @@ func main() {
 	}
 	//if mode == "book" {
 	//	lg.Debugf("work mode: %v", mode)
-		bk.addGuideLineRoutes()
+	//	bk.addGuideLineRoutes()
 	//} else {
-	//	bk.addProductRoutes()
+		bk.addProductRoutes()
 	//}
 
     bk.StartBK(add)
