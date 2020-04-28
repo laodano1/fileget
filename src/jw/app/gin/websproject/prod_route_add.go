@@ -49,7 +49,7 @@ func generalHandle(tmplName string, midx, sidx int) func(c *gin.Context)  {
 func hp(c *gin.Context)  {
 	fullPth := fmt.Sprintf("%v%ctmpl%cindex.html", exeAbsPath, os.PathSeparator, os.PathSeparator)
 	tp := template.Must(template.New("homepage").Funcs(template.FuncMap{
-		"tolowwer": func(name string) string {
+		"toLower": func(name string) string {
 			return strings.ToLower(name)
 		},
 	}).ParseFiles(fullPth))
@@ -70,8 +70,33 @@ func hp(c *gin.Context)  {
 	c.Render(http.StatusOK, rd)
 }
 
+func conf(c *gin.Context) {
+	fullPth := fmt.Sprintf("%v%ctmpl%cweb-config.html", exeAbsPath, os.PathSeparator, os.PathSeparator)
+	tp := template.Must(template.New("config").Funcs(template.FuncMap{
+		"toLower": func(name string) string {
+			return strings.ToLower(name)
+		},
+	}).ParseFiles(fullPth))
+	//
+
+	dt := &gin.H{
+		"title" : "config",
+		"sidebarlists" : sidebarData.List,
+
+	}
+
+	rd := render.HTML{
+		Template: tp,
+		Name:     "config",
+		Data:     dt,
+	}
+
+	c.Render(http.StatusOK, rd)
+}
+
 func (m *myBackend) addProductRoutes() {
 	m.e.GET("/", hp)
+	m.e.GET("/config", conf)
 
 	for midx, sbitem := range sidebarData.List {
 		mdg := m.e.Group(fmt.Sprintf("/%v", strings.ToLower(sbitem.Name)))
