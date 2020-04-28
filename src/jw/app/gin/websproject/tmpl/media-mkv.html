@@ -228,7 +228,7 @@
                 <h4><b>{{ $pitem.Name }}</b></h4>
               </div>
               <div class="card-body text-center">
-                <video width="100%" src="{{ $pitem.Href }}" controls="controls" >
+                <video width="100%" src="{{ $pitem.Href }}" controls="controls" preload>
                   您的浏览器不支持 video 标签。
                 </video>
                 <a href="{{ $pitem.Href }}">{{ $pitem.Name }}</a>

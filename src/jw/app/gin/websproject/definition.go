@@ -1,6 +1,9 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
+)
 
 type myBackend struct {
 	e     *gin.Engine
@@ -22,8 +25,8 @@ type sbSubItem struct {
 }
 
 type sidebarMainItem struct {
-	Name     string      `json:"name"`
-	SubItems []sbSubItem `json:"subItems"`
+	Name     string        `json:"name"`
+	SubItems []sbSubItem   `json:"subItems"`
 	PageCnt  []pageContent `json:"pageCnt"`
 }
 
@@ -31,6 +34,10 @@ type sidebar struct {
 	List  []sidebarMainItem `json:"list"`
 }
 
+type dbObj struct {
+	Db *gorm.DB
+
+}
 
 
 

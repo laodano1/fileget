@@ -11,14 +11,14 @@ const (
 var (
 	lg = golog.New("my-backend")
 	exeAbsPath string
+	myDB *dbObj
 )
 
 
 func main() {
-	//var mode string
-	//flag.StringVar(&mode, "m", "book", "working mode. support: book | prod")
-	//flag.StringVar(&mode, "m", "prod", "working mode. support: book | prod")
-	//flag.Parse()
+	var err error
+	LoadData()
+
 	bk, err := NewBK()
 	if err != nil {
 		lg.Errorf("%v", err)
