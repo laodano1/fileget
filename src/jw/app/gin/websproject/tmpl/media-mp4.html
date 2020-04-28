@@ -326,7 +326,7 @@ function copyToClipboard(element) {
   var currentURL = $(location).attr('href');
   var protocol = location.protocol;
   var host = location.host;
-  $temp.val($(element).attr("src")).select();
+  $temp.val(protocol + "//" + host + $(element).attr("src")).select();
   console.log("link: " + protocol + "//" + host + $(element).attr("src"));
   document.execCommand("copy");
   $temp.remove();
