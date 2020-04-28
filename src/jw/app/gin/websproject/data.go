@@ -9,7 +9,7 @@ func LoadData() {
 	subIList = append(subIList, sbSubItem{Name: "mkv", Href: "/mkv"})
 
 	pgItems1 := make([]pageItem, 0)
-	pgItems1 = append(pgItems1, pageItem{})
+	//pgItems1 = append(pgItems1, pageItem{})
 	pgcnt1 := pageContent{PageObjs: pgItems1}
 
 	pgItems2 := make([]pageItem, 0)
