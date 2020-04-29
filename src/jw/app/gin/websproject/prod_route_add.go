@@ -77,8 +77,35 @@ func hp(c *gin.Context)  {
 	c.Render(http.StatusOK, rd)
 }
 
+func cfg(c *gin.Context)  {
+	fullPth := fmt.Sprintf("%v%ctmpl%cweb-config.html", exeAbsPath, os.PathSeparator, os.PathSeparator)
+	tp := template.Must(template.New("config").Funcs(template.FuncMap{
+		"toLower": func(name string) string {
+			return strings.ToLower(name)
+		},
+	}).ParseFiles(fullPth))
+	//
+
+	dt := &gin.H{
+		"title" : "production website",
+		//"sidebarlists" : sidebarData.List,
+
+	}
+
+	rd := render.HTML{
+		Template: tp,
+		Name:     "config",
+		Data:     dt,
+	}
+
+	c.Render(http.StatusOK, rd)
+}
+
 func (m *myBackend) addProductRoutes() {
 	m.e.GET("/", hp)
+	m.e.GET("/cfg", cfg)
+
+
 	for idx, dirItem := range staticDir {
 		m.e.Static(fmt.Sprintf("/%v", dirItem),   dirList.DirList[idx])
 	}

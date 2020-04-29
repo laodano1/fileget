@@ -230,13 +230,19 @@
               <div class="card-body">
                 <form action="#!" method="post" name="edit-form" class="edit-form">
                   <div class="form-group">
-                    <label for="config_group">配置分组</label>
-                    <textarea class="form-control" id="config_group" rows="5" name="config_group" placeholder="请输入配置分组">base:基本
-system:系统
-develop:开发
-upload:上传</textarea>
+                    <label for="config_group">Paths</label>
+                    <input  class="form-control" id="config_group" rows="1" name="config_group" placeholder="Path1"></input>
                   </div>
                   <div class="form-group">
+                    <input class="form-control" id="config_group" rows="5" name="config_group" placeholder="Path2"></input>
+                  </div>
+                  <div class="form-group">
+                    <input class="form-control" id="config_group" rows="5" name="config_group" placeholder="Path3"></input>
+                  </div>
+                  <div class="form-group">
+                    <input class="form-control" id="config_group" rows="5" name="config_group" placeholder="Path4"></input>
+                  </div>
+                  <!--div class="form-group">
                     <label for="form_item_type">配置类型</label>
                     <textarea class="form-control" id="form_item_type" rows="5" name="form_item_type" placeholder="请输入配置类型">text:单行文本
     textarea:多行文本
@@ -285,10 +291,10 @@ upload:上传</textarea>
                         <input type="radio" name="app_trace" value="1"><span>是</span>
                       </label>
                     </div>
-                  </div>
+                  </div-->
                   <div class="form-group">
-                    <button type="submit" class="btn btn-primary m-r-5">确 定</button>
-                    <button type="button" class="btn btn-default" onclick="javascript:history.back(-1);return false;">返 回</button>
+                    <button type="submit" class="btn btn-primary m-r-5">Set</button>
+                    <!-- button type="button" class="btn btn-default" onclick="javascript:history.back(-1);return false;">返 回</button-->
                   </div>
                 </form>
               </div>
