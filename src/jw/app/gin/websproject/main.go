@@ -17,18 +17,19 @@ var (
 
 func main() {
 	var err error
-	LoadData()
+	//LoadData()
+
+	err = LoadMediaInfo()
+	if err != nil {
+		return
+	}
 
 	bk, err := NewBK()
 	if err != nil {
 		lg.Errorf("%v", err)
 	}
-	//if mode == "book" {
-	//	lg.Debugf("work mode: %v", mode)
-	//	bk.addGuideLineRoutes()
-	//} else {
-		bk.addProductRoutes()
-	//}
+
+	bk.addProductRoutes()
 
     bk.StartBK(add)
 }

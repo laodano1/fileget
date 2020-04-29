@@ -39,6 +39,22 @@ type dbObj struct {
 
 }
 
+type dirsJsonObj struct{
+	DirList []string `json:"dirlist"`
+}
+
+
+type oneType struct {
+	typeName string
+	names  []string
+	paths   []string
+}
+
+
+type filesList struct {
+	list map[string]*oneType
+}
+
 
 
 
