@@ -225,13 +225,13 @@
         {{ else }}
           {{ range $idx, $pitem := .pagecontent }}
           <div class="col-sm-6">
-            <div class="card " style="height: 50%; ">
+            <div class="card " style="width: 100%; height: 400px;">
               <div class="card-header bg-success ">
 
                 <h4>{{$idx}} : <b>{{ $pitem.Name }}</b></h4>
               </div>
               <div class="card-body text-center">
-                <video id="vdo-{{$idx}}" style="width: 100%; height: 200px;"  src="{{ $pitem.Href }}" controls="controls" preload>
+                <video id="vdo-{{$idx}}" style="width: 100%; height: 200px;"  src="{{ $pitem.Href }}" controls="controls" poster="images/favicon.ico">
                   您的浏览器不支持 video 标签。
                 </video>
                 <button class="btn btn-secondary btn-block " onclick="copyToClipboard('#vdo-{{$idx}}')" data-toggle="modal" data-target="#confirmModal">copy link</button>

@@ -89,7 +89,8 @@ func LoadMediaInfo() (err error) {
 		staticDir = append(staticDir, uuiddir)
 		filepath.Walk(dirItem, mywalkfunc(videoFileList, uuiddir, dirItem))
 	}
-	lg.Debugf("uuiddir： %v", staticDir)
+	lg.Debugf("uuiddir： %v, mp4: %v", staticDir, len(videoFileList.list["mp4"].names))
+
 	setWebData(videoFileList)
 	return
 }
