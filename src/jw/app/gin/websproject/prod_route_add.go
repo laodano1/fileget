@@ -25,6 +25,12 @@ func generalHandle(tmplName string, midx, sidx int) func(c *gin.Context)  {
 				lg.Debugf("it's empty")
 				return true
 			},
+			"isZero": func(id int) bool {
+				if id == 0 {
+					return true
+				}
+				return false
+			},
 		}).ParseFiles(fullPth))
 		//
 		dt := &gin.H{
@@ -50,7 +56,7 @@ func generalHandle(tmplName string, midx, sidx int) func(c *gin.Context)  {
 func hp(c *gin.Context)  {
 	fullPth := fmt.Sprintf("%v%ctmpl%cindex.html", exeAbsPath, os.PathSeparator, os.PathSeparator)
 	tp := template.Must(template.New("homepage").Funcs(template.FuncMap{
-		"tolowwer": func(name string) string {
+		"toLower": func(name string) string {
 			return strings.ToLower(name)
 		},
 	}).ParseFiles(fullPth))
