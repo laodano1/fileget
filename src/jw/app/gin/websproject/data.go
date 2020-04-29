@@ -11,29 +11,31 @@ import (
 )
 
 var (
-	dirList       dirsJsonObj
-	staticDir     []string
+	dirList   dirsJsonObj
+	staticDir []string
 )
 
-
-func mywalkfunc(fl filesList, staticDir string) func(path string, info os.FileInfo, err error) error {
+func mywalkfunc(fl filesList, staticDir, rootDir string) func(path string, info os.FileInfo, err error) error {
 	setVal := func(typeStr, path string) {
 		tpss := strings.Split(path, fmt.Sprintf("%c", os.PathSeparator))
-		if _, ok := fl.list[typeStr]; !ok {  // 不存在该type 才新建
+		restStr := strings.Replace(path, rootDir, "", -1)
+		restStr = strings.Replace(restStr, "\\", "/", -1)
+		if _, ok := fl.list[typeStr]; !ok { // 不存在该type 才新建
 			ot := &oneType{typeName: typeStr}
-			ot.names = append(ot.names, tpss[len(tpss) - 1])
-			ot.paths = append(ot.paths, fmt.Sprintf("/%v/%v", staticDir, tpss[len(tpss) - 1]))
+			ot.names = append(ot.names, tpss[len(tpss)-1])
+
+			ot.paths = append(ot.paths, fmt.Sprintf("/%v/%v", staticDir, restStr))
 			fl.list[typeStr] = ot
 		} else {
-			fl.list[typeStr].names = append(fl.list[typeStr].names, tpss[len(tpss) - 1])
-			fl.list[typeStr].paths = append(fl.list[typeStr].paths, fmt.Sprintf("/%v/%v", staticDir, tpss[len(tpss) - 1]))
+			fl.list[typeStr].names = append(fl.list[typeStr].names, tpss[len(tpss)-1])
+			fl.list[typeStr].paths = append(fl.list[typeStr].paths, fmt.Sprintf("/%v/%v", staticDir, restStr))
 		}
 	}
 
 	return func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
 			tmpStrs := strings.Split(path, ".")
-			switch tmpStrs[len(tmpStrs) - 1] {
+			switch tmpStrs[len(tmpStrs)-1] {
 			case "mp3":
 				setVal("mp3", path)
 			case "mp4":
@@ -62,6 +64,8 @@ func mywalkfunc(fl filesList, staticDir string) func(path string, info os.FileIn
 }
 
 func LoadMediaInfo() (err error) {
+	epath, _ := os.Executable()
+	lg.Debugf("exe path: %v", epath)
 	c, err := ioutil.ReadFile("dirs.json")
 	if err != nil {
 		lg.Errorf("read config file failed: %v", err)
@@ -83,7 +87,7 @@ func LoadMediaInfo() (err error) {
 			continue
 		}
 		staticDir = append(staticDir, uuiddir)
-		filepath.Walk(dirItem, mywalkfunc(videoFileList, uuiddir))
+		filepath.Walk(dirItem, mywalkfunc(videoFileList, uuiddir, dirItem))
 	}
 	lg.Debugf("uuiddir： %v", staticDir)
 	setWebData(videoFileList)
@@ -134,7 +138,7 @@ func setWebData(videos filesList) {
 		pgcList = append(pgcList, pageContent{PageObjs: pgItems})
 	}
 	sbmi.SubItems = subIList
-	sbmi.PageCnt  = pgcList
+	sbmi.PageCnt = pgcList
 	sbmi.Name = "Media"
 
 	sbObj.List = append(sbObj.List, sbmi)
