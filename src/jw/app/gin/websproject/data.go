@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/hashicorp/go-uuid"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -11,21 +12,21 @@ import (
 
 var (
 	dirList       dirsJsonObj
-
+	staticDir     []string
 )
 
 
-func mywalkfunc(fl filesList) func(path string, info os.FileInfo, err error) error {
+func mywalkfunc(fl filesList, staticDir string) func(path string, info os.FileInfo, err error) error {
 	setVal := func(typeStr, path string) {
 		tpss := strings.Split(path, fmt.Sprintf("%c", os.PathSeparator))
 		if _, ok := fl.list[typeStr]; !ok {  // 不存在该type 才新建
 			ot := &oneType{typeName: typeStr}
 			ot.names = append(ot.names, tpss[len(tpss) - 1])
-			ot.paths = append(ot.paths, fmt.Sprintf("/video/%v", tpss[len(tpss) - 1]))
+			ot.paths = append(ot.paths, fmt.Sprintf("/%v/%v", staticDir, tpss[len(tpss) - 1]))
 			fl.list[typeStr] = ot
 		} else {
 			fl.list[typeStr].names = append(fl.list[typeStr].names, tpss[len(tpss) - 1])
-			fl.list[typeStr].paths = append(fl.list[typeStr].paths, fmt.Sprintf("/video/%v", tpss[len(tpss) - 1]))
+			fl.list[typeStr].paths = append(fl.list[typeStr].paths, fmt.Sprintf("/%v/%v", staticDir, tpss[len(tpss) - 1]))
 		}
 	}
 
@@ -76,9 +77,15 @@ func LoadMediaInfo() (err error) {
 	var videoFileList filesList
 	videoFileList.list = make(map[string]*oneType)
 	for _, dirItem := range dirList.DirList {
-		filepath.Walk(dirItem, mywalkfunc(videoFileList))
+		uuiddir, err := uuid.GenerateUUID()
+		if err != nil {
+			lg.Errorf("generate uuid failed: %v", err)
+			continue
+		}
+		staticDir = append(staticDir, uuiddir)
+		filepath.Walk(dirItem, mywalkfunc(videoFileList, uuiddir))
 	}
-
+	lg.Debugf("uuiddir： %v", staticDir)
 	setWebData(videoFileList)
 	return
 }
@@ -88,24 +95,48 @@ func setWebData(videos filesList) {
 	sbmi := sidebarMainItem{}
 
 	subIList := make([]sbSubItem, 0)
-	for tp, _ := range videos.list {
-		// sidebar sub-item
-		subIList = append(subIList, sbSubItem{Name: tp, Href: fmt.Sprintf("/%v", tp)})
-	}
-	sbmi.SubItems = subIList
-
 	pgcList := make([]pageContent, 0)
-	for _, atype := range videos.list {
-		// sub-item relevant page items
-		pgItems := make([]pageItem, 0)
+
+	loadSbAndPageObj := func(atype *oneType, tp string) (pgItems []pageItem) {
+		pgItems = make([]pageItem, 0)
 		for idx, name := range atype.names {
 			pgItems = append(pgItems, pageItem{Name: name, Href: atype.paths[idx]})
 		}
+		subIList = append(subIList, sbSubItem{Name: tp, Href: fmt.Sprintf("/%v", tp)})
+		return
+	}
 
+	for tp, atype := range videos.list {
+		var pgItems []pageItem
+		switch tp {
+		case "mp3":
+			pgItems = loadSbAndPageObj(atype, tp)
+		case "mp4":
+			pgItems = loadSbAndPageObj(atype, tp)
+		case "mkv":
+			pgItems = loadSbAndPageObj(atype, tp)
+		case "rm":
+			pgItems = loadSbAndPageObj(atype, tp)
+		case "rmvb":
+			pgItems = loadSbAndPageObj(atype, tp)
+		case "mov":
+			pgItems = loadSbAndPageObj(atype, tp)
+		case "wmv":
+			pgItems = loadSbAndPageObj(atype, tp)
+		case "flv":
+			pgItems = loadSbAndPageObj(atype, tp)
+		case "avi":
+			pgItems = loadSbAndPageObj(atype, tp)
+		case "3gp":
+			pgItems = loadSbAndPageObj(atype, tp)
+		default:
+		}
 		pgcList = append(pgcList, pageContent{PageObjs: pgItems})
 	}
+	sbmi.SubItems = subIList
 	sbmi.PageCnt  = pgcList
 	sbmi.Name = "Media"
+
 	sbObj.List = append(sbObj.List, sbmi)
 
 	sidebarData = *sbObj

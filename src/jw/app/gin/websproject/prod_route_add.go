@@ -19,7 +19,7 @@ func generalHandle(tmplName string, midx, sidx int) func(c *gin.Context)  {
 			},
 			"isEmpty": func(list []pageItem) bool {
 				if len(list) > 0 {
-					lg.Debugf("not empty")
+					//lg.Debugf("not empty")
 					return false
 				}
 				lg.Debugf("it's empty")
@@ -29,11 +29,12 @@ func generalHandle(tmplName string, midx, sidx int) func(c *gin.Context)  {
 		//
 		dt := &gin.H{
 			"title" : tmplName,
+			"radio": strings.Split(tmplName, "-")[1] ,
 			"sidebarlists" : sidebarData.List,
-			"pagecontent": sidebarData.List[midx].PageCnt[sidx].PageObjs,
+			"pagecontent"  : sidebarData.List[midx].PageCnt[sidx].PageObjs,
 		}
 
-
+		//lg.Debugf("req url: %v. page content objects: %v", c.Request.URL, sidebarData.List[midx].PageCnt[sidx].PageObjs)
 
 		rd := render.HTML{
 			Template: tp,
@@ -72,6 +73,9 @@ func hp(c *gin.Context)  {
 
 func (m *myBackend) addProductRoutes() {
 	m.e.GET("/", hp)
+	for idx, dirItem := range staticDir {
+		m.e.Static(fmt.Sprintf("/%v", dirItem),   dirList.DirList[idx])
+	}
 
 	for midx, sbitem := range sidebarData.List {
 		mdg := m.e.Group(fmt.Sprintf("/%v", strings.ToLower(sbitem.Name)))

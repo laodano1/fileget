@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fileget/src/jw/app/gin/myBackend/utis"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -36,15 +35,6 @@ var sbr = `
 `
 var sidebarData sidebar
 
-func getSBData() (err error) {
-	err = json.Unmarshal([]byte(sbr), &sidebarData)
-	if err != nil {
-		lg.Errorf("unmarshal sidebar data failed: %v", err)
-		return
-	}
-	lg.Debugf("sidebar: %v", sidebarData)
-	return
-}
 
 func NewBK() (*myBackend, error) {
 	//if err := getSBData(); err != nil {
