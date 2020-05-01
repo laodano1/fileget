@@ -139,12 +139,13 @@ func shutdown(c *gin.Context) {
 
 	if codeStr == "911" {
 		cmd := exec.Command("shutdown")
-		err := cmd.Start()
+		err := cmd.Run()
 		if err != nil {
-			lg.Errorf("shutdown command executes failed!")
-			c.IndentedJSON(http.StatusInternalServerError, gin.H{"result" : "shutdown command executes failed!"})
+			lg.Errorf("shutdown command executes failed: %v", err)
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"result" : err})
 			return
 		}
+
 		c.IndentedJSON(http.StatusOK, &gin.H{"result": "ok"})
 	} else {
 		c.IndentedJSON(http.StatusOK, &gin.H{ "result": "code invalid! not shutdown!"} )
