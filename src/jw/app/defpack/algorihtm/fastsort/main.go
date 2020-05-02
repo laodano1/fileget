@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func fastsort(list []int) []int {
-	
+
 
 	return list
 }
