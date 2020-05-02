@@ -17,5 +17,6 @@ package main
 //import "jwCmdApp/cmd"
 
 func main() {
+	// all codes are in src !!!
 	//cmd.Execute()
 }

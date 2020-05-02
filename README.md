@@ -1,5 +1,5 @@
 # Collections in Golang
-This project contains many small sub projects for collection basic algorithm or famous golang packages usage,
+This project contains many small sub projects for collecting basic algorithm and popular golang packages usage,
  for instance:
  
  * go-micro for micro service 
