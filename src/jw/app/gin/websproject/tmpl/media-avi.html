@@ -225,7 +225,7 @@
           {{ else }}
           {{ range $idx, $pitem := .pagecontent }}
           <div class="col-sm-6">
-              <div class="card " style="width: 100%; height: 400px;">
+              <div class="card " >
               <div class="card-header bg-success">
                 <h4><b>{{ $pitem.Name }}</b></h4>
               </div>
@@ -234,7 +234,7 @@
                     您的浏览器不支持 video 标签。
                   </video>
                   <!-- Button trigger modal -->
-                  <button class="btn btn-success btn-w-xl" onclick="copyToClipboard('#vdo-{{$idx}}')" data-toggle="modal" data-target="#confirmModal">copy link</button>
+                  <button class="btn btn-secondary btn-block" onclick="copyToClipboard('#vdo-{{$idx}}')" data-toggle="modal" data-target="#confirmModal">copy link</button>
                 </div>
             </div>
           </div>
