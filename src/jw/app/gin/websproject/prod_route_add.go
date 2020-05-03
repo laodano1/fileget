@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -52,6 +53,13 @@ func generalHandle(tmplName string, midx, sidx int) func(c *gin.Context)  {
 	}
 }
 
+func (m *myBackend)  staticHandle(group string)  {
+	m.e.Static(fmt.Sprintf("%v/css", group),    fmt.Sprintf("%v%ctmpl%ccss", exeAbsPath, os.PathSeparator, os.PathSeparator))
+	m.e.Static(fmt.Sprintf("%v/js", group),     fmt.Sprintf("%v%ctmpl%cjs", exeAbsPath, os.PathSeparator, os.PathSeparator))
+	m.e.Static(fmt.Sprintf("%v/images", group), fmt.Sprintf("%v%ctmpl%cimages", exeAbsPath, os.PathSeparator, os.PathSeparator))
+	m.e.Static(fmt.Sprintf("%v/fonts", group),  fmt.Sprintf("%v%ctmpl%cfonts", exeAbsPath, os.PathSeparator, os.PathSeparator))
+	m.e.Static(fmt.Sprintf("%v/video", group),  fmt.Sprintf("%v%ctmpl%cfonts", exeAbsPath, os.PathSeparator, os.PathSeparator))
+}
 
 func hp(c *gin.Context)  {
 	fullPth := fmt.Sprintf("%v%ctmpl%cindex.html", exeAbsPath, os.PathSeparator, os.PathSeparator)
@@ -101,9 +109,54 @@ func cfg(c *gin.Context)  {
 	c.Render(http.StatusOK, rd)
 }
 
+func forshutdown(c *gin.Context)  {
+	fullPth := fmt.Sprintf("%v%ctmpl%cshutdown.html", exeAbsPath, os.PathSeparator, os.PathSeparator)
+	tp := template.Must(template.New("shutdown").Funcs(template.FuncMap{
+		"toLower": func(name string) string {
+			return strings.ToLower(name)
+		},
+	}).ParseFiles(fullPth))
+	//
+
+	dt := &gin.H{
+		"title" : "shutdown raspberry pi 3 website",
+		"radio" : "shutdown raspberry pi 3",
+
+	}
+
+	rd := render.HTML{
+		Template: tp,
+		Name:     "shutdown",
+		Data:     dt,
+	}
+
+	c.Render(http.StatusOK, rd)
+}
+
+func shutdown(c *gin.Context) {
+	codeStr := c.Param("code")
+	lg.Debugf("code string: %v", codeStr)
+
+	if codeStr == "911" {
+		cmd := exec.Command("shutdown")
+		err := cmd.Run()
+		if err != nil {
+			lg.Errorf("shutdown command executes failed: %v", err)
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"result" : err})
+			return
+		}
+
+		c.IndentedJSON(http.StatusOK, &gin.H{"result": "ok"})
+	} else {
+		c.IndentedJSON(http.StatusOK, &gin.H{ "result": "code invalid! not shutdown!"} )
+	}
+}
+
 func (m *myBackend) addProductRoutes() {
 	m.e.GET("/", hp)
 	m.e.GET("/cfg", cfg)
+	m.e.GET("/forsd", forshutdown)
+	m.e.GET("/sd/:code", shutdown)
 
 
 	for idx, dirItem := range staticDir {
