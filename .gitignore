@@ -5,3 +5,4 @@ go.sum
 *.mp4
 *.mkv
 dirs.json
+*.png
