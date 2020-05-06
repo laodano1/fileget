@@ -4,3 +4,4 @@ go.sum
 *.mp3
 *.mp4
 *.mkv
+dirs.json
