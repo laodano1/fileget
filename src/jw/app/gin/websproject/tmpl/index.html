@@ -223,7 +223,9 @@
             <div class="error-body text-center">
               <h1>This is homepage!</h1>
               <h4>Homepage</h4>
-
+              <a id="mybtn" href="/">test</a>
+              <textarea id="ta" ></textarea>
+              <button id="btt" onclick="window.location.href = 'http://10.0.0.24:10000/';">hello</button>
             </div>
           </div>
         </section>
@@ -397,6 +399,10 @@
 <!--图表插件-->
 <script type="text/javascript" src="js/Chart.js"></script>
 <script type="text/javascript">
+function aaa() {
+
+}
+
 $(document).ready(function(e) {
     var $dashChartBarsCnt  = jQuery( '.js-chartjs-bars' )[0].getContext( '2d' ),
         $dashChartLinesCnt = jQuery( '.js-chartjs-lines' )[0].getContext( '2d' );

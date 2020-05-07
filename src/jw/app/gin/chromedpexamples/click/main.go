@@ -25,7 +25,8 @@ func main() {
 	// navigate to a page, wait for an element, click
 	var example string
 	err := chromedp.Run(ctx,
-		chromedp.Navigate(`https://golang.org/pkg/time/`),
+		chromedp.Navigate(`https://docs.studygolang.com/pkg/time/`),
+		//chromedp.Navigate(`https://golang.org/pkg/time/`),
 		// wait for footer element is visible (ie, page is loaded)
 		chromedp.WaitVisible(`body > footer`),
 		// find and click "Expand All" link
