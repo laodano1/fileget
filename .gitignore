@@ -8,3 +8,5 @@ dirs.json
 *.png
 worldHeritageList.json
 whl
+.DS_Store
+

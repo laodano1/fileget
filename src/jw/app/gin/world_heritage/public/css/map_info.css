@@ -1,0 +1,139 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+html, body, #mapid {
+    height: 100%;
+    width: 100vw;
+}
+
+#firstDiv, #ipt {
+    /*align: right;*/
+    position: fixed;
+    width: 100px;
+    height: 50px;
+    /*font-size: xx-large;*/
+}
+
+.interactiveContainer {
+    width: 100%;
+}
+
+#mapid {
+    position: absolute;
+    left: 0;
+    /*top: 32px;*/
+    width: 100%;
+    height: 100%;
+}
+
+.tabItem {
+    width: 14%;
+    margin-top: 5px;
+    padding: 2px 0px 2px 0px;
+    float: left;
+    margin-left: -1px;
+    border: #aaa solid 1px;
+    border-right: none;
+    cursor: pointer;
+    text-align: center;
+    font-size: 15px;
+    font-weight: normal;
+    text-transform: uppercase;
+    color: #888888 ;
+}
+
+.tabItem:first-child {
+    margin-left: 4px;
+
+    border-radius: 7px 0px 0 7px;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+.tabItem:last-child {
+    border-radius: 0px 7px 7px 0px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-right: 1px solid #aaa;
+}
+
+.tabItem:hover {
+    color: #E34B4B;
+}
+
+.tabItem.selected {
+    color: maroon;
+    background: #eee;
+    box-shadow: inset 1px 1px 7px -2px #555;
+    color: white !important;
+    font-weight: 400;
+    border: 1px solid #E34B4B !important;
+    background: #E34B4B !important;
+    pointer-events: none;
+}
+
+.info {
+    width: 80px;
+    padding: 4px 4px;
+    /*font: 14px/16px Arial, Helvetica, sans-serif;*/
+    background: white;
+    /*background: rgba(255, 255, 255, 0.8);*/
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+#select {
+    background-color: white;
+    width: 55px;
+    height: 30px;
+    color: dimgrey;
+}
+
+.brPanel i {
+    width: 22px;
+    height: 22px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+#brBut, #blBut {
+    text-align: center;
+    border: 1px solid #eeeeee;
+    width: 42px;
+    height: 28px;
+    color: green;
+    background-color: white;
+}
+
+#buttonl {
+    width: 30px;
+    height: 20px;
+    border: 1px solid #e0e0e0;
+    background-color: white;
+    color: dimgrey;
+    z-index: 40;
+}
+
+#areaBR {
+    width: 140px;
+    height: 140px;
+    /*border: 1px solid black;*/
+    background-color: white;
+    color: green;
+    z-index: 40;
+}
+
+.innerIcon {
+    text-align: center;
+    margin-left: 2px;
+    margin-top: 2px;
+    width: 40px;
+    height: 40px;
+    box-shadow: inset 1px 1px 7px -2px #555;
+    border: 1px solid darkslategray;
+    color: darkslategray;
+    float: left;
+}
