@@ -138,7 +138,7 @@ function loadAllLoupan(loupanInfo) {
     });
 }
 
-addBROptionsPanel();
+// addBROptionsPanel();
 function addBROptionsPanel() {
     var brPanel = L.control({position: 'bottomright'});
     brPanel.onAdd = function (map) {

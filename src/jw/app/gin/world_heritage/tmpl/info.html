@@ -3,18 +3,21 @@
 <html>
 <head>
     <title>{{.title}}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/materialdesignicons.min.css" rel="stylesheet">
-    <link href="css/style.min.css" rel="stylesheet">
-    <link rel="icon" href="assets/favicon.ico" type="image/ico">
+
+    <link rel="icon" href="https://gin-gonic.com/favicons/favicon.ico" type="image/ico">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="">
     <!--link(rel="stylesheet" href="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.css")-->
     <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
     <script src="/assets/leaflet-search/leaflet-search.js"></script>
     <script src="/assets/leaflet-chinamap/leaflet.ChineseTmsProviders.js"></script>
     <!--script( src="http://k4r573n.github.io/leaflet-control-osm-geocoder/Control.OSMGeocoder.js")-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="css/style.min.css" rel="stylesheet">
     <style>
         body {
             padding: 0;
@@ -36,7 +39,38 @@
     </style>
 </head>
 <body><!--#firstDiv--><!--    input#ipt(align="right")-->
-    <div id="mapid"></div>
+    <!--头部信息-->
+    <header class="lyear-layout-header">
+
+        <nav class="navbar navbar-default">
+            <div class="topbar">
+
+                <div class="topbar-left">
+                </div>
+
+                <ul class="topbar-right">
+                    <img class="img-avatar img-avatar-48 m-r-10" src="https://gin-gonic.com/favicons/favicon.ico" alt="avatar" />
+
+                </ul>
+
+            </div>
+        </nav>
+
+    </header>
+    <!--End 头部信息-->
+
+    <!--页面主要内容-->
+    <main class="lyear-layout-content">
+        <div class="row">
+            <div class="col-lg-7">
+                aaa
+            </div>
+        </div>
+        <div id="mapid" style="width: 85%; height: 80%"></div>
+    </main>
+    <footer class="mdi-page-layout-footer">
+        aaa
+    </footer>
 </body>
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
