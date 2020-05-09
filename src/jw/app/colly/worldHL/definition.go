@@ -16,7 +16,7 @@ type HeritageItem struct {
 type CountryItem struct {
 	Name string `json:"name"`
 	Href string `json:"href"`
-	Type string `json:"type"`
+	Type string `json:"type,omitempty"`
 	HeritageList []HeritageItem `json:"heritage_list"`
 }
 
@@ -25,6 +25,9 @@ type WorldHeritageList struct {
 }
 
 
-
+type msg struct {
+	Status bool
+	Url    string
+}
 
 

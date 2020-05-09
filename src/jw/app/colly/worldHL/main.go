@@ -1,109 +1,48 @@
 package main
 
 import (
-	"encoding/json"
-	"github.com/PuerkitoBio/goquery"
 	"github.com/davyxu/golog"
-	"github.com/gocolly/colly/v2"
-	"io/ioutil"
-	"strings"
+	"sync"
 )
 
 var (
 	urlPrefix = "http://whc.unesco.org"
-
+	lg = golog.New("world-heritage-list")
+	UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36"
 )
 
 func main() {
-	lg := golog.New("world-heritage-list")
-	c := colly.NewCollector(
-		 colly.CacheDir("./whl"),
-		)
+	wohelist := make(chan msg, 100)
+	done     := make(chan bool)
+	wg       := &sync.WaitGroup{}
 
-	c.OnRequest(func(req *colly.Request) {
-		//lg.Debugf("request: %v", req.URL)
-	})
+	wg.Add(2)
+	go getHeritageListByCountryDimension(wohelist)
 
-	c.OnResponse(func(rsp *colly.Response) {
-		lg.Debugf("response...")
-	})
-
-	var whl WorldHeritageList
-	whl.CountryList = make([]CountryItem, 0)
-
-	c.OnHTML("#acc", func(e *colly.HTMLElement) {  // div
-		e.DOM.ChildrenFiltered("h4").Each(func(i int, s *goquery.Selection) {  // h4
-
-			ci := CountryItem{}
-			href, _ := s.Children().Attr("href")
-			ci.Href = urlPrefix + href // e.ChildAttr("a", "href")
-			ci.Name = s.Children().Text()
-			ci.Type, _ = s.Attr("id")  //e.Attr("id")
-
-			whl.CountryList = append(whl.CountryList, ci)
-			//lg.Debugf("CountryItem: %v", ci)
-		})
-
-		e.DOM.ChildrenFiltered("div.list_site").Each(func(i int, s *goquery.Selection) { // div
-			ht  := HeritageItem{}
-			ht.Types     = make(map[string][]OneHeritage)
-			ht.TypeOrder = make([]string, 0)
-			s.ChildrenFiltered("ul").ChildrenFiltered("li").Each(func(i1 int, s1 *goquery.Selection) { // li
-				//lg.Debugf("li: %v", i1)
-				htp, _ := s1.Attr("class")
-				htp = strings.Trim(htp, " ")
-
-				duplicatted := func(tpStr string) (b bool) {
-					for _, t := range ht.TypeOrder {
-						if t == tpStr {
-							b = true
-							return
-						}
+	// 2 workers
+	for i, _ := range []int{1, 2} {
+		go func(i int) {
+			for {
+				select {
+				case tmpMsg := <- wohelist:
+					if tmpMsg.Status {
+						done <- true
+						wg.Done()
+						return
+					} else {
+						//lg.Debugf("worker(%v) starts, %v", i, tmpMsg)
+						GetHeritageInfo(tmpMsg.Url)
 					}
+				case <- done:
+					wg.Done()
 					return
 				}
-				if !duplicatted(htp) {   // only store distinct types
-					ht.TypeOrder = append(ht.TypeOrder, htp)
-				}
+			}
+		}(i)
+	}
 
-				if _, ok := ht.Types[htp]; !ok {   // if initialed, do nothing
-					ht.Types[htp] = make([]OneHeritage, 0)
-				}
+	//time.Sleep(10 * time.Second)
 
-				s1.ChildrenFiltered("a").Each(func(i2 int, s2 *goquery.Selection) {  // a
-					oh := OneHeritage{}
-					oh.Href, _ = s2.Attr("href")
-					oh.Href = urlPrefix + strings.Trim(oh.Href, " ")
-					oh.Name    = s2.Text()
-					oh.Name    = strings.Trim(oh.Name, " ")
-
-					//lg.Debugf("len(TypeOrder): %v, i3: %v", len(ht.TypeOrder), i3)
-					ht.Types[htp] = append(ht.Types[htp], oh)
-					//lg.Debugf("(%v) type: '%15v', href: '%v', text: '%50v', len: %v", i2, htp, oh.Href, oh.Name, len(ht.Types[htp]))
-				})
-
-			})
-			//lg.Debugf("HeritageItem(%v): %v", i, ht)
-			whl.CountryList[i].HeritageList = append(whl.CountryList[i].HeritageList, ht)
-		})
-
-		lg.Debugf("len CountryList: %v", len(whl.CountryList))
-		//lg.Debugf("CountryList: %v", whl.CountryList[1])
-
-		file, err := json.MarshalIndent(whl, "", "  ")
-		if err != nil {
-			lg.Errorf("json MarshalIndent failed: %v", err)
-			return
-		}
-
-		err = ioutil.WriteFile("worldHeritageList.json", file, 0644)
-		if err != nil {
-			lg.Errorf("write to json file failed: %v", err)
-			return
-		}
-
-	})
-
-	c.Visit("http://whc.unesco.org/en/list/")
-
+	wg.Wait()
+	lg.Debugf("bye bye")
 }
