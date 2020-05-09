@@ -74,6 +74,8 @@ func (ms *Myserver) hp(c *gin.Context) {
 }
 
 func (ms *Myserver) lpjson(c *gin.Context) {
+	mth := c.Query("month")
+	lg.Debugf("month: %v", mth)
 	jsonb, err := ioutil.ReadFile(exeAbsPath + "/public/lpinfors.json")
 	if err != nil {
 		lg.Errorf("read json file failed: %v", err)
@@ -88,8 +90,8 @@ func (ms *Myserver) lpjson(c *gin.Context) {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": "failed", "description": err})
 		return
 	}
-	lg.Debugf("%v", allLP)
-	c.IndentedJSON(http.StatusOK, allLP)
+
+	c.IndentedJSON(http.StatusOK, allLP.Month[mth])
 }
 
 func (ms *Myserver) AddRoutes() {

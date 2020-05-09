@@ -10,8 +10,8 @@ type LpItem struct{
 	Name  string `json:"name"`
 	Block string `json:"block"`
 	Timestamp string   `json:"timestamp"`
-	Subway    []string `json:"subway"`
-	Xuequ     []string `json:"xuequ"`
+	subway    []string `json:"subway"`
+	xuequ     []string `json:"xuequ"`
 	Type      string   `json:"type"`
 	Unit      string   `json:"unit"`
 	Price     string   `json:"price"`

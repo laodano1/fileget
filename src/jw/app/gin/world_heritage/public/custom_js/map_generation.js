@@ -73,6 +73,7 @@ function loadAllLoupan(loupanInfo) {
     // });
 
     loupanInfo.forEach(function (data) {
+        // console.log(data);
         var lpName = "<b>楼盘: </b> " + data.name + "<br>";
         if(data.hasOwnProperty('wenzurl')) { // 如果有微信文章链接
             lpName = "<b>楼盘: </b><a href=' " + data.wenzurl + "'> " + data.name + "</a><br>";
@@ -83,15 +84,15 @@ function loadAllLoupan(loupanInfo) {
 
         var lpBlock = "<b>区域: </b>" + data.block + "<br>";
         var lpType = "<b>类型: </b> " + data.type + "<br>";
-        var lpPrice = "<b>价格: </b> " + data.price + "<br>";
-        var lpHuxing = "<b>户型: </b> " + data.huxing + "<br>";
+        // var lpPrice = "<b>价格: </b> " + data.price + "<br>";
+        // var lpHuxing = "<b>户型: </b> " + data.huxing + "<br>";
 
         lpBlock = "<p style=\"color: darkgray;margin-bottom: 0px;margin-top: 0px;\">" + lpBlock + "</p>";
-        var popCnt = lpName + lpBlock + lpType + lpPrice + lpHuxing;
+        var popCnt = lpName + lpBlock + lpType //+ lpPrice + lpHuxing;
 
         if(data.taoshu !== '') {
-            var taoshu = "<b>套数: </b> " + data.taoshu + "<br>";
-            popCnt += taoshu;
+            // var taoshu = "<b>套数: </b> " + data.taoshu + "<br>";
+            // popCnt += taoshu;
         }
 
 
@@ -102,13 +103,13 @@ function loadAllLoupan(loupanInfo) {
             });
             popCnt += subway;
         }
-        if (data.hasOwnProperty('xuequ') && data.xuequ.length != 0) {
-            var xuequ = "<b>学区: </b> ";
-            data.xuequ.forEach(function (value) {
-                xuequ += value + "<br>";
-            });
-            popCnt += xuequ;
-        }
+        // if (data.hasOwnProperty('xuequ') && data.xuequ.length != 0) {
+        //     var xuequ = "<b>学区: </b> ";
+        //     data.xuequ.forEach(function (value) {
+        //         xuequ += value + "<br>";
+        //     });
+        //     popCnt += xuequ;
+        // }
 
         // var marker1 = L.marker(data.coordinate, {opacity: 0.5, icon: redMarker})
         var marker1 = L.marker(data.coordinate, {opacity: 0.5})
