@@ -10,7 +10,7 @@ type OneHeritage struct {
 type HeritageItem struct {
 	TypeOrder []string  `json:"type_order"`  // type order to manage types map key sequence
 	Types     map[string][]OneHeritage `json:"types"`
-	BelongTo string `json:"belong_to"`
+	BelongTo  string `json:"belong_to"`
 }
 
 type CountryItem struct {
