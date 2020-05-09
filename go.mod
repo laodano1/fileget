@@ -3,6 +3,7 @@ module fileget
 go 1.13
 
 require (
+	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/chromedp/cdproto v0.0.0-20200424080200-0de008e41fa0
 	github.com/chromedp/chromedp v0.5.3
 	github.com/chromedp/examples v0.0.0-20200501161515-cb21abae103c // indirect
@@ -12,6 +13,7 @@ require (
 	github.com/davyxu/protoplus v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.6.2
 	github.com/go-sql-driver/mysql v1.4.1
+	github.com/gocolly/colly/v2 v2.0.1
 	github.com/golang/protobuf v1.3.3
 	github.com/gorilla/websocket v1.4.1
 	github.com/hashicorp/consul/api v1.3.0

@@ -22,7 +22,6 @@ func main() {
 	defer cancel()
 
 	// navigate to a page, wait for an element, click
-
 	//var projects []*cdp.Node
 	var msg string
 	var res string
