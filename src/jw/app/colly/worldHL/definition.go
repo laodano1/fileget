@@ -28,5 +28,3 @@ type WorldHeritageList struct {
 
 
 
-
-

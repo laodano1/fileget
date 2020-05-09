@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/davyxu/golog"
 	"github.com/gocolly/colly/v2"
+	"io/ioutil"
 	"strings"
 )
 
@@ -44,14 +46,27 @@ func main() {
 
 		e.DOM.ChildrenFiltered("div.list_site").Each(func(i int, s *goquery.Selection) { // div
 			ht  := HeritageItem{}
-			ht.Types = make(map[string][]OneHeritage)
+			ht.Types     = make(map[string][]OneHeritage)
+			ht.TypeOrder = make([]string, 0)
 			s.ChildrenFiltered("ul").ChildrenFiltered("li").Each(func(i1 int, s1 *goquery.Selection) { // li
 				//lg.Debugf("li: %v", i1)
 				htp, _ := s1.Attr("class")
 				htp = strings.Trim(htp, " ")
 
-				ht.TypeOrder = append(ht.TypeOrder, htp)
-				if _, ok := ht.Types[htp]; !ok {
+				duplicatted := func(tpStr string) (b bool) {
+					for _, t := range ht.TypeOrder {
+						if t == tpStr {
+							b = true
+							return
+						}
+					}
+					return
+				}
+				if !duplicatted(htp) {   // only store distinct types
+					ht.TypeOrder = append(ht.TypeOrder, htp)
+				}
+
+				if _, ok := ht.Types[htp]; !ok {   // if initialed, do nothing
 					ht.Types[htp] = make([]OneHeritage, 0)
 				}
 
@@ -75,6 +90,17 @@ func main() {
 		lg.Debugf("len CountryList: %v", len(whl.CountryList))
 		//lg.Debugf("CountryList: %v", whl.CountryList[1])
 
+		file, err := json.MarshalIndent(whl, "", "  ")
+		if err != nil {
+			lg.Errorf("json MarshalIndent failed: %v", err)
+			return
+		}
+
+		err = ioutil.WriteFile("worldHeritageList.json", file, 0644)
+		if err != nil {
+			lg.Errorf("write to json file failed: %v", err)
+			return
+		}
 
 	})
 
