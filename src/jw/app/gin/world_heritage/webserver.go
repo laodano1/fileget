@@ -1,12 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"fileget/src/jw/app/gin/world_heritage/utils"
 	"fmt"
 	"github.com/davyxu/golog"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -71,16 +73,34 @@ func (ms *Myserver) hp(c *gin.Context) {
 
 }
 
+func (ms *Myserver) lpjson(c *gin.Context) {
+	jsonb, err := ioutil.ReadFile(exeAbsPath + "/public/lpinfors.json")
+	if err != nil {
+		lg.Errorf("read json file failed: %v", err)
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": "failed", "description": err})
+		return
+	}
+
+	allLP := new(LpList)
+	err = json.Unmarshal(jsonb, allLP)
+	if err != nil {
+		lg.Errorf("unmarshal failed: %v", err)
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": "failed", "description": err})
+		return
+	}
+	lg.Debugf("%v", allLP)
+	c.IndentedJSON(http.StatusOK, allLP)
+}
+
+func (ms *Myserver) AddRoutes() {
+	ms.e.GET("/", ms.hp)
+	ms.e.GET("/lpjson", ms.lpjson)
+}
+
 func (ms *Myserver) Start() {
 	if err := ms.e.Run(port); err != nil {
 		lg.Errorf("start gin server failed: %v", err)
 	}
 }
-
-func (ms *Myserver) AddRoutes() {
-	ms.e.GET("/", ms.hp)
-
-}
-
 
 
