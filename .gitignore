@@ -9,4 +9,5 @@ dirs.json
 worldHeritageList.json
 whl
 .DS_Store
-
+tmp
+colly_worldHL

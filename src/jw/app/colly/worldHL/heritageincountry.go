@@ -74,7 +74,7 @@ func getHeritageListByCountryDimension(wohelist chan msg) {
 					ht.Types[htp] = append(ht.Types[htp], oh)
 					//lg.Debugf("(%v) type: '%15v', href: '%v', text: '%50v', len: %v", i2, htp, oh.Href, oh.Name, len(ht.Types[htp]))
 					if oh.Href != "" && !strings.Contains(oh.Href, "transboundary") && !strings.Contains(oh.Href, "criteria_revision") {
-						wohelist <- msg{Url: oh.Href, Status: false}
+						wohelist <- msg{Url: oh.Href, Status: false, Name: oh.Name}
 						if oh.Href == "" {
 							lg.Debugf("oh.Href is null")
 						}
@@ -89,7 +89,7 @@ func getHeritageListByCountryDimension(wohelist chan msg) {
 		//lg.Debugf("CountryList: %v", whl.CountryList[1])
 
 		utils.Write2JsonFile(whl, "worldHeritageList.json")
-		wohelist <- msg{Url: "...", Status: true}
+		wohelist <- msg{Status: true}
 		//close(wohelist)
 	})
 

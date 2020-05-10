@@ -29,6 +29,18 @@ type WorldHeritageList struct {
 type msg struct {
 	Status bool
 	Url    string
+	Name   string
 }
 
+type HeritageDetail struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	TheFlag     []string `json:"the_flag"`
+	Country     []string  `json:"country"`
+	Location    string  `json:"location"`
+	Coordinate  string  `json:"coordinate"`
+	DateOfInscription string `json:"date_of_inscription"`
+	CoverImageHref    string  `json:"cover_image"`
+
+}
 
