@@ -12,7 +12,7 @@ var (
 )
 
 func main() {
-	wohelist := make(chan msg, 100)
+	wohelist := make(chan msg, 168)
 	done     := make(chan bool)
 	wg       := &sync.WaitGroup{}
 

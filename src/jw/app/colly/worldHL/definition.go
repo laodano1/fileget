@@ -4,13 +4,13 @@ package main
 type OneHeritage struct {
 	Name string `json:"name"`
 	Href string `json:"href"`
-	BelongTo string `json:"belong_to"`
+	Country string `json:"country"`
 }
 
 type HeritageItem struct {
 	TypeOrder []string  `json:"type_order"`  // type order to manage types map key sequence
 	Types     map[string][]OneHeritage `json:"types"`
-	BelongTo  string `json:"belong_to"`
+	Country   string `json:"country"`
 }
 
 type CountryItem struct {
@@ -21,7 +21,8 @@ type CountryItem struct {
 }
 
 type WorldHeritageList struct {
-	CountryList []CountryItem `json:"country_list"`
+	countryOrder []string               `json:"country_order"`
+	CountryList  map[string]*CountryItem `json:"country_list"`
 }
 
 

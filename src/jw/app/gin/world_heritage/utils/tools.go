@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -28,3 +29,20 @@ func GetFullPathDir() (exeAbsPathDir string, err error) {
 
 	return
 }
+
+func ReadJson(exeAbsPath, fileName string) (jsonb []byte, err error) {
+	jsonb, err = ioutil.ReadFile(exeAbsPath + "/public/" + fileName)
+	if err != nil {
+		return
+	}
+	return
+}
+//
+//
+//func UnmarshalJson(jsonb []byte, val interface{}) (err error) {
+//	err = json.Unmarshal(jsonb, val)
+//	if err != nil {
+//		return
+//	}
+//	return
+//}

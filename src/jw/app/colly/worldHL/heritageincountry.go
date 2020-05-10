@@ -22,18 +22,18 @@ func getHeritageListByCountryDimension(wohelist chan msg) {
 	})
 
 	var whl WorldHeritageList
-	whl.CountryList = make([]CountryItem, 0)
+	whl.CountryList = make(map[string]*CountryItem)
 
 	c.OnHTML("#acc", func(e *colly.HTMLElement) {  // div
 		e.DOM.ChildrenFiltered("h4").Each(func(i int, s *goquery.Selection) {  // h4
-
-			ci := CountryItem{}
+			ci := new(CountryItem)
 			href, _ := s.Children().Attr("href")
 			ci.Href = urlPrefix + href // e.ChildAttr("a", "href")
 			ci.Name = s.Children().Text()
 			ci.Type, _ = s.Attr("id")  //e.Attr("id")
 
-			whl.CountryList = append(whl.CountryList, ci)
+			whl.CountryList[ci.Name] = ci
+			whl.countryOrder = append(whl.countryOrder, ci.Name)
 			//lg.Debugf("CountryItem: %v", ci)
 		})
 
@@ -80,10 +80,9 @@ func getHeritageListByCountryDimension(wohelist chan msg) {
 						}
 					}
 				})
-
 			})
 			//lg.Debugf("HeritageItem(%v): %v", i, ht)
-			whl.CountryList[i].HeritageList = append(whl.CountryList[i].HeritageList, ht)
+			whl.CountryList[whl.countryOrder[i]].HeritageList = append(whl.CountryList[whl.countryOrder[i]].HeritageList, ht)
 		})
 
 		lg.Debugf("len CountryList: %v", len(whl.CountryList))

@@ -82,13 +82,20 @@ function loadAllLoupan(loupanInfo) {
             lpName = "<b>楼盘: </b><a href='http://47.100.37.81/prof?lp=" + (data.id-1) + "'> " + data.name + "</a><br>";
         }
 
-        var lpBlock = "<b>区域: </b>" + data.block + "<br>";
+        var flag = "<img src='http://whc.unesco.org/uploads/states/small/cn.gif' style='vertical-align:middle; border:1px solid #666666'>";
+        var lpBlock = flag + " <b>区域: </b>" + data.block + "<br>";
         var lpType = "<b>类型: </b> " + data.type + "<br>";
         // var lpPrice = "<b>价格: </b> " + data.price + "<br>";
         // var lpHuxing = "<b>户型: </b> " + data.huxing + "<br>";
 
-        lpBlock = "<p style=\"color: darkgray;margin-bottom: 0px;margin-top: 0px;\">" + lpBlock + "</p>";
-        var popCnt = lpName + lpBlock + lpType //+ lpPrice + lpHuxing;
+        var lpBlock = "<p style=\"color: darkgray;margin-bottom: 0px;margin-top: 0px;\">" + lpBlock + "</p>";
+
+        var popCnt = "<div style='width: 400px;'>" +
+            "" +
+            lpName +
+            lpBlock +
+            lpType +
+            "</div>"; //+ lpPrice + lpHuxing;
 
         if(data.taoshu !== '') {
             // var taoshu = "<b>套数: </b> " + data.taoshu + "<br>";
@@ -103,6 +110,7 @@ function loadAllLoupan(loupanInfo) {
             });
             popCnt += subway;
         }
+
         // if (data.hasOwnProperty('xuequ') && data.xuequ.length != 0) {
         //     var xuequ = "<b>学区: </b> ";
         //     data.xuequ.forEach(function (value) {

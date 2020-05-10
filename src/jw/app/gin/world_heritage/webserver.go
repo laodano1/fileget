@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
 	"html/template"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -73,30 +72,52 @@ func (ms *Myserver) hp(c *gin.Context) {
 
 }
 
-func (ms *Myserver) lpjson(c *gin.Context) {
-	mth := c.Query("month")
-	lg.Debugf("month: %v", mth)
-	jsonb, err := ioutil.ReadFile(exeAbsPath + "/public/lpinfors.json")
-	if err != nil {
-		lg.Errorf("read json file failed: %v", err)
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": "failed", "description": err})
-		return
-	}
 
-	allLP := new(LpList)
-	err = json.Unmarshal(jsonb, allLP)
-	if err != nil {
-		lg.Errorf("unmarshal failed: %v", err)
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": "failed", "description": err})
-		return
-	}
+func (ms *Myserver) getInfo(fileNames []string, infoType string) func(c *gin.Context) {
 
-	c.IndentedJSON(http.StatusOK, allLP.Month[mth])
+	return func (c *gin.Context) {
+		var mth string
+		switch infoType {
+		case info_type_WHL:
+			jsonb, err := utils.ReadJson(exeAbsPath, fileNames[0])
+			if err != nil {
+				lg.Errorf("")
+				c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
+				return
+			}
+			allH := new(WorldHeritageList)
+			err = json.Unmarshal(jsonb, allH)
+			if err != nil {
+				c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
+				return
+			}
+			c.IndentedJSON(http.StatusOK, allH)
+		case info_type_Loupan :
+			mth = c.Query("month")
+			lg.Debugf("month: %v", mth)
+			jsonb, err := utils.ReadJson(exeAbsPath, fileNames[0])
+			if err != nil {
+				lg.Errorf("%v", err)
+				c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
+				return
+			}
+			allLP := new(LpList)
+			err = json.Unmarshal(jsonb, allLP)
+			if err != nil {
+				c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
+				return
+			}
+			c.IndentedJSON(http.StatusOK, allLP.Month[mth])
+		default:
+			c.IndentedJSON(http.StatusOK, gin.H{"result": "unknown type!"})
+		}
+    }
 }
 
 func (ms *Myserver) AddRoutes() {
 	ms.e.GET("/", ms.hp)
-	ms.e.GET("/lpjson", ms.lpjson)
+	ms.e.GET("/lpjson", ms.getInfo([]string{json_loupan}, info_type_Loupan))
+	ms.e.GET("/whl",    ms.getInfo([]string{json_whl}, info_type_WHL))
 }
 
 func (ms *Myserver) Start() {
