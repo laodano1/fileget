@@ -50,6 +50,7 @@ func main() {
 					continue
 				}
 			}
+			wg.Done()
 		}(i)
 	}
 
