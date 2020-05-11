@@ -97,6 +97,7 @@ func GetHeritageInfo(id int, heritageItem parseMsg) {
 		//lg.Debugf("url: %v, detail; %v", c.String(), allHeritageDetailList)
 		fileName := strings.ReplaceAll(hd.Name, " ", "_")
 		fileName  = strings.ReplaceAll(fileName, "/", "-")
+		fileName  = strings.ReplaceAll(fileName, ":", "--")
 		if hd.Description == "" {
 			// if no China contents, then use English instead
 			var enDesc string
