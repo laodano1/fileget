@@ -7,7 +7,11 @@ import (
 	"strings"
 )
 
-func getHeritageListByCountryDimension(wohelist chan msg) {
+var (
+	worldHeritages WorldHeritageList
+)
+
+func getHeritageListByCountryDimension() {
 	c := colly.NewCollector(
 		colly.CacheDir("./whl"),
 	)
@@ -21,8 +25,8 @@ func getHeritageListByCountryDimension(wohelist chan msg) {
 		//lg.Debugf("response...")
 	})
 
-	var whl WorldHeritageList
-	whl.CountryList = make(map[string]*CountryItem)
+
+	worldHeritages.CountryList = make(map[string]*CountryItem)
 
 	c.OnHTML("#acc", func(e *colly.HTMLElement) {  // div
 		e.DOM.ChildrenFiltered("h4").Each(func(i int, s *goquery.Selection) {  // h4
@@ -32,13 +36,14 @@ func getHeritageListByCountryDimension(wohelist chan msg) {
 			ci.Name = s.Children().Text()
 			ci.Type, _ = s.Attr("id")  //e.Attr("id")
 
-			whl.CountryList[ci.Name] = ci
-			whl.countryOrder = append(whl.countryOrder, ci.Name)
+			worldHeritages.CountryList[ci.Name] = ci
+			worldHeritages.countryOrder = append(worldHeritages.countryOrder, ci.Name)
 			//lg.Debugf("CountryItem: %v", ci)
 		})
 
 		e.DOM.ChildrenFiltered("div.list_site").Each(func(i int, s *goquery.Selection) { // div
 			ht  := HeritageItem{}
+			ht.Country = worldHeritages.CountryList[worldHeritages.countryOrder[i]].Name
 			ht.Types     = make(map[string][]OneHeritage)
 			ht.TypeOrder = make([]string, 0)
 			s.ChildrenFiltered("ul").ChildrenFiltered("li").Each(func(i1 int, s1 *goquery.Selection) { // li
@@ -65,6 +70,7 @@ func getHeritageListByCountryDimension(wohelist chan msg) {
 
 				s1.ChildrenFiltered("a").Each(func(i2 int, s2 *goquery.Selection) {  // a
 					oh := OneHeritage{}
+					oh.Country = worldHeritages.CountryList[worldHeritages.countryOrder[i]].Name
 					oh.Href, _ = s2.Attr("href")
 					oh.Href    = urlPrefix + strings.Trim(oh.Href, " ")
 					oh.Name    = s2.Text()
@@ -73,23 +79,23 @@ func getHeritageListByCountryDimension(wohelist chan msg) {
 					//lg.Debugf("len(TypeOrder): %v, i3: %v", len(ht.TypeOrder), i3)
 					ht.Types[htp] = append(ht.Types[htp], oh)
 					//lg.Debugf("(%v) type: '%15v', href: '%v', text: '%50v', len: %v", i2, htp, oh.Href, oh.Name, len(ht.Types[htp]))
-					if oh.Href != "" && !strings.Contains(oh.Href, "transboundary") && !strings.Contains(oh.Href, "criteria_revision") {
-						wohelist <- msg{Url: oh.Href, Status: false, Name: oh.Name}
-						if oh.Href == "" {
-							lg.Debugf("oh.Href is null")
-						}
-					}
+					//if oh.Href != "" && !strings.Contains(oh.Href, "transboundary") && !strings.Contains(oh.Href, "criteria_revision") {
+					//	wohelist <- msg{Url: oh.Href, Status: false, Name: oh.Name}
+					//	if oh.Href == "" {
+					//		lg.Debugf("oh.Href is null")
+					//	}
+					//}
 				})
 			})
 			//lg.Debugf("HeritageItem(%v): %v", i, ht)
-			whl.CountryList[whl.countryOrder[i]].HeritageList = append(whl.CountryList[whl.countryOrder[i]].HeritageList, ht)
+			worldHeritages.CountryList[worldHeritages.countryOrder[i]].HeritageList = append(worldHeritages.CountryList[worldHeritages.countryOrder[i]].HeritageList, ht)
 		})
 
-		lg.Debugf("len CountryList: %v", len(whl.CountryList))
+		lg.Debugf("len CountryList: %v", len(worldHeritages.CountryList))
 		//lg.Debugf("CountryList: %v", whl.CountryList[1])
 
-		utils.Write2JsonFile(whl, "worldHeritageList.json")
-		wohelist <- msg{Status: true}
+		utils.Write2JsonFile(worldHeritages, "worldHeritageList.json")
+		//wohelist <- msg{Status: true}
 		//close(wohelist)
 	})
 

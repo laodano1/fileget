@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fileget/src/jw/app/colly/worldHL/utils"
+	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly/v2"
+	"os"
 	"strings"
 	"time"
 )
@@ -11,13 +14,12 @@ var (
 	allHeritageDetailList []HeritageDetail
 )
 
-func GetHeritageInfo(id int, heritageItem msg) {
+func GetHeritageInfo(id int, heritageItem parseMsg) {
 	startTime := time.Now()
 	c := colly.NewCollector(
 		colly.CacheDir("./whl"),
 	)
 	c.UserAgent = UserAgent
-
 
 	c.OnRequest(func(req *colly.Request) {
 		//lg.Debugf("(%v) on request: %v", id, req.URL)
@@ -28,7 +30,7 @@ func GetHeritageInfo(id int, heritageItem msg) {
 		hd.Name = heritageItem.Name
 
 		e.DOM.Find(".alternate").ChildrenFiltered("div").Each(func(i int, s *goquery.Selection) {
-			lg.Debugf("parse list")
+			//lg.Debugf("parse list")
 			switch i {
 			case 0:
 				flagUrl, _ := s.ChildrenFiltered("img").Attr("src")
@@ -82,12 +84,12 @@ func GetHeritageInfo(id int, heritageItem msg) {
 		if err != nil {
 			lg.Errorf("get zh html failed: %v", err)
 		} else {
-			lg.Debugf("use zh description")
+			lg.Debugf("worker(%v) use zh description", id)
 			hd.Description = zhDesc
 		}
 
 		e.DOM.Find("div.icaption.bordered").Find("img").Each(func(i int, s *goquery.Selection) {
-			lg.Debugf("parse cover image")
+			lg.Debugf("worker(%v) parse cover image", id)
 			hd.CoverImageHref, _ = s.Attr("data-src")
 			hd.CoverImageHref    = urlPrefix + strings.Trim(hd.CoverImageHref, " ")
 		})
@@ -102,15 +104,14 @@ func GetHeritageInfo(id int, heritageItem msg) {
 			if err != nil {
 				lg.Errorf("get english html failed: %v", err)
 			} else {
-				lg.Debugf("use english description")
+				lg.Debugf("worker(%v) use english description", id)
 				hd.Description = enDesc
 			}
 		}
-		//utils.Write2JsonFile(hd, fmt.Sprintf("%v%ctmp%c%v",  exeDirPath, os.PathSeparator, os.PathSeparator, fileName + ".json") )
-		//lg.Debugf("detail; %v", allHeritageDetailList)
-		allHeritageDetailList = append(allHeritageDetailList, *hd)
+		outputFile := fmt.Sprintf("%v%ctmp%c%v",  exeDirPath, os.PathSeparator, os.PathSeparator, fileName + ".json")
+		utils.Write2JsonFile(hd, outputFile)
 
-		lg.Debugf("parse %v spending %v seconds.", heritageItem.Url, time.Now().Sub(startTime).Seconds())
+		lg.Debugf("worker(%v) parse %v spending %v seconds.", id, heritageItem.Url, time.Now().Sub(startTime).Seconds())
 	})
 
 	c.Visit(heritageItem.Url)

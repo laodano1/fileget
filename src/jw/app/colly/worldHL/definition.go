@@ -26,7 +26,7 @@ type WorldHeritageList struct {
 }
 
 
-type msg struct {
+type parseMsg struct {
 	Status bool
 	Url    string
 	Name   string

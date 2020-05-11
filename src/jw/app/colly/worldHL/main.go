@@ -2,9 +2,7 @@ package main
 
 import (
 	"fileget/src/jw/app/colly/worldHL/utils"
-	"fmt"
 	"github.com/davyxu/golog"
-	"os"
 	"sync"
 )
 
@@ -17,41 +15,45 @@ var (
 
 func main() {
 	exeDirPath, _ = utils.GetFullPathDir()
-	lg.Debugf("--------- exe path: %v", exeDirPath)
+	lg.Debugf("--------- exe dir path: %v", exeDirPath)
 
 	lg.SetParts(golog.LogPart_Level, golog.LogPart_Name, golog.LogPart_TimeMS)
-	wohelist := make(chan msg, 1)
-	done     := make(chan bool)
 	wg       := &sync.WaitGroup{}
 
-	wg.Add(3)
-	go getHeritageListByCountryDimension(wohelist)
+	getHeritageListByCountryDimension()
 
+	var parsedCountries sync.Map
+
+	wg.Add(2)
 	// 2 workers
-	for i, _ := range []int{1, 2, 3} {
+	for i, _ := range []int{1, 2} {
 		go func(i int) {
-			for {
-				select {
-				case tmpMsg := <- wohelist:
-					if tmpMsg.Status {
-						done <- true
-						wg.Done()
-						return
-					} else {
-						//lg.Debugf("worker(%v) starts, %v", i, tmpMsg)
-						GetHeritageInfo(i,tmpMsg)
+			for _, c := range worldHeritages.countryOrder {
+				if _, ok := parsedCountries.Load(c); !ok {  // not exist
+					parsedCountries.Store(c, true)
+					lg.Debugf("country: %v", c)
+					for _, cItem := range worldHeritages.CountryList {
+						for _, hItem := range cItem.HeritageList {
+							for _, oItem := range hItem.Types {
+								for _, h := range oItem {
+									msg := parseMsg{
+										Url: h.Href,
+										Name: h.Name,
+									}
+									lg.Debugf("    parse heritage: %v, url: %v", msg.Name, msg.Url)
+									GetHeritageInfo(i, msg)
+								}
+							}
+						}
 					}
-				case <- done:
-					wg.Done()
-					return
+				} else {
+					continue
 				}
 			}
 		}(i)
 	}
 
-	//time.Sleep(10 * time.Second)
-
 	wg.Wait()
-	utils.Write2JsonFile(allHeritageDetailList, fmt.Sprintf("%v%ctmp%c%v",  exeDirPath, os.PathSeparator, os.PathSeparator, "All_World_Heritage_Detail_List.json") )
+	//utils.Write2JsonFile(allHeritageDetailList, fmt.Sprintf("%v%ctmp%c%v",  exeDirPath, os.PathSeparator, os.PathSeparator, "All_World_Heritage_Detail_List.json") )
 	lg.Debugf("bye bye")
 }
