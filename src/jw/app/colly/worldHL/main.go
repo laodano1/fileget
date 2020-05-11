@@ -2,7 +2,9 @@ package main
 
 import (
 	"fileget/src/jw/app/colly/worldHL/utils"
+	"fmt"
 	"github.com/davyxu/golog"
+	"os"
 	"sync"
 )
 
@@ -11,6 +13,8 @@ var (
 	lg = golog.New("world-heritage-list")
 	exeDirPath string
 	UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36"
+
+	allJson map[string]bool
 )
 
 func main() {
@@ -20,6 +24,7 @@ func main() {
 	lg.SetParts(golog.LogPart_Level, golog.LogPart_Name, golog.LogPart_TimeMS)
 	wg       := &sync.WaitGroup{}
 
+	allJson = utils.GetMatchedFiles(fmt.Sprintf("%v%ctmp", exeDirPath, os.PathSeparator), "json")
 	getHeritageListByCountryDimension()
 
 	var parsedCountries sync.Map

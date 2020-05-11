@@ -12,6 +12,7 @@ import (
 
 var (
 	allHeritageDetailList []HeritageDetail
+	cnt int
 )
 
 func GetHeritageInfo(id int, heritageItem parseMsg) {
@@ -28,6 +29,16 @@ func GetHeritageInfo(id int, heritageItem parseMsg) {
 	c.OnHTML("div.content", func(e *colly.HTMLElement) {
 		hd := new(HeritageDetail)
 		hd.Name = heritageItem.Name
+
+		fileName := strings.ReplaceAll(hd.Name, " ", "_")
+		fileName  = strings.ReplaceAll(fileName, "/", "-")
+		fileName  = strings.ReplaceAll(fileName, ":", "--")
+
+		outputFile := fmt.Sprintf("%v%ctmp%c%v",  exeDirPath, os.PathSeparator, os.PathSeparator, fileName + ".json")
+		if _, ok := allJson[outputFile]; ok {
+			lg.Debugf("json(%v) exists. do nothing!", outputFile)
+			return
+		}
 
 		e.DOM.Find(".alternate").ChildrenFiltered("div").Each(func(i int, s *goquery.Selection) {
 			//lg.Debugf("parse list")
@@ -94,13 +105,10 @@ func GetHeritageInfo(id int, heritageItem parseMsg) {
 			hd.CoverImageHref    = urlPrefix + strings.Trim(hd.CoverImageHref, " ")
 		})
 
-		//lg.Debugf("url: %v, detail; %v", c.String(), allHeritageDetailList)
-		fileName := strings.ReplaceAll(hd.Name, " ", "_")
-		fileName  = strings.ReplaceAll(fileName, "/", "-")
-		fileName  = strings.ReplaceAll(fileName, ":", "--")
 		if hd.Description == "" {
 			// if no China contents, then use English instead
 			var enDesc string
+			var err    error
 			enDesc, err = e.DOM.Find("#contentdes_en").Html()
 			if err != nil {
 				lg.Errorf("get english html failed: %v", err)
@@ -109,7 +117,9 @@ func GetHeritageInfo(id int, heritageItem parseMsg) {
 				hd.Description = enDesc
 			}
 		}
-		outputFile := fmt.Sprintf("%v%ctmp%c%v",  exeDirPath, os.PathSeparator, os.PathSeparator, fileName + ".json")
+		//lg.Debugf("url: %v, detail; %v", c.String(), allHeritageDetailList)
+		cnt++
+		lg.Debugf("worker(%v) not json exists. write it(%v). count: %v", outputFile, cnt)
 		utils.Write2JsonFile(hd, outputFile)
 
 		lg.Debugf("worker(%v) parse %v spending %v seconds.", id, heritageItem.Url, time.Now().Sub(startTime).Seconds())

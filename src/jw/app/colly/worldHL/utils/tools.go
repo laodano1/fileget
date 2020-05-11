@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var (
@@ -49,4 +50,15 @@ func Write2JsonFile(whl interface{}, fileName string) {
 		return
 	}
 
+}
+
+func GetMatchedFiles(dir, suffix string) (matchedFiles map[string]bool) {
+	filepath.Walk(dir, func(path string, info os.FileInfo, err error) (er error) {
+		if !info.IsDir() && strings.HasSuffix(info.Name(), suffix) {
+			matchedFiles[info.Name()] = true
+		}
+		return
+	})
+
+	return
 }
