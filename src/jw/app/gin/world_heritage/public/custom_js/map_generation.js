@@ -1,4 +1,4 @@
-var mymap = L.map('mapid').setView([30.66243, 104.0625], 10);  // 天府广场
+var mymap = L.map('mapid').setView([30.66243, 104.0625], 3);  // somewhere
 
 // API: http://leafletjs.com/reference-1.2.0.html#tilelayer
 // L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {

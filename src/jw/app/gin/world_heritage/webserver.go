@@ -50,26 +50,28 @@ func NewGinServer() *Myserver {
 }
 
 
-func (ms *Myserver) hp(c *gin.Context) {
-	fullPth := fmt.Sprintf("%v%ctmpl%cinfo.html", exeAbsPath, os.PathSeparator, os.PathSeparator)
-	tp := template.Must(template.New("info").Funcs(template.FuncMap{
-		"toLower": func(name string) string {
-			return strings.ToLower(name)
-		},
-	}).ParseFiles(fullPth))
+func (ms *Myserver) hp(tmpl string) func(c *gin.Context) {
 
-	dt := gin.H{
-		"title": "haha",
+	return func(c *gin.Context) {
+		fullPth := fmt.Sprintf("%v%ctmpl%c%v.html", exeAbsPath, os.PathSeparator, os.PathSeparator, tmpl)
+		tp := template.Must(template.New(tmpl).Funcs(template.FuncMap{
+			"toLower": func(name string) string {
+				return strings.ToLower(name)
+			},
+		}).ParseFiles(fullPth))
+
+		dt := gin.H{
+			"title": "haha",
+		}
+
+		rd := render.HTML{
+			Template: tp,
+			Name:     tmpl,
+			Data:     dt,
+		}
+
+		c.Render(http.StatusOK, rd)
 	}
-
-	rd := render.HTML{
-		Template: tp,
-		Name:     "info",
-		Data:     dt,
-	}
-
-	c.Render(http.StatusOK, rd)
-
 }
 
 
@@ -79,19 +81,19 @@ func (ms *Myserver) getInfo(fileNames []string, infoType string) func(c *gin.Con
 		var mth string
 		switch infoType {
 		case info_type_WHL:
-			jsonb, err := utils.ReadJson(exeAbsPath, fileNames[0])
+			jsonb, err := utils.ReadWHLJson(exeAbsPath, fileNames[0])
 			if err != nil {
 				lg.Errorf("")
 				c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
 				return
 			}
-			allH := new(WorldHeritageList)
+			allH := new(HeritageDetail)
 			err = json.Unmarshal(jsonb, allH)
 			if err != nil {
 				c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
 				return
 			}
-			c.IndentedJSON(http.StatusOK, allH)
+			c.IndentedJSON(http.StatusOK, []HeritageDetail{*allH})
 		case info_type_Loupan :
 			mth = c.Query("month")
 			lg.Debugf("month: %v", mth)
@@ -115,9 +117,11 @@ func (ms *Myserver) getInfo(fileNames []string, infoType string) func(c *gin.Con
 }
 
 func (ms *Myserver) AddRoutes() {
-	ms.e.GET("/", ms.hp)
+	ms.e.GET("/", ms.hp("info"))
 	ms.e.GET("/lpjson", ms.getInfo([]string{json_loupan}, info_type_Loupan))
-	ms.e.GET("/whl",    ms.getInfo([]string{json_whl}, info_type_WHL))
+
+	ms.e.GET("/whl",   ms.hp("whl"))
+	ms.e.GET("/whldt", ms.getInfo([]string{json_whl}, info_type_WHL))
 }
 
 func (ms *Myserver) Start() {

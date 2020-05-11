@@ -5,6 +5,6 @@ const (
 	info_type_WHL    = "whl"
 
 	json_loupan = "lpinfors.json"
-	json_whl = "whl.json"
+	json_whl = "Aksum.json"
 )
 

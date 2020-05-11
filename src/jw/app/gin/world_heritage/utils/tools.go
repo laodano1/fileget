@@ -37,6 +37,15 @@ func ReadJson(exeAbsPath, fileName string) (jsonb []byte, err error) {
 	}
 	return
 }
+
+func ReadWHLJson(exeAbsPath, fileName string) (jsonb []byte, err error) {
+	jsonb, err = ioutil.ReadFile(exeAbsPath + "/tmp/" + fileName)
+	if err != nil {
+		return
+	}
+	return
+}
+
 //
 //
 //func UnmarshalJson(jsonb []byte, val interface{}) (err error) {

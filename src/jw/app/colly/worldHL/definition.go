@@ -35,12 +35,14 @@ type parseMsg struct {
 type HeritageDetail struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	TheFlag     []string `json:"the_flag"`
+	//TheFlag     []string `json:"the_flag"`
 	Country     []string  `json:"country"`
-	Location    string  `json:"location"`
-	Coordinate  string  `json:"coordinate"`
-	DateOfInscription string `json:"date_of_inscription"`
-	CoverImageHref    string  `json:"cover_image"`
+	//Location    string  `json:"location"`
+	Coordinate    string  `json:"coordinate"`
+	CoordinateDigit  [2]float64  `json:"coordinate_digit"`
+	//DateOfInscription string `json:"date_of_inscription"`
+	Brief       string  `json:"brief"`
+	CoverImageHref   string  `json:"cover_image"`
 
 }
 
