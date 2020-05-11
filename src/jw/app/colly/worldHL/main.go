@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/davyxu/golog"
 	"os"
+	"strings"
 	"sync"
 )
 
@@ -29,24 +30,26 @@ func main() {
 
 	var parsedCountries sync.Map
 
-	wg.Add(2)
+	wg.Add(1)
 	// 2 workers
-	for i, _ := range []int{1, 2} {
+	for i, _ := range []int{1} {
 		go func(i int) {
 			for _, c := range worldHeritages.countryOrder {
 				if _, ok := parsedCountries.Load(c); !ok {  // not exist
 					parsedCountries.Store(c, true)
 					lg.Debugf("country: %v", c)
-					for _, cItem := range worldHeritages.CountryList {
-						for _, hItem := range cItem.HeritageList {
-							for _, oItem := range hItem.Types {
-								for _, h := range oItem {
-									msg := parseMsg{
-										Url: h.Href,
-										Name: h.Name,
-									}
-									lg.Debugf("    parse heritage: %v, url: %v", msg.Name, msg.Url)
+					for _, hl := range worldHeritages.CountryList[c].HeritageList {
+						for _, oItem := range hl.Types {
+							for _, h := range oItem {
+								msg := parseMsg{
+									Url: h.Href,
+									Name: h.Name,
+								}
+								if !strings.Contains(msg.Url, "whc.unesco.org#") {
 									GetHeritageInfo(i, msg)
+									//lg.Debugf("    ---- parse heritage: %v, url: %v", msg.Name, msg.Url)
+								} else {
+									//lg.Debugf("    do not parse heritage: %v, url: %v", msg.Name, msg.Url)
 								}
 							}
 						}
@@ -55,6 +58,7 @@ func main() {
 					continue
 				}
 			}
+			lg.Debugf("for loop done")
 			wg.Done()
 		}(i)
 	}

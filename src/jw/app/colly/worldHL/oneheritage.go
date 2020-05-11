@@ -35,8 +35,8 @@ func GetHeritageInfo(id int, heritageItem parseMsg) {
 		fileName  = strings.ReplaceAll(fileName, ":", "--")
 
 		outputFile := fmt.Sprintf("%v%ctmp%c%v",  exeDirPath, os.PathSeparator, os.PathSeparator, fileName + ".json")
-		if _, ok := allJson[outputFile]; ok {
-			lg.Debugf("json(%v) exists. do nothing!", outputFile)
+		if _, ok := allJson[fileName + ".json"]; ok {
+			lg.Debugf("json(%v) exists. do nothing!", fileName + ".json")
 			return
 		}
 
@@ -119,7 +119,7 @@ func GetHeritageInfo(id int, heritageItem parseMsg) {
 		}
 		//lg.Debugf("url: %v, detail; %v", c.String(), allHeritageDetailList)
 		cnt++
-		lg.Debugf("worker(%v) not json exists. write it(%v). count: %v", outputFile, cnt)
+		lg.Debugf("worker(%v) not json exists. write it(%v). count: %v", outputFile, outputFile, cnt)
 		utils.Write2JsonFile(hd, outputFile)
 
 		lg.Debugf("worker(%v) parse %v spending %v seconds.", id, heritageItem.Url, time.Now().Sub(startTime).Seconds())
