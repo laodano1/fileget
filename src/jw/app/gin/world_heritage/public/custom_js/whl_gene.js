@@ -45,7 +45,7 @@ $.get('/whldt', function (data, status) {
 
     Object.keys(Areas).forEach(function (oneArea) {
         // console.log(oneArea);
-        baseLayers[oneArea] = L.layerGroup(allAreas[oneArea]);
+        // baseLayers[oneArea] = L.layerGroup(allAreas[oneArea]);
 
         allAreas[oneArea].forEach(function (oneMarker) {
             allMakrkers.push(oneMarker);
@@ -56,7 +56,7 @@ $.get('/whldt', function (data, status) {
 // var notTFNALayer = L.layerGroup(notTFNA).addTo(mymap);
 
 // console.log(allMakrkers);
-    baseLayers["全城"] = allMarkersLayer;
+    baseLayers["全球"] = allMarkersLayer;
 //
     L.control.layers(baseLayers, null).addTo(mymap);
 
