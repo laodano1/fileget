@@ -10,20 +10,44 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"reflect"
 	"strings"
+	"time"
 )
 
 var (
 	port = ":10000"
 	exeAbsPath string
 	lg = golog.New("world_heritage")
+	allJsonFilePath []string
+	allHtailData []HeritageDetail
 )
 
+func PreStartActions() (err error)  {
+	lg.SetParts(golog.LogPart_Level, golog.LogPart_TimeMS, golog.LogPart_ShortFileName)
+	lg.EnableColor(true)
+	startTime := time.Now()
+
+	exeAbsPath, _ = utils.GetFullPathDir()
+	allJsonFilePath, err = utils.GetFiles(fmt.Sprintf("%v%ctmp", exeAbsPath, os.PathSeparator), "json")
+	if err != nil {
+		lg.Errorf("%v", err)
+	}
+
+	allHtailData, err = getJsonDataList(allJsonFilePath, reflect.TypeOf(HeritageDetail{}))
+	if err != nil {
+		lg.Errorf("%v", err)
+	}
+
+
+	lg.Debugf("*********************** preparing spent: %v seconds.", time.Now().Sub(startTime))
+	return
+}
+
 func NewGinServer() *Myserver {
+
 	gin.ForceConsoleColor()
 	e := gin.Default()
-	//var err error
-	exeAbsPath, _ = utils.GetFullPathDir()
 
 	// set static files
 	e.Static("/css",    fmt.Sprintf("%v%cpublic%ccss", exeAbsPath, os.PathSeparator, os.PathSeparator))
@@ -75,41 +99,41 @@ func (ms *Myserver) hp(tmpl string) func(c *gin.Context) {
 }
 
 
-func (ms *Myserver) getInfo(fileNames []string, infoType string) func(c *gin.Context) {
+func (ms *Myserver) getInfo(data []HeritageDetail, infoType string) func(c *gin.Context) {
 
 	return func (c *gin.Context) {
-		var mth string
+		//var mth string
 		switch infoType {
 		case info_type_WHL:
-			jsonb, err := utils.ReadWHLJson(exeAbsPath, fileNames[0])
-			if err != nil {
-				lg.Errorf("")
-				c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
-				return
-			}
-			allH := new(HeritageDetail)
-			err = json.Unmarshal(jsonb, allH)
-			if err != nil {
-				c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
-				return
-			}
-			c.IndentedJSON(http.StatusOK, []HeritageDetail{*allH})
+			//jsonb, err := utils.ReadWHLJson(fileNames[0])
+			//if err != nil {
+			//	lg.Errorf("%v", err)
+			//	c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
+			//	return
+			//}
+			//allH := new(HeritageDetail)
+			//err = json.Unmarshal(jsonb, allH)
+			//if err != nil {
+			//	c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
+			//	return
+			//}
+			c.IndentedJSON(http.StatusOK, data)
 		case info_type_Loupan :
-			mth = c.Query("month")
-			lg.Debugf("month: %v", mth)
-			jsonb, err := utils.ReadJson(exeAbsPath, fileNames[0])
-			if err != nil {
-				lg.Errorf("%v", err)
-				c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
-				return
-			}
-			allLP := new(LpList)
-			err = json.Unmarshal(jsonb, allLP)
-			if err != nil {
-				c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
-				return
-			}
-			c.IndentedJSON(http.StatusOK, allLP.Month[mth])
+			//mth = c.Query("month")
+			//lg.Debugf("month: %v", mth)
+			//jsonb, err := utils.ReadJson(exeAbsPath, fileNames[0])
+			//if err != nil {
+			//	lg.Errorf("%v", err)
+			//	c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
+			//	return
+			//}
+			//allLP := new(LpList)
+			//err = json.Unmarshal(jsonb, allLP)
+			//if err != nil {
+			//	c.IndentedJSON(http.StatusInternalServerError, gin.H{"result": err})
+			//	return
+			//}
+			//c.IndentedJSON(http.StatusOK, allLP.Month[mth])
 		default:
 			c.IndentedJSON(http.StatusOK, gin.H{"result": "unknown type!"})
 		}
@@ -117,11 +141,11 @@ func (ms *Myserver) getInfo(fileNames []string, infoType string) func(c *gin.Con
 }
 
 func (ms *Myserver) AddRoutes() {
-	ms.e.GET("/", ms.hp("info"))
-	ms.e.GET("/lpjson", ms.getInfo([]string{json_loupan}, info_type_Loupan))
+	ms.e.GET("/", ms.hp("whl"))
+	//ms.e.GET("/lpjson", ms.getInfo([]string{json_loupan}, info_type_Loupan))
 
-	ms.e.GET("/whl",   ms.hp("whl"))
-	ms.e.GET("/whldt", ms.getInfo([]string{json_whl}, info_type_WHL))
+	//ms.e.GET("/whl",   ms.hp("whl"))
+	ms.e.GET("/whldt", ms.getInfo(allHtailData, info_type_WHL))
 }
 
 func (ms *Myserver) Start() {
@@ -130,4 +154,21 @@ func (ms *Myserver) Start() {
 	}
 }
 
+func getJsonDataList(files []string, p reflect.Type) (list []HeritageDetail, err error) {
+	for _, f := range files {
+		var jsonb []byte
+		jsonb, err = utils.ReadWHLJson(f)
+		if err != nil {
+			return nil, err
+		}
+		hd := new(HeritageDetail)
+		json.Unmarshal(jsonb, hd)
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, *hd)
+	}
+
+	return
+}
 

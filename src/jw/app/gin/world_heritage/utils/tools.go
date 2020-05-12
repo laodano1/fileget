@@ -1,10 +1,12 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func GetFullPath() (exeAbsPath string, err error) {
@@ -38,13 +40,33 @@ func ReadJson(exeAbsPath, fileName string) (jsonb []byte, err error) {
 	return
 }
 
-func ReadWHLJson(exeAbsPath, fileName string) (jsonb []byte, err error) {
-	jsonb, err = ioutil.ReadFile(exeAbsPath + "/tmp/" + fileName)
+func ReadWHLJson(fileName string) (jsonb []byte, err error) {
+	jsonb, err = ioutil.ReadFile(fileName)
 	if err != nil {
 		return
 	}
 	return
 }
+
+func GetFiles(dir, suffix string) (files []string, er error) {
+	er = filepath.Walk(dir, func(path string, info os.FileInfo, err error) (er error) {
+		defer func() {
+			if err := recover(); err != nil {
+				//fmt.Println(err)
+				er = errors.New(fmt.Sprintf("%v", err))
+				return
+			}
+		}()
+		if !info.IsDir() && strings.HasSuffix(info.Name(), suffix) {
+			files = append(files, path)
+		}
+
+		return err
+	})
+	return
+}
+
+
 
 //
 //

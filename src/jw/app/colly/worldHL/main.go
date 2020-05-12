@@ -23,6 +23,7 @@ func main() {
 	lg.Debugf("--------- exe dir path: %v", exeDirPath)
 
 	lg.SetParts(golog.LogPart_Level, golog.LogPart_Name, golog.LogPart_TimeMS)
+	lg.EnableColor(true)
 	wg       := &sync.WaitGroup{}
 
 	allJson = utils.GetMatchedFiles(fmt.Sprintf("%v%ctmp", exeDirPath, os.PathSeparator), "json")

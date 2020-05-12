@@ -83,7 +83,7 @@ function loadAllWorldHesitages(whInfo) {
             lpName = "<b>Name: </b> " + data.name + "<br>";
         }
 
-        var coverPic = "<img src=" + data.cover_image + " style='width:100%;height:150px;vertical-align:middle; border:1px solid #666666'>";
+        var coverPic = "<img src=" + data.cover_image + " style='width:100%;height:100%;vertical-align:middle; border:1px solid #666666'>";
         // var lpBlock = flag + " <b>区域: </b>" + data.block + "<br>";
         // var lpType = "<b>经纬度: </b> " + data.coordinate + "<br>";
         // var lpPrice = "<b>价格: </b> " + data.price + "<br>";
