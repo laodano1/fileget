@@ -85,7 +85,7 @@ func (ms *Myserver) hp(tmpl string) func(c *gin.Context) {
 		}).ParseFiles(fullPth))
 
 		dt := gin.H{
-			"title": "haha",
+			"title": "世界遗产坐标",
 		}
 
 		rd := render.HTML{

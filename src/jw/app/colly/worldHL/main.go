@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 )
 
 var (
@@ -30,6 +31,7 @@ func main() {
 	getHeritageListByCountryDimension()
 
 	var parsedCountries sync.Map
+	startT := time.Now()
 
 	wg.Add(1)
 	// 2 workers
@@ -66,5 +68,5 @@ func main() {
 
 	wg.Wait()
 	//utils.Write2JsonFile(allHeritageDetailList, fmt.Sprintf("%v%ctmp%c%v",  exeDirPath, os.PathSeparator, os.PathSeparator, "All_World_Heritage_Detail_List.json") )
-	lg.Debugf("bye bye")
+	lg.Debugf("total spent: %v seconds. bye bye", time.Now().Sub(startT))
 }

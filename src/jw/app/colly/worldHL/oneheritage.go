@@ -37,7 +37,7 @@ func GetHeritageInfo(id int, heritageItem parseMsg) {
 
 		outputFile := fmt.Sprintf("%v%ctmp%c%v",  exeDirPath, os.PathSeparator, os.PathSeparator, fileName + ".json")
 		if _, ok := allJson[fileName + ".json"]; ok {
-			lg.Debugf("json(%v) exists. do nothing!", fileName + ".json")
+			lg.Debugf("    json(%v) exists. do nothing!", fileName + ".json")
 			return
 		}
 
@@ -140,7 +140,11 @@ func GetHeritageInfo(id int, heritageItem parseMsg) {
 			lg.Errorf("get zh html failed: %v", err)
 		} else {
 			lg.Debugf("worker(%v) use zh description", id)
+
 			hd.Description = zhDesc
+			hd.Description = strings.ReplaceAll(hd.Description, "\"/en", "\"" + urlPrefix + "/en")
+			hd.Description = strings.ReplaceAll(hd.Description, "<h6>", "<a href=\"" + heritageItem.Url +"\"><h6><strong>")
+			hd.Description = strings.ReplaceAll(hd.Description, "</h6>", "</h6></strong></a>")
 		}
 
 		e.DOM.Find("div.icaption.bordered").Find("img").Each(func(i int, s *goquery.Selection) {
@@ -159,6 +163,9 @@ func GetHeritageInfo(id int, heritageItem parseMsg) {
 			} else {
 				lg.Debugf("worker(%v) use english description", id)
 				hd.Description = enDesc
+				hd.Description = strings.ReplaceAll(hd.Description, "\"/en", "\"" + urlPrefix + "/en")
+				hd.Description = strings.ReplaceAll(hd.Description, "<h6>", "<a href=\"" + heritageItem.Url +"\"><h6><strong>")
+				hd.Description = strings.ReplaceAll(hd.Description, "</h6>", "</h6></strong></a>")
 			}
 		}
 		//lg.Debugf("url: %v, detail; %v", c.String(), allHeritageDetailList)
