@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -34,6 +35,7 @@ func GetHeritageInfo(id int, heritageItem parseMsg) {
 		fileName := strings.ReplaceAll(hd.Name, " ", "_")
 		fileName  = strings.ReplaceAll(fileName, "/", "-")
 		fileName  = strings.ReplaceAll(fileName, ":", "--")
+		fileName  = strings.ReplaceAll(fileName, "\"", "'")
 
 		outputFile := fmt.Sprintf("%v%ctmp%c%v",  exeDirPath, os.PathSeparator, os.PathSeparator, fileName + ".json")
 		if _, ok := allJson[fileName + ".json"]; ok {
@@ -170,7 +172,7 @@ func GetHeritageInfo(id int, heritageItem parseMsg) {
 		}
 		//lg.Debugf("url: %v, detail; %v", c.String(), allHeritageDetailList)
 		cnt++
-		lg.Debugf("worker(%v) not json exists. write it(%v). count: %v", outputFile, outputFile, cnt)
+		lg.Debugf("worker(%v) not json exists. write it(%v). count: %v", id, outputFile, cnt)
 		util.Write2JsonFile(hd, outputFile)
 
 		lg.Debugf("worker(%v) parse %v spending %v seconds.", id, heritageItem.Url, time.Now().Sub(startTime).Seconds())
@@ -216,4 +218,36 @@ func coodinateConvert(co string) (latitude, longitude float64) {
 	}
 	//
 	return
+}
+
+func parseAllHeritage(id int, parsedCountries map[string]bool, wg *sync.WaitGroup, lk *sync.Mutex) {
+	for _, c := range worldHeritages.countryOrder {
+		lk.Lock()
+		if _, ok := parsedCountries[c]; !ok {  // not exist
+			parsedCountries[c] = true
+			lk.Unlock()
+			lg.Debugf("worker(%v) country: %v", id, c)
+			for _, hl := range worldHeritages.CountryList[c].HeritageList {
+				for _, oItem := range hl.Types {
+					for _, h := range oItem {
+						msg := parseMsg{
+							Url: h.Href,
+							Name: h.Name,
+						}
+						if !strings.Contains(msg.Url, "whc.unesco.org#") {
+							GetHeritageInfo(id, msg)
+							//lg.Debugf("    ---- parse heritage: %v, url: %v", msg.Name, msg.Url)
+						} else {
+							//lg.Debugf("    do not parse heritage: %v, url: %v", msg.Name, msg.Url)
+						}
+					}
+				}
+			}
+		} else {
+			lk.Unlock()
+			continue
+		}
+	}
+	lg.Debugf("parseAllHeritage for loop done")
+	wg.Done()
 }
