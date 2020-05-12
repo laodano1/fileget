@@ -12,6 +12,8 @@ require (
 	github.com/davyxu/goobjfmt v0.1.0 // indirect
 	github.com/davyxu/protoplus v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.6.2
+	github.com/gizak/termui v3.1.0+incompatible // indirect
+	github.com/gizak/termui/v3 v3.1.0
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/gocolly/colly/v2 v2.0.1
 	github.com/golang/protobuf v1.3.3
@@ -22,11 +24,13 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/magicsea/behavior3go v0.0.0-20200226033918-88f465325648
+	github.com/mattn/go-runewidth v0.0.4
 	github.com/micro/go-micro v1.18.0
 	github.com/micro/go-plugins/registry/consul v0.0.0-20200119172437-4fe21aa238fd
 	github.com/micro/go-plugins/transport/tcp v0.0.0-20200119172437-4fe21aa238fd
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/nats-io/nats.go v1.9.1
+	github.com/nsf/termbox-go v0.0.0-20200418040025-38ba6e5628f1
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.6.3
 	github.com/tealeg/xlsx v1.0.5

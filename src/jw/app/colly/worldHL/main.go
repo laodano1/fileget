@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fileget/src/jw/app/colly/worldHL/utils"
+	"fileget/util"
 	"fmt"
 	"github.com/davyxu/golog"
 	"os"
@@ -20,14 +20,14 @@ var (
 )
 
 func main() {
-	exeDirPath, _ = utils.GetFullPathDir()
+	exeDirPath, _ = util.GetFullPathDir()
 	lg.Debugf("--------- exe dir path: %v", exeDirPath)
 
 	lg.SetParts(golog.LogPart_Level, golog.LogPart_Name, golog.LogPart_TimeMS)
 	lg.EnableColor(true)
 	wg       := &sync.WaitGroup{}
 
-	allJson = utils.GetMatchedFiles(fmt.Sprintf("%v%ctmp", exeDirPath, os.PathSeparator), "json")
+	allJson = util.GetMatchedFiles(fmt.Sprintf("%v%ctmp", exeDirPath, os.PathSeparator), "json")
 	getHeritageListByCountryDimension()
 
 	var parsedCountries sync.Map

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fileget/src/jw/app/colly/worldHL/utils"
+	"fileget/util"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly/v2"
 	"strings"
@@ -94,7 +94,7 @@ func getHeritageListByCountryDimension() {
 		lg.Debugf("len CountryList: %v", len(worldHeritages.CountryList))
 		//lg.Debugf("CountryList: %v", whl.CountryList[1])
 
-		utils.Write2JsonFile(worldHeritages, "worldHeritageList.json")
+		util.Write2JsonFile(worldHeritages, "worldHeritageList.json")
 		//wohelist <- msg{Status: true}
 		//close(wohelist)
 	})

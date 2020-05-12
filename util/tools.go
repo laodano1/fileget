@@ -1,13 +1,14 @@
-package utils
+package util
 
 import (
-	"encoding/json"
+"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/davyxu/golog"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"strings"
+"github.com/davyxu/golog"
+"io/ioutil"
+"os"
+"path/filepath"
+"strings"
 )
 
 var (
@@ -63,3 +64,33 @@ func GetMatchedFiles(dir, suffix string) (matchedFiles map[string]bool) {
 
 	return
 }
+
+
+func GetFiles(dir, suffix string) (files []string, er error) {
+	er = filepath.Walk(dir, func(path string, info os.FileInfo, err error) (er error) {
+		defer func() {
+			if err := recover(); err != nil {
+				//fmt.Println(err)
+				er = errors.New(fmt.Sprintf("%v", err))
+				return
+			}
+		}()
+		if !info.IsDir() && strings.HasSuffix(info.Name(), suffix) {
+			files = append(files, path)
+		}
+
+		return err
+	})
+	return
+}
+
+func ReadWHLJson(fileName string) (jsonb []byte, err error) {
+	jsonb, err = ioutil.ReadFile(fileName)
+	if err != nil {
+		return
+	}
+	return
+}
+
+
+

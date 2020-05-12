@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fileget/src/jw/app/colly/worldHL/utils"
+	"fileget/util"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly/v2"
@@ -171,7 +171,7 @@ func GetHeritageInfo(id int, heritageItem parseMsg) {
 		//lg.Debugf("url: %v, detail; %v", c.String(), allHeritageDetailList)
 		cnt++
 		lg.Debugf("worker(%v) not json exists. write it(%v). count: %v", outputFile, outputFile, cnt)
-		utils.Write2JsonFile(hd, outputFile)
+		util.Write2JsonFile(hd, outputFile)
 
 		lg.Debugf("worker(%v) parse %v spending %v seconds.", id, heritageItem.Url, time.Now().Sub(startTime).Seconds())
 	})

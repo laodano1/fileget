@@ -2,7 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fileget/src/jw/app/gin/world_heritage/utils"
+	"fileget/util"
+
 	"fmt"
 	"github.com/davyxu/golog"
 	"github.com/gin-gonic/gin"
@@ -28,8 +29,8 @@ func PreStartActions() (err error)  {
 	lg.EnableColor(true)
 	startTime := time.Now()
 
-	exeAbsPath, _ = utils.GetFullPathDir()
-	allJsonFilePath, err = utils.GetFiles(fmt.Sprintf("%v%ctmp", exeAbsPath, os.PathSeparator), "json")
+	exeAbsPath, _ = util.GetFullPathDir()
+	allJsonFilePath, err = util.GetFiles(fmt.Sprintf("%v%ctmp", exeAbsPath, os.PathSeparator), "json")
 	if err != nil {
 		lg.Errorf("%v", err)
 	}
@@ -157,7 +158,7 @@ func (ms *Myserver) Start() {
 func getJsonDataList(files []string, p reflect.Type) (list []HeritageDetail, err error) {
 	for _, f := range files {
 		var jsonb []byte
-		jsonb, err = utils.ReadWHLJson(f)
+		jsonb, err = util.ReadWHLJson(f)
 		if err != nil {
 			return nil, err
 		}
