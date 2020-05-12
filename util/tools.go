@@ -12,17 +12,23 @@ import (
 )
 
 var (
-	lg = golog.New("utils")
+	Lg = golog.New("utils")
+
 )
+
+func init() {
+	Lg.EnableColor(true)
+	Lg.SetParts(golog.LogPart_Level, golog.LogPart_TimeMS, golog.LogPart_ShortFileName)
+}
 
 func GetFullPath() (exeAbsPath string, err error) {
 	exeAbsPath, err = os.Executable()
 	if err != nil {
-		fmt.Errorf("get os.Executable failed: %v", err)
+		Lg.Errorf("get os.Executable failed: %v", err)
 		return
 	}
 	//
-	fmt.Printf("os.Executable path: %v\n", exeAbsPath)
+	Lg.Infof("os.Executable path: %v\n", exeAbsPath)
 
 	return
 }
@@ -41,13 +47,13 @@ func Write2JsonFile(whl interface{}, fileName string) {
 
 	f, err := json.MarshalIndent(whl, "", "  ")
 	if err != nil {
-		lg.Errorf("json MarshalIndent failed: %v", err)
+		Lg.Errorf("json MarshalIndent failed: %v", err)
 		return
 	}
 
 	err = ioutil.WriteFile(fmt.Sprintf("%v", fileName), f, 0644)
 	if err != nil {
-		lg.Errorf("write to json file failed: %v", err)
+		Lg.Errorf("write to json file failed: %v", err)
 		return
 	}
 
@@ -70,7 +76,7 @@ func GetFiles(dir, suffix string) (files []string, er error) {
 	er = filepath.Walk(dir, func(path string, info os.FileInfo, err error) (er error) {
 		defer func() {
 			if err := recover(); err != nil {
-				//fmt.Println(err)
+
 				er = errors.New(fmt.Sprintf("%v", err))
 				return
 			}
