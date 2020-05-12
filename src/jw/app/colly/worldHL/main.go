@@ -17,6 +17,8 @@ var (
 	UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36"
 
 	allJson map[string]bool
+
+	un UnitedNations
 )
 
 func main() {
@@ -27,22 +29,25 @@ func main() {
 	lg.EnableColor(true)
 
 	var tp string
-	//flag.StringVar(&tp, "t", "country", "get type. currently support: country | whl (world heritage list) ")
-	flag.StringVar(&tp, "t", "whl", "get type. currently support: country | whl (world heritage list) ")
+	flag.StringVar(&tp, "t", "country", "get type. currently support: country | whl (world heritage list) ")
+	//flag.StringVar(&tp, "t", "whl", "get type. currently support: country | whl (world heritage list) ")
 	flag.Parse()
 
 	wg := new(sync.WaitGroup)
+	lk := new(sync.Mutex)
 	startT := time.Now()
 	switch tp {
 	case "country":
+		un.CountryList = make([]OneCountry, 0)
 		getCountries()
+
+		os.Exit(0)
+
 	case "whl":
 		allJson = util.GetMatchedFiles(fmt.Sprintf("%v%ctmp", exeDirPath, os.PathSeparator), "json")
 		getHeritageListByCountryDimension()
 
 		parsedCountries := make(map[string]bool)
-
-		lk := new(sync.Mutex)
 		for i, _ := range []int{1, 2, 3, 4 , 5, 6} {
 			wg.Add(1)
 			go parseAllHeritage(i, parsedCountries, wg, lk)

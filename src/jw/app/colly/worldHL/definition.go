@@ -46,3 +46,14 @@ type HeritageDetail struct {
 
 }
 
+
+type UnitedNations struct {
+	CountryList []OneCountry `json:"country_list"`
+}
+
+type OneCountry struct {
+	Name     string `json:"name"`
+	FlagHref string `json:"flag_href"`
+	Region   string `json:"region"`
+}
+
