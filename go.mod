@@ -3,6 +3,7 @@ module fileget
 go 1.13
 
 require (
+	github.com/blackjack/webcam v0.0.0-20200313125108-10ed912a8539
 	github.com/davyxu/cellnet v4.1.0+incompatible
 	github.com/davyxu/golog v0.1.0
 	github.com/davyxu/goobjfmt v0.1.0 // indirect
@@ -25,6 +26,7 @@ require (
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.6.3
 	github.com/tealeg/xlsx v1.0.5
+	github.com/valyala/fasthttp v1.12.0
 	google.golang.org/grpc v1.25.1
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 	gopkg.in/yaml.v2 v2.2.8
