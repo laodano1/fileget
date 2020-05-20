@@ -16,11 +16,13 @@ var (
 func getCountries() {
 	c := colly.NewCollector(
 			colly.CacheDir("./whl"),
+			colly.UserAgent(UserAgent),
 	)
-	c.UserAgent = UserAgent
+
 	lg.Debugf("user agent: %v", c.UserAgent)
 
 	c.OnHTML("#myUL", func(e *colly.HTMLElement) {  // ul
+
 		e.DOM.Children().Each(func(i int, s *goquery.Selection) {  // li
 			oc := OneCountry{}
 			s.Find("td").Each(func(i1 int, s1 *goquery.Selection) {
