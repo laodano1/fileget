@@ -27,7 +27,7 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/magicsea/behavior3go v0.0.0-20200226033918-88f465325648
-	github.com/micro/examples v0.2.0 // indirect
+	github.com/micro/examples v0.2.0
 	github.com/micro/go-micro v1.18.0
 	github.com/micro/go-plugins/registry/consul v0.0.0-20200119172437-4fe21aa238fd
 	github.com/micro/go-plugins/transport/tcp v0.0.0-20200119172437-4fe21aa238fd // indirect
