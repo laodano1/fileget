@@ -16,9 +16,9 @@ require (
 	github.com/gizak/termui/v3 v3.1.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/gocolly/colly/v2 v2.0.1
-	github.com/golang/protobuf v1.3.3
+	github.com/golang/protobuf v1.4.1
 	github.com/gorilla/websocket v1.4.1
-	github.com/gwuhaolin/livego v0.0.0-20200509033525-ac935b8214d0
+	github.com/gwuhaolin/livego v0.0.0-20200509033525-ac935b8214d0 // indirect
 	github.com/hashicorp/consul/api v1.3.0
 	github.com/hashicorp/go-uuid v1.0.1
 	github.com/headzoo/surf v1.0.0 // indirect
@@ -27,22 +27,24 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/magicsea/behavior3go v0.0.0-20200226033918-88f465325648
+	github.com/micro/examples v0.2.0 // indirect
 	github.com/micro/go-micro v1.18.0
 	github.com/micro/go-plugins/registry/consul v0.0.0-20200119172437-4fe21aa238fd
-	github.com/micro/go-plugins/transport/tcp v0.0.0-20200119172437-4fe21aa238fd
+	github.com/micro/go-plugins/transport/tcp v0.0.0-20200119172437-4fe21aa238fd // indirect
+	github.com/micro/micro/v2 v2.7.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/nats-io/nats.go v1.9.1
+	github.com/nats-io/nats.go v1.9.2
 	github.com/nsf/termbox-go v0.0.0-20200418040025-38ba6e5628f1 // indirect
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.6.3
 	github.com/tealeg/xlsx v1.0.5
 	github.com/valyala/fasthttp v1.12.0
-	google.golang.org/grpc v1.25.1
+	google.golang.org/grpc v1.26.0
 	gopkg.in/headzoo/surf.v1 v1.0.0
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 	gopkg.in/yaml.v2 v2.2.8
 	k8s.io/api v0.18.1 // indirect
 	k8s.io/apimachinery v0.18.1
-	k8s.io/client-go v11.0.0+incompatible
+	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible
 	k8s.io/utils v0.0.0-20200410165547-614e4363e9c4 // indirect
 )
