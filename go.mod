@@ -29,8 +29,8 @@ require (
 	github.com/magicsea/behavior3go v0.0.0-20200226033918-88f465325648
 	github.com/micro/examples v0.2.0
 	github.com/micro/go-micro v1.18.0
+	github.com/micro/go-plugins v1.1.2-0.20190710094942-bf407858372c
 	github.com/micro/go-plugins/registry/consul v0.0.0-20200119172437-4fe21aa238fd
-	github.com/micro/go-plugins/transport/tcp v0.0.0-20200119172437-4fe21aa238fd // indirect
 	github.com/micro/micro/v2 v2.7.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/nats-io/nats.go v1.9.2
