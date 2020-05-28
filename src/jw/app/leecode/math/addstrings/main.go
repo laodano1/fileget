@@ -20,11 +20,11 @@ func addstrings(num1, num2 string) ( s string) {
 	for rc > 0 || l1 >= 0 || l2 >= 0 {
 		var x rune
 		var y rune
-		if l1 < 0 { x = 0} else { x = (b1[l1]) - '0' }
-		if l2 < 0 { y = 0} else { y = (b2[l2]) - '0' }
+		if l1 < 0 { x = 0} else { x = (b1[l1]) - '0' }    // 通过跟字符0的相减，得到该位字符表达的数值
+		if l2 < 0 { y = 0} else { y = (b2[l2]) - '0' }    // 通过跟字符0的相减，得到该位字符表达的数值
 		l1--; l2--
-		tmp = append(tmp, fmt.Sprintf("%d", (x + y + rc) % 10))
-		rc = (x + y + rc) / 10
+		tmp = append(tmp, fmt.Sprintf("%d", (x + y + rc) % 10))   // 每位值相加再加上进位的值跟10取模，得到值
+		rc = (x + y + rc) / 10   //  每位值相加再加上进位的值除以10，得到是否进位的值
 	}
 
 	for i := len(tmp) - 1; i >= 0; i-- {
