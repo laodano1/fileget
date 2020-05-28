@@ -1,8 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fileget/util"
+)
 
-func selectsort(list []int) []int {
+func selectsortDesc(list []int) []int {
 	for i := range list {
 		max := i
 		for j := i; j < len(list); j++ {
@@ -16,9 +18,23 @@ func selectsort(list []int) []int {
 	return list
 }
 
+func selectsortAsc(list []int) []int {
+	for i := range list {
+		min := i
+		for j := i; j < len(list); j++ {
+			if list[min] > list[j] {
+				min, j = j, min
+			}
+		}
+		list[i], list[min] = list[min], list[i]
+	}
+
+	return list
+}
 
 func main() {
-	list := []int{9, 0, 7, 6, 5, 4, 3, 2, 1, 8}
-	list = selectsort(list)
-	fmt.Printf("selectsort list: %v\n", list)
+	list := []int{9, 8, 7, 6, 5, 4, 3, 2, 1, 0}
+	//list = selectsortDesc(list)
+	list = selectsortAsc(list)
+	util.Lg.Debugf("selectsort list: %v\n", list)
 }
