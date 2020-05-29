@@ -4,3 +4,12 @@ go.sum
 *.mp3
 *.mp4
 *.mkv
+dirs.json
+*.png
+worldHeritageList.json
+whl/
+.DS_Store
+tmp
+colly_worldHL
+ctr
+
