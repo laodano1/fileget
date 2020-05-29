@@ -5,16 +5,18 @@ import (
 	"fileget/src/jw/app/micro.srv/grpc-tcp/proto/myserver"
 	"github.com/davyxu/golog"
 	"github.com/micro/go-micro/client"
+	"github.com/micro/go-micro/codec/grpc"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-plugins/registry/consul"
+	"github.com/micro/go-plugins/transport/tcp"
 	"strings"
 	"sync/atomic"
 	"time"
 )
 
 var (
-	Host = "10.0.0.131:7777"
-	cs   = "10.0.0.131:8500"
+	Host = "10.0.0.8:7777"
+	cs   = "10.0.0.32:8500"
 	lg   = golog.New("grpc-client")
 	cli  client.Client
 )
@@ -30,9 +32,14 @@ func CallRPC() {
 		lg.Debugf("create a new go micro client! | %v", time.Now().Format(time.RFC3339Nano))
 		c = client.NewClient(
 
-			//client.Transport(tcp.NewTransport()),
+			client.Transport(tcp.NewTransport()),
 			client.Registry(consul.NewRegistry(registry.Addrs(cs))),
-		//client.WrapCall(wrap),<
+			//client.Codec("application/protobuf", proto.NewCodec),
+			//client.Codec("application/grpc", grpc.NewCodec),
+			client.Codec("application/grpc+json", grpc.NewCodec),
+			//client.Codec("application/octet-stream", raw.NewCodec),
+			//client.Codec("application/json-rpc", jsonrpc.NewCodec),
+		//client.WrapCall(wrap),
 		//client.Retries(3), // retry times
 		)
 	}
