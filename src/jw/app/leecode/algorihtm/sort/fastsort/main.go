@@ -2,47 +2,74 @@ package main
 
 import (
 	"fileget/util"
-	"math/rand"
 )
 
-func fastsort(list []int) []int {
+// trade space for time
+func fastsort(input []int) (output []int) {
+	//l := 0; 	r := len(input) - 1
+	if len(input) <= 1 { return input}
 
+	tmpL := make([]int, 0, len(input))
+	tmpR := make([]int, 0, len(input))
+	//pivot := rand.Int() % len(input)
+	pivot := len(input)/2
+	//pivot := 0
 
-	return list
+	for i, _ := range input {
+		if i == pivot {
+			continue
+		} else if input[i] <= input[pivot] {  // less than and equal
+			tmpL = append(tmpL, input[i])
+		} else {   // greater than
+			tmpR = append(tmpR, input[i])
+		}
+	}
+	util.Lg.Debugf("tmpL: %v", tmpL)
+	util.Lg.Debugf("tmpR: %v", tmpR)
+	util.Lg.Debugf("")
+
+	output = append(output, fastsort(tmpL)...)
+	output = append(output, input[pivot])
+	output = append(output, fastsort(tmpR)...)
+
+	return
 }
 
-func quicksort(a []int) []int {
-	if len(a) < 2 {
-		return a
-	}
+//
+func quicksort1(a []int) []int {
+	if len(a) < 2 { return a }
 
 	left, right := 0, len(a)-1
 
-	pivot := rand.Int() % len(a)
-
+	//pivot := rand.Int() % len(a)
+	pivot := len(a)/2
+	util.Lg.Debugf("1. input: %v, pivot: %v", a, pivot)
 	a[pivot], a[right] = a[right], a[pivot]
-
+	util.Lg.Debugf("2. input: %v", a)
 	for i, _ := range a {
+		if i == right {continue}
 		if a[i] < a[right] {
 			a[left], a[i] = a[i], a[left]
 			left++
 		}
 	}
-
+	util.Lg.Debugf("3. input: %v, left: %v", a, left)
 	a[left], a[right] = a[right], a[left]
-
-	quicksort(a[:left])
-	quicksort(a[left+1:])
+	util.Lg.Debugf("4. input: %v", a)
+	util.Lg.Debugf("")
+	quicksort1(a[:left])
+	quicksort1(a[left+1:])
 
 	return a
 }
 
 
 func main() {
-	list := []int{9, 8, 7, 6, 5, 4, 3, 2, 1, 0}
-	list = quicksort(list)
+	list := []int{11, 88, 77, 66, 9, 34, 7, 6, 5, 24, 3, 2, 1, 0}
+	//list = quicksort1(list)
+	list = fastsort(list)
 	util.Lg.Debugf("output: %v\n", list)
 
-	a, b, c := 1, 2, 3
-	util.Lg.Debugf("%v, %v, %v", a, b, c)
+	//a, b, c := 1, 2, 3
+	//util.Lg.Debugf("%v, %v, %v", a, b, c)
 }
