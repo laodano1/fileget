@@ -1,10 +1,13 @@
 package main
 
-import "testing"
+import (
+	"fileget/util"
+	"testing"
+)
 
 func BenchmarkValueOfString(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		ValueOfString("222- 122+ 133")
+		util.ValueOfString("222- 122+ 133")
 	}
 }
 
