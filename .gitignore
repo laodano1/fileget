@@ -7,4 +7,9 @@ go.sum
 dirs.json
 *.png
 worldHeritageList.json
-whl
+whl/
+.DS_Store
+tmp
+colly_worldHL
+ctr
+

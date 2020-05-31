@@ -1,0 +1,124 @@
+var mymap = L.map('mapid').setView([30.66243, 104.0625], 10);  // 天府广场
+
+// API: http://leafletjs.com/reference-1.2.0.html#tilelayer
+// L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+//     // L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png', {
+//     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+//     // maxZoom: 18,
+//     // tileSize: 512,
+//     // zoomOffset: -1,
+//     id: 'mapbox.streets',
+//     accessToken: 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'
+// }).addTo(mymap);   // 'addTo': Adds the control to the given map.
+
+L.tileLayer.chinaProvider('GaoDe.Normal.Map',{maxZoom:18,minZoom:5}).addTo(mymap);  // 高德地图插件
+
+var circle;
+var polygon;
+
+var month = '201805';
+
+$.get('/lpjson?month=' + month, function (data, status) {
+    var loupanInfo = data;
+
+    if (loupanInfo.length < 1) {return;}
+
+    if (status !== 'success') {return;}  // exception handle
+
+// collected markers
+    var TFNA = [];
+    var longquan = [];
+    var notTFNA = [];
+    allAreas = {};  //全部区域
+    var oneArea = {};  //tmp区域
+    Areas = {};  //tmp区域
+
+    loadAllLoupan(loupanInfo);
+
+// console.log("sametimeStamp: " + TFNA.length);
+    var allItemLayer = L.layerGroup();
+// console.log(Areas);
+
+    var allMakrkers = [];
+    var baseLayers = {};
+
+    Object.keys(Areas).forEach(function (oneArea) {
+        // console.log(oneArea);
+        baseLayers[oneArea] = L.layerGroup(allAreas[oneArea]);
+
+        allAreas[oneArea].forEach(function (oneMarker) {
+            allMakrkers.push(oneMarker);
+        });
+    });
+
+    var allMarkersLayer = L.layerGroup(allMakrkers).addTo(mymap);
+// var notTFNALayer = L.layerGroup(notTFNA).addTo(mymap);
+
+// console.log(allMakrkers);
+    baseLayers["全城"] = allMarkersLayer;
+//
+    L.control.layers(baseLayers, null).addTo(mymap);
+});
+
+
+// 默认加载的楼盘的标记
+function loadAllLoupan(loupanInfo) {
+    // console.log("loupanInfo.loupans.length: " + loupanInfo.loupans.length);
+
+    loupanInfo.forEach(function (data) {
+        var lpName = "<b>楼盘: </b> " + data.name + "<br>";
+        var lpBlock = "<b>区域: </b>" + data.block + "<br>";
+        var lpType = "<b>类型: </b> " + data.type + "<br>";
+        var lpPrice = "<b>价格: </b> " + data.price + "<br>";
+        var lpHuxing = "<b>户型: </b> " + data.huxing + "<br>";
+
+        lpBlock = "<p style=\"color: darkgray;margin-bottom: 0px;margin-top: 0px;\">" + lpBlock + "</p>";
+        var popCnt = lpName + lpBlock + lpType + lpPrice + lpHuxing;
+
+        if(data.taoshu !== '') {
+            var taoshu = "<b>套数: </b> " + data.taoshu + "<br>";
+            popCnt += taoshu;
+        }
+
+
+        if (data.hasOwnProperty('subway') && data.subway.length != 0) {
+            var subway = "<b>地铁: </b> ";
+            data.subway.forEach(function (value) {
+                subway += value + "<br>";
+            });
+            popCnt += subway;
+        }
+        if (data.hasOwnProperty('xuequ') && data.xuequ.length != 0) {
+            var xuequ = "<b>学区: </b> ";
+            data.xuequ.forEach(function (value) {
+                xuequ += value + "<br>";
+            });
+            popCnt += xuequ;
+        }
+
+        var marker1 = L.marker(data.coordinate, {opacity: 0.5})
+                        .bindPopup(popCnt)
+                        .openPopup();
+        var circle = L.circle(data.coordinate, {
+            color: 'red',
+            fillColor: null,
+            fillOpacity: 0.5,
+            radius: 10
+        });
+
+        if (!allAreas.hasOwnProperty(data.block)) {
+        //     allAreas.add(data.block, [].push(marker1));
+            allAreas[data.block] = [marker1, circle];
+        }
+        else {
+            allAreas[data.block].push(marker1);
+            allAreas[data.block].push(circle);
+        }
+
+        // console.log(data.block);
+        if (!Areas.hasOwnProperty(data.block)) {
+            Areas[data.block] = 0;
+        }
+    });
+}
+
