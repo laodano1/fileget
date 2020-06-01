@@ -163,3 +163,13 @@ func calculate(a, b int, s rune) (sum int) {
 	return
 }
 
+func GetEachBitNumOfString(input string) (bits []int) {
+	bits = make([]int, 0)
+	for i := range input {
+		t := string(input[i])
+		n, _ := strconv.Atoi(t)
+		bits = append(bits, n)
+	}
+
+	return
+}
