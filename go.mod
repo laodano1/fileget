@@ -3,6 +3,7 @@ module fileget
 go 1.13
 
 require (
+	github.com/99designs/gqlgen v0.9.1
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/chromedp/cdproto v0.0.0-20200424080200-0de008e41fa0
 	github.com/chromedp/chromedp v0.5.3
@@ -11,14 +12,20 @@ require (
 	github.com/davyxu/golog v0.1.0
 	github.com/davyxu/goobjfmt v0.1.0 // indirect
 	github.com/davyxu/protoplus v0.1.0 // indirect
+	github.com/emicklei/go-restful v2.8.1+incompatible
 	github.com/gin-gonic/gin v1.6.2
 	github.com/gizak/termui v3.1.0+incompatible // indirect
 	github.com/gizak/termui/v3 v3.1.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/gocolly/colly/v2 v2.0.1
+	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/protobuf v1.4.1
+	github.com/google/uuid v1.1.1
+	github.com/gorilla/rpc v1.2.0
 	github.com/gorilla/websocket v1.4.1
+	github.com/grpc-ecosystem/grpc-gateway v1.9.5
 	github.com/gwuhaolin/livego v0.0.0-20200509033525-ac935b8214d0 // indirect
+	github.com/hailocab/go-geoindex v0.0.0-20160127134810-64631bfe9711
 	github.com/hashicorp/consul/api v1.3.0
 	github.com/hashicorp/go-uuid v1.0.1
 	github.com/headzoo/surf v1.0.0 // indirect
@@ -27,18 +34,25 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/magicsea/behavior3go v0.0.0-20200226033918-88f465325648
+	github.com/micro/cli v0.2.0
 	github.com/micro/examples v0.2.0
 	github.com/micro/go-micro v1.18.0
 	github.com/micro/go-plugins v1.1.2-0.20190710094942-bf407858372c
 	github.com/micro/go-plugins/registry/consul v0.0.0-20200119172437-4fe21aa238fd
+	github.com/micro/micro v1.7.1-0.20190711215914-2cddc2c877c5
 	github.com/micro/micro/v2 v2.7.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/nats-io/nats.go v1.9.2
 	github.com/nsf/termbox-go v0.0.0-20200418040025-38ba6e5628f1 // indirect
+	github.com/pborman/uuid v1.2.0
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.6.3
 	github.com/tealeg/xlsx v1.0.5
 	github.com/valyala/fasthttp v1.12.0
+	github.com/vektah/gqlparser v1.1.2
+	github.com/yanyiwu/gojieba v1.1.2
+	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
+	google.golang.org/genproto v0.0.0-20191216164720-4f79533eabd1
 	google.golang.org/grpc v1.26.0
 	gopkg.in/headzoo/surf.v1 v1.0.0
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22

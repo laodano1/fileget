@@ -1,6 +1,8 @@
 package main
 
-import "fileget/util"
+import (
+	"fileget/util"
+)
 
 func main() {
 	a := 3
