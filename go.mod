@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/99designs/gqlgen v0.9.1
 	github.com/PuerkitoBio/goquery v1.5.0
+	github.com/blackjack/webcam v0.0.0-20200313125108-10ed912a8539
 	github.com/chromedp/cdproto v0.0.0-20200424080200-0de008e41fa0
 	github.com/chromedp/chromedp v0.5.3
 	github.com/chromedp/examples v0.0.0-20200501161515-cb21abae103c // indirect
@@ -16,6 +17,7 @@ require (
 	github.com/gin-gonic/gin v1.6.2
 	github.com/gizak/termui v3.1.0+incompatible // indirect
 	github.com/gizak/termui/v3 v3.1.0 // indirect
+	github.com/go-redis/redis v6.15.8+incompatible
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/gocolly/colly/v2 v2.0.1
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
@@ -50,7 +52,7 @@ require (
 	github.com/tealeg/xlsx v1.0.5
 	github.com/valyala/fasthttp v1.12.0
 	github.com/vektah/gqlparser v1.1.2
-	github.com/yanyiwu/gojieba v1.1.2
+	github.com/yanyiwu/gojieba v1.1.2 // indirect
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
 	google.golang.org/genproto v0.0.0-20191216164720-4f79533eabd1
 	google.golang.org/grpc v1.26.0
