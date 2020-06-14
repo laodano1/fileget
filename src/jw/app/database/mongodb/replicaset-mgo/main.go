@@ -32,5 +32,13 @@ func main() {
 	util.Lg.Debugf("num: %v,  servers: %v", len(session.LiveServers()), session.LiveServers())
 	n, _ := session.DB("jwtestdb").C("jwcol").Count()
 	util.Lg.Debugf("jwcol count: %v", n)
+	dbNames, _ := session.DatabaseNames()
+	util.Lg.Debugf("session mode: %v", dbNames)
+
+	col := session.DB("jwtestdb").C("jwcol")
+
+	col.Insert()
+
+	//session.SelectServers()   // use this method to use read/write preference
 
 }
