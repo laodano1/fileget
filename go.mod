@@ -44,6 +44,7 @@ require (
 	github.com/micro/micro v1.7.1-0.20190711215914-2cddc2c877c5
 	github.com/micro/micro/v2 v2.7.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/mozillazg/go-pinyin v0.18.0
 	github.com/nats-io/nats.go v1.9.2
 	github.com/nsf/termbox-go v0.0.0-20200418040025-38ba6e5628f1 // indirect
 	github.com/pborman/uuid v1.2.0
