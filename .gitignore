@@ -12,9 +12,6 @@ whl/
 tmp
 colly_worldHL
 ctr
-<<<<<<< HEAD
 .vscode/
-
-=======
 *.out
->>>>>>> 0dbc70aa4d9036442a65f3ab63beac1b09dda46c
+
