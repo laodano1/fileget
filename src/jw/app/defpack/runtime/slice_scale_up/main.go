@@ -1,6 +1,9 @@
 package main
 
-import "fileget/util"
+import (
+	"fileget/util"
+	"strings"
+)
 
 // each time, slice scales 2 times of current capacity
 func main() {
@@ -29,4 +32,11 @@ func main() {
 		mp = append(mp, i)
 	}
 	util.Lg.Debugf("7, len: %v, cap: %v", len(mp), cap(mp))
+
+	arr1 := [4]int{0,0,0,0}
+	util.Lg.Debugf("array: %v", arr1[:0])
+
+	var sb strings.Builder
+	sb.String()
+
 }

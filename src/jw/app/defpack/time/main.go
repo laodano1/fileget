@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fileget/util"
 	"fmt"
 	"github.com/davyxu/golog"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -39,6 +41,7 @@ func mywalkfunc(fl filesList) func(path string, info os.FileInfo, err error) err
 	}
 
 	return func(path string, info os.FileInfo, err error) error {
+		fmt.Printf("************************** 2. goroutine number: %v\n", runtime.NumGoroutine())
 		if !info.IsDir() {
 			tmpStrs := strings.Split(path, ".")
 			switch tmpStrs[len(tmpStrs) - 1] {
@@ -74,14 +77,15 @@ func main() {
 
 	fl := filesList{}
 	fl.list = make(map[string]*oneType)
-
+	fmt.Printf("************************** 1. goroutine number: %v\n", runtime.NumGoroutine())
+	util.Lg.Debugf("3. goroutine number: %v, dir: %v", runtime.NumGoroutine(), dir)
 	filepath.Walk(dir, mywalkfunc(fl))
 
-	for tp, list := range fl.list {
-		lg.Debugf("type: %v", tp)
-		for idx, name := range list.names {
-			lg.Debugf("       file name: %v", name)
-			lg.Debugf("       file path: %v", list.paths[idx])
-		}
-	}
+	//for tp, list := range fl.list {
+		//lg.Debugf("type: %v", tp)
+		//for idx, name := range list.names {
+			//lg.Debugf("       file name: %v", name)
+			//lg.Debugf("       file path: %v", list.paths[idx])
+		//}
+	//}
 }
