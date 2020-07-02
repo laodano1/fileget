@@ -9,10 +9,12 @@ require (
 	github.com/chromedp/cdproto v0.0.0-20200424080200-0de008e41fa0
 	github.com/chromedp/chromedp v0.5.3
 	github.com/chromedp/examples v0.0.0-20200501161515-cb21abae103c // indirect
+	github.com/containernetworking/cni v0.8.0 // indirect
 	github.com/davyxu/cellnet v4.1.0+incompatible
 	github.com/davyxu/golog v0.1.0
 	github.com/davyxu/goobjfmt v0.1.0 // indirect
 	github.com/davyxu/protoplus v0.1.0 // indirect
+	github.com/docker/docker-ce v17.12.1-ce-rc2+incompatible // indirect
 	github.com/emicklei/go-restful v2.8.1+incompatible
 	github.com/gin-gonic/gin v1.6.2
 	github.com/gizak/termui v3.1.0+incompatible // indirect
@@ -48,6 +50,7 @@ require (
 	github.com/nats-io/nats.go v1.9.2
 	github.com/nsf/termbox-go v0.0.0-20200418040025-38ba6e5628f1 // indirect
 	github.com/pborman/uuid v1.2.0
+	github.com/projectcalico/cni-plugin v3.8.9+incompatible // indirect
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.6.3
 	github.com/tealeg/xlsx v1.0.5
