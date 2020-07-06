@@ -5,15 +5,20 @@ go 1.13
 require (
 	github.com/99designs/gqlgen v0.9.1
 	github.com/PuerkitoBio/goquery v1.5.0
+	github.com/benmoss/go-powershell v0.0.0-20190925205200-09527df358ca // indirect
 	github.com/blackjack/webcam v0.0.0-20200313125108-10ed912a8539
+	github.com/bronze1man/goStrongswanVici v0.0.0-20200615065859-ff78c6a7cf1f // indirect
 	github.com/chromedp/cdproto v0.0.0-20200424080200-0de008e41fa0
 	github.com/chromedp/chromedp v0.5.3
 	github.com/chromedp/examples v0.0.0-20200501161515-cb21abae103c // indirect
 	github.com/containernetworking/cni v0.8.0 // indirect
+	github.com/coreos/flannel v0.12.0
+	github.com/coreos/go-iptables v0.4.5 // indirect
 	github.com/davyxu/cellnet v4.1.0+incompatible
 	github.com/davyxu/golog v0.1.0
 	github.com/davyxu/goobjfmt v0.1.0 // indirect
 	github.com/davyxu/protoplus v0.1.0 // indirect
+	github.com/denverdino/aliyungo v0.0.0-20200701124158-2451fe6f9270 // indirect
 	github.com/docker/docker-ce v17.12.1-ce-rc2+incompatible // indirect
 	github.com/emicklei/go-restful v2.8.1+incompatible
 	github.com/gin-gonic/gin v1.6.2
@@ -35,6 +40,8 @@ require (
 	github.com/headzoo/surf v1.0.0 // indirect
 	github.com/headzoo/ut v0.0.0-20181013193318-a13b5a7a02ca // indirect
 	github.com/jinzhu/gorm v1.9.12
+	github.com/juju/errors v0.0.0-20200330140219-3fe23663418f // indirect
+	github.com/juju/testing v0.0.0-20200706033705-4c23f9c453cd // indirect
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/magicsea/behavior3go v0.0.0-20200226033918-88f465325648
@@ -51,11 +58,14 @@ require (
 	github.com/nsf/termbox-go v0.0.0-20200418040025-38ba6e5628f1 // indirect
 	github.com/pborman/uuid v1.2.0
 	github.com/projectcalico/cni-plugin v3.8.9+incompatible // indirect
+	github.com/rakelkar/gonetsh v0.0.0-20190930180311-e5c5ffe4bdf0 // indirect
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.6.3
 	github.com/tealeg/xlsx v1.0.5
 	github.com/valyala/fasthttp v1.12.0
 	github.com/vektah/gqlparser v1.1.2
+	github.com/vishvananda/netlink v1.1.0 // indirect
+	github.com/vishvananda/netns v0.0.0-20200520041808-52d707b772fe // indirect
 	github.com/yanyiwu/gojieba v1.1.2 // indirect
 	go.mongodb.org/mongo-driver v1.3.4
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
