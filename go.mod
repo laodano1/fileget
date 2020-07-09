@@ -3,6 +3,8 @@ module fileget
 go 1.13
 
 replace (
+	github.com/kubernetes-incubator/service-catalog => github.com/kubernetes-sigs/service-catalog v0.3.0
+	github.com/kubernetes/kubernetes => k8s.io/kubernetes v1.18.5
 	golang.org/x/sys => golang.org/x/sys v0.0.0-20190813064441-fde4db37ae7a // pinned to release-branch.go1.13
 	golang.org/x/tools => golang.org/x/tools v0.0.0-20190821162956-65e3620a7ae7 // pinned to release-branch.go1.13
 	k8s.io/api => k8s.io/api v0.0.0-20200214081623-ecbd4af0fc33
@@ -13,12 +15,16 @@ replace (
 
 // k8s relevant
 require (
+	//github.com/kubernetes/kubernetes v1.18.5
 	github.com/containernetworking/cni v0.8.0 // indirect
+	github.com/kubernetes-incubator/service-catalog v0.3.0 // indirect
 	github.com/projectcalico/cni-plugin v3.8.9+incompatible // indirect
-	k8s.io/api v0.18.1 // indirect
-	k8s.io/apimachinery v0.18.1
+	k8s.io/apimachinery v0.18.5
 	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible
-	k8s.io/code-generator v0.18.5
+	k8s.io/kube-aggregator v0.18.5 // indirect
+	k8s.io/kube-controller-manager v0.18.5 // indirect
+	k8s.io/kube-scheduler v0.18.5 // indirect
+	k8s.io/kubelet v0.18.5 // indirect
 	k8s.io/utils v0.0.0-20200410165547-614e4363e9c4 // indirect
 )
 
