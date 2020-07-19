@@ -6,6 +6,7 @@ import (
 	"github.com/mozillazg/go-pinyin"
 	"net/http"
 	"sync"
+	"unicode"
 )
 
 var (
@@ -32,23 +33,43 @@ func StartServer() {
 		if hans == "" {
 			c.JSON(http.StatusOK, "empty query")
 		} else {
-			val, ok := pinyins.Load(hans)
-			if !ok {
-				a := pinyin.NewArgs()
-				a.Style = pinyin.Tone
-
-				//for _, i := range hans {
-				//	py := pinyin.Pinyin(string(i), a)
-				//	pinyins.Store(string(i), py[0][0])
-				//}
-				ps := pinyin.Pinyin(hans, a)
-				pinyins.Store(hans, ps)
-
-				util.Lg.Debugf("pin yin: %v", ps)
-				c.JSON(http.StatusOK, ps)
-			} else {
-				c.JSON(http.StatusOK, val)
+			var tmpHans []rune
+			rs := []rune(hans)
+			for i := range rs {
+				if unicode.Is(unicode.Han, rs[i]) { // 只处理汉字
+					tmpHans = append(tmpHans, rs[i])
+				}
 			}
+
+			if len(tmpHans) == 0 {
+				util.Lg.Debugf("no han character!")
+				c.JSON(http.StatusOK, "no han character!")
+				return
+			}
+
+			outputHans := make([]string, 0)
+			opHans := make([][]string, 0)
+			for i := range tmpHans {
+				val, ok := pinyins.Load(string(tmpHans[i]))
+				if !ok {
+					a := pinyin.NewArgs()
+					a.Style = pinyin.Tone
+
+					ps := pinyin.Pinyin(string(tmpHans[i]), a)
+					pinyins.Store(string(tmpHans[i]), ps[0][0]) // cached in sync.Map
+
+					//util.Lg.Debugf("pin yin: %v", ps)
+					outputHans = append(outputHans, ps[0][0])
+
+					//c.JSON(http.StatusOK, ps)
+				} else {
+					//c.JSON(http.StatusOK, val)
+					outputHans = append(outputHans, val.(string))
+				}
+			}
+			opHans[0] = make([]string, 0)
+			//opHans[1] = string(tmpHans)
+			c.JSON(http.StatusOK, outputHans[0])
 
 		}
 
