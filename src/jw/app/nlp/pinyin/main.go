@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fileget/src/jw/app/nlp/pinyin/lib"
 	"fileget/util"
 	"github.com/gin-gonic/gin"
 	"github.com/mozillazg/go-pinyin"
@@ -34,58 +35,38 @@ func StartServer() {
 	e.GET("/", func(c *gin.Context) {
 		hans := c.Query("py")
 
-		//hans := "弍是"
 		if hans == "" {
 			c.JSON(http.StatusOK, "empty query")
 		} else {
-			var tmpHans []rune
 			rs := []rune(hans)
+			rsp := new(lib.RspJsonDefault)
+			rsp.Hz = make([]string, 0)
+			rsp.Py = make([]string, 0)
 			for i := range rs {
+				var tmpItem string
 				if unicode.Is(unicode.Han, rs[i]) { // 只处理汉字
-					tmpHans = append(tmpHans, rs[i])
-				}
-			}
+					val, ok := pinyins.Load(string(rs[i]))
+					if !ok {
+						a := pinyin.NewArgs()
+						a.Style = pinyin.Tone
 
-			if len(tmpHans) == 0 {
-				util.Lg.Debugf("no han character!")
-				c.JSON(http.StatusOK, "no han character!")
-				return
-			}
+						ps := pinyin.Pinyin(string(rs[i]), a)
+						pinyins.Store(string(rs[i]), ps[0][0]) // cached in sync.Map
 
-			//outputHans := make([]string, 0)
-			//opHans := make([][]string, 0)
-			rsp := gin.H{}
-			rsp["hz"] = make([]string, 0, len(tmpHans))
-			rsp["py"] = make([]string, 0, len(tmpHans))
-			for i := range tmpHans {
+						tmpItem = ps[0][0]
 
-				val, ok := pinyins.Load(string(tmpHans[i]))
-				if !ok {
-					a := pinyin.NewArgs()
-					a.Style = pinyin.Tone
-
-					ps := pinyin.Pinyin(string(tmpHans[i]), a)
-					pinyins.Store(string(tmpHans[i]), ps[0][0]) // cached in sync.Map
-
-					//util.Lg.Debugf("pin yin: %v", ps)
-					//outputHans = append(outputHans, ps[0][0])
-					//opHans = append(opHans, ps[0])
-					rsp["py"] = append(rsp["py"].([]string), ps[0][0])
+					} else {
+						tmpItem = val.(string)
+					}
+					rsp.Py = append(rsp.Py, tmpItem)
 				} else {
-					//outputHans = append(outputHans, val.(string))
-					//opHans = append(opHans,  []string{val.(string)})
-					rsp["py"] = append(rsp["py"].([]string), val.(string))
+					rsp.Py = append(rsp.Py, string(rs[i]))
 				}
-				//tmpItem := make([]string, 0)
-				//tmpItem = append(tmpItem, string(tmpHans[i]))
-				rsp["hz"] = append(rsp["hz"].([]string), string(tmpHans[i]))
+				rsp.Hz = append(rsp.Hz, string(rs[i]))
 			}
 
-			//rsp["py"] = opHans
-
-
-			//c.IndentedJSON(http.StatusOK, rsp)
-			c.JSON(http.StatusOK, rsp)
+			c.IndentedJSON(http.StatusOK, rsp)
+			//c.JSON(http.StatusOK, rsp)
 		}
 
 	})
@@ -97,11 +78,6 @@ func StartServer() {
 }
 
 func main() {
-	//hans := "范蠡"
-	//hans := "弍是"
-	//a := pinyin.NewArgs()
-	//a.Style = pinyin.Tone
-	//
 	//util.Lg.Debugf("pin yin: %v", pinyin.Pinyin(hans, a))
 	StartServer()
 
