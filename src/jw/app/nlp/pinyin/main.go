@@ -14,6 +14,11 @@ var (
 	pinyins sync.Map
 )
 
+//type rspJson struct {
+//	py []string  `json:"py"`
+//	hz []string  `json:"hz"`
+//}
+
 func StartServer() {
 	gin.ForceConsoleColor()
 	e := gin.Default()
@@ -47,9 +52,13 @@ func StartServer() {
 				return
 			}
 
-			outputHans := make([]string, 0)
-			opHans := make([][]string, 0)
+			//outputHans := make([]string, 0)
+			//opHans := make([][]string, 0)
+			rsp := gin.H{}
+			rsp["hz"] = make([]string, 0, len(tmpHans))
+			rsp["py"] = make([]string, 0, len(tmpHans))
 			for i := range tmpHans {
+
 				val, ok := pinyins.Load(string(tmpHans[i]))
 				if !ok {
 					a := pinyin.NewArgs()
@@ -59,18 +68,24 @@ func StartServer() {
 					pinyins.Store(string(tmpHans[i]), ps[0][0]) // cached in sync.Map
 
 					//util.Lg.Debugf("pin yin: %v", ps)
-					outputHans = append(outputHans, ps[0][0])
-
-					//c.JSON(http.StatusOK, ps)
+					//outputHans = append(outputHans, ps[0][0])
+					//opHans = append(opHans, ps[0])
+					rsp["py"] = append(rsp["py"].([]string), ps[0][0])
 				} else {
-					//c.JSON(http.StatusOK, val)
-					outputHans = append(outputHans, val.(string))
+					//outputHans = append(outputHans, val.(string))
+					//opHans = append(opHans,  []string{val.(string)})
+					rsp["py"] = append(rsp["py"].([]string), val.(string))
 				}
+				//tmpItem := make([]string, 0)
+				//tmpItem = append(tmpItem, string(tmpHans[i]))
+				rsp["hz"] = append(rsp["hz"].([]string), string(tmpHans[i]))
 			}
-			opHans[0] = make([]string, 0)
-			//opHans[1] = string(tmpHans)
-			c.JSON(http.StatusOK, outputHans[0])
 
+			//rsp["py"] = opHans
+
+
+			//c.IndentedJSON(http.StatusOK, rsp)
+			c.JSON(http.StatusOK, rsp)
 		}
 
 	})
