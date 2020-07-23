@@ -23,15 +23,16 @@ require (
 	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible
 	k8s.io/kube-aggregator v0.18.5 // indirect
 	k8s.io/kube-controller-manager v0.18.5 // indirect
-	k8s.io/kube-proxy v0.18.5
+	k8s.io/kube-proxy v0.18.5 // indirect
 	k8s.io/kube-scheduler v0.18.5 // indirect
-	k8s.io/kubectl v0.18.5
+	k8s.io/kubectl v0.18.5 // indirect
 	k8s.io/kubelet v0.18.5 // indirect
-	k8s.io/legacy-cloud-providers v0.18.5
+	k8s.io/legacy-cloud-providers v0.18.5 // indirect
 	k8s.io/utils v0.0.0-20200410165547-614e4363e9c4 // indirect
 )
 
 require (
+	github.com/google/gopacket v1.1.18
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
 	google.golang.org/genproto v0.0.0-20191216164720-4f79533eabd1
 	google.golang.org/grpc v1.26.0
