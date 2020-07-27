@@ -25,6 +25,7 @@ func GetNormFloat64(dev, mean float64) float64 {
 
 func GetNormInt64(dev, mean float64) (val int64) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	//util.Lg.Debugf("%v", r.NormFloat64())
 	tmp := r.NormFloat64()
 	if tmp > 0 {
 		if tmp > 1 {
@@ -43,45 +44,69 @@ func GetNormInt64(dev, mean float64) (val int64) {
 	return int64(tmp * dev + mean)
 }
 
-func GetVal(tR *tmpRands) {
-	for i := 0; i < 100; i++ {
-		item := GetNormInt64(500, 1500)
+func GetVal(tR *tmpRands, dev, mean float64) {
+	for {
+		item := GetNormInt64(dev, mean)
 		if item == 0 {continue}
 		//util.Lg.Debugf("rand: %v", item)
 		tR.Mp[item] = true
 		tR.Arr = append(tR.Arr, item)
+		break
 	}
+}
+
+func GetVal2(dev, mean float64) (val int64) {
+	for {
+		val = GetNormInt64(dev, mean)
+		if val == 0 {continue} else {break}
+		//util.Lg.Debugf("rand: %v", item)
+	}
+	return
 }
 
 func GenerateVal(tR *tmpRands) {
 	//tR := &tmpRands{}
 	tR.Mp = make(map[int64]bool)
-	for  {
-		GetVal(tR)
-		if len(tR.Arr) != 0 {break}
-	}
-	if tR.Arr[int64(len(tR.Arr)/2)] < 1000 || tR.Arr[int64(len(tR.Arr)/2)] > 2000 {
-		util.Lg.Debugf("********************** bad value!!!")
-	}
+	//for  {
+		min := 2500000
+		max := 3000000
+		dev  := float64((max - min)/2)
+		mean := float64((min + max)/2)
+		util.Lg.Debugf("dev: %v, mean: %f", dev, mean)
+		GetVal(tR, dev, mean)
+		//if len(tR.Arr) != 0 {break}
+	//}
+	//if tR.Arr[int64(len(tR.Arr)/2)] < 1000 || tR.Arr[int64(len(tR.Arr)/2)] > 2000 {
+	//	util.Lg.Debugf("********************** bad value!!!")
+	//}
+
+}
+
+func GenerateVal2(min, max float64) int64 {
+	dev  := (max - min)/2
+	mean := (min + max)/2
+	//util.Lg.Debugf("dev: %v, mean: %f", dev, mean)
+	return GetVal2(dev, mean)
 }
 
 func StartWebServer() {
 	gin.ForceConsoleColor()
 	e := gin.Default()
 
-
 	e.GET("/", func(c *gin.Context) {
-		tR := &tmpRands{}
-		//tR.Mp = make(map[int64]bool)
-		//for  {
-		//	GetVal(tR)
-		//	if len(tR.Arr) != 0 {break}
-		//}
-		//if tR.Arr[int64(len(tR.Arr)/2)] < 1000 || tR.Arr[int64(len(tR.Arr)/2)] > 2000 {
-		//	util.Lg.Debugf("********************** bad value!!!",)
-		//}
-		GenerateVal(tR)
-		c.IndentedJSON(http.StatusOK, tR.Arr[int64(len(tR.Arr)/2)])
+
+		//tR := &tmpRands{}
+		//GenerateVal(tR)
+		//c.IndentedJSON(http.StatusOK, tR.Arr[int64(len(tR.Arr)/2)])
+		//c.IndentedJSON(http.StatusOK, tR.Mp)
+
+		min := float64(2500000)
+		max := float64(3000000)
+		arr := make([]int64, 0)
+		for i := 0; i < 1; i++ {
+			arr = append(arr, GenerateVal2(min, max))
+		}
+		c.IndentedJSON(http.StatusOK, arr)
 	})
 
 	if err := e.Run(port); err != nil {

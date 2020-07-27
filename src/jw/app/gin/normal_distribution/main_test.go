@@ -26,3 +26,11 @@ func BenchmarkGetVal(b *testing.B) {
 		//util.Lg.Debugf("rand: %v", tR.Arr[int64(len(tR.Arr)/2)])
 	}
 }
+
+func BenchmarkGetVal2(b *testing.B) {
+	min := float64(2500000)
+	max := float64(3000000)
+	for i := 0; i < b.N; i++ {
+		util.Lg.Debugf("value: %v", GenerateVal2(min, max))
+	}
+}

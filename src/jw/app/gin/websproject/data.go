@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fileget/util"
 	"fmt"
 	"github.com/hashicorp/go-uuid"
 	"io/ioutil"
@@ -66,7 +67,8 @@ func mywalkfunc(fl filesList, staticDir, rootDir string) func(path string, info 
 func LoadMediaInfo() (err error) {
 	epath, _ := os.Executable()
 	lg.Debugf("exe path: %v", epath)
-	c, err := ioutil.ReadFile("dirs.json")
+	dir, _ := util.GetFullPathDir()
+	c, err := ioutil.ReadFile(fmt.Sprintf("%v%sdirs.json", dir, string(os.PathSeparator)))
 	if err != nil {
 		lg.Errorf("read config file failed: %v", err)
 		return
