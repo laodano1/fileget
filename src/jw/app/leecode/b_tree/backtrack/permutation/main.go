@@ -5,6 +5,7 @@ import "fileget/util"
 var result [][]int32
 
 func backtrack(input []int32, track []int32) {
+	// if match end condition, then record the permutation
 	if len(track) == len(input) {
 		result = append(result, track)
 		return

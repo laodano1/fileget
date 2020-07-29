@@ -2,10 +2,17 @@ package main
 
 import (
 	"fileget/util"
+	"math"
 	"testing"
 )
 
 func TestGetNormFloat64(t *testing.T) {
+	util.Lg.Debugf("%v", math.Ceil(8.1))   // 向上取整
+	util.Lg.Debugf("%v", math.Round(8.51)) // 四舍五入
+
+	tmp := 123456
+
+	util.Lg.Debugf("%v", tmp - tmp % 10000) //
 
 }
 

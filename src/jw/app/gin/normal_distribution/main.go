@@ -23,6 +23,18 @@ func GetNormFloat64(dev, mean float64) float64 {
 	return r.NormFloat64() * dev + mean
 }
 
+func GenerateVal(tR *tmpRands) {
+	tR.Mp = make(map[int64]bool)
+
+	min := 2500000
+	max := 3000000
+	dev  := float64((max - min)/2)
+	mean := float64((min + max)/2)
+	util.Lg.Debugf("dev: %v, mean: %f", dev, mean)
+	GetVal(tR, dev, mean)
+}
+
+
 func GetNormInt64(dev, mean float64) (val int64) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	//util.Lg.Debugf("%v", r.NormFloat64())
@@ -58,28 +70,9 @@ func GetVal(tR *tmpRands, dev, mean float64) {
 func GetVal2(dev, mean float64) (val int64) {
 	for {
 		val = GetNormInt64(dev, mean)
-		if val == 0 {continue} else {break}
-		//util.Lg.Debugf("rand: %v", item)
+		if val == 0 {continue} else {val = val - val % 10000; break}
 	}
 	return
-}
-
-func GenerateVal(tR *tmpRands) {
-	//tR := &tmpRands{}
-	tR.Mp = make(map[int64]bool)
-	//for  {
-		min := 2500000
-		max := 3000000
-		dev  := float64((max - min)/2)
-		mean := float64((min + max)/2)
-		util.Lg.Debugf("dev: %v, mean: %f", dev, mean)
-		GetVal(tR, dev, mean)
-		//if len(tR.Arr) != 0 {break}
-	//}
-	//if tR.Arr[int64(len(tR.Arr)/2)] < 1000 || tR.Arr[int64(len(tR.Arr)/2)] > 2000 {
-	//	util.Lg.Debugf("********************** bad value!!!")
-	//}
-
 }
 
 func GenerateVal2(min, max float64) int64 {
@@ -95,13 +88,8 @@ func StartWebServer() {
 
 	e.GET("/", func(c *gin.Context) {
 
-		//tR := &tmpRands{}
-		//GenerateVal(tR)
-		//c.IndentedJSON(http.StatusOK, tR.Arr[int64(len(tR.Arr)/2)])
-		//c.IndentedJSON(http.StatusOK, tR.Mp)
-
-		min := float64(2500000)
-		max := float64(3000000)
+		min := float64(850000)
+		max := float64(1650000)
 		arr := make([]int64, 0)
 		for i := 0; i < 1; i++ {
 			arr = append(arr, GenerateVal2(min, max))
