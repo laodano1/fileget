@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fileget/util"
 	"log"
 	"net"
 	"strings"
@@ -86,7 +87,32 @@ type GameRoomConfigInfo struct {
 	SpecialConfig     string `json:"specialConfig"`    //
 }
 
+func chanTst() {
+	success := make(chan bool)
+
+	tk := time.Tick(2 * time.Second)
+
+	go func() {
+		time.Sleep(5 * time.Second)
+		close(success)
+	}()
+
+	for {
+		select {
+		case <-success:
+			util.Lg.Debugf("in success")
+			return
+		case <-tk:
+			util.Lg.Debugf("in tick")
+		}
+	}
+
+}
+
 func main() {
+
+	chanTst()
+
 	//ip := GetOutboundIP()
 	//getip()
 	//str := "3086001010101"
