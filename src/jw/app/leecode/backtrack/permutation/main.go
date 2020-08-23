@@ -2,6 +2,10 @@ package main
 
 import "fileget/util"
 
+/*
+	全排列
+*/
+
 var result [][]int32
 
 func backtrack(input []int32, track []int32) {
@@ -22,26 +26,29 @@ func backtrack(input []int32, track []int32) {
 
 	for i := range input {
 		// if path chose, continue
-		if DoExist(input[i]) {continue}
+		if DoExist(input[i]) {
+			continue
+		}
 
 		// make choice
 		track = append(track, input[i])
+		util.Lg.Debugf("1. track: %v", track)
 
 		// next layer backtrack
 		backtrack(input, track)
 
 		track = track[:len(track)-1]
+		util.Lg.Debugf("2. track: %v", track)
 	}
 
 }
 
-func Permutation(input []int32)  {
+func Permutation(input []int32) {
 	// path record
 	track := make([]int32, 0)
 
 	backtrack(input, track)
 }
-
 
 func main() {
 	input := []int32{1, 2, 3}

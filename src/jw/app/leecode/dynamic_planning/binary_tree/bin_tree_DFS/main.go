@@ -2,6 +2,10 @@ package main
 
 import "fileget/util"
 
+/*
+	deep first search / 深度优先
+*/
+
 //
 type TreeNode2 struct {
 	Val      int32
@@ -30,7 +34,9 @@ func geneBSTree(input []int32) *TreeNode2 {
 	root := &TreeNode2{Val: input[0]}
 
 	for i := range input {
-		if i == 0 {continue}
+		if i == 0 {
+			continue
+		}
 		setNode(input[i], root)
 	}
 	//util.Lg.Debugf("%v", root)
@@ -51,6 +57,7 @@ func getNodeByPreorder(n *TreeNode2) {
 }
 
 var arr = make([]int32, 0)
+
 func Preorder(root *TreeNode2) {
 	getNodeByPreorder(root)
 }
@@ -89,7 +96,7 @@ func Postorder(root *TreeNode2) {
 }
 
 func main() {
-	nums := []int32{5, 2, 4,  1, 3, 8, 6, 7, 9}
+	nums := []int32{5, 2, 4, 1, 3, 8, 6, 7, 9}
 	//nums := []int32{1, 2, 3, 4, 5}
 	//nums := []int32{5, 4, 3, 2, 1}
 	mt := geneBSTree(nums)

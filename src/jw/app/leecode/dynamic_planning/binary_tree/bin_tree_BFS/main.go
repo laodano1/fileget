@@ -5,6 +5,10 @@ import (
 	"math"
 )
 
+/*
+	breadth first search / 广度优先
+*/
+
 type TreeNode2 struct {
 	Val      int32
 	Children [2]*TreeNode2
@@ -47,13 +51,15 @@ func geneBSTree(input []int32) *TreeNode2 {
 }
 
 func BFS(root *TreeNode2, target int32, step *int32) int32 {
-	if root == nil {return -1}
-	nodeQue := make([]*TreeNode2, 0)       // 节点队列
-	height  := int32(1)                    // 树的层数记录
-	visited := make(map[*TreeNode2]bool)   // 记录遍历过的节点
+	if root == nil {
+		return -1
+	}
+	nodeQue := make([]*TreeNode2, 0)     // 节点队列
+	height := int32(1)                   // 树的层数记录
+	visited := make(map[*TreeNode2]bool) // 记录遍历过的节点
 
-	nodeQue = append(nodeQue, root)        // root 入队
-	visited[root] = true                   // 记录root 遍历过
+	nodeQue = append(nodeQue, root) // root 入队
+	visited[root] = true            // 记录root 遍历过
 	//var step int32
 
 	for len(nodeQue) > 0 {
@@ -61,7 +67,9 @@ func BFS(root *TreeNode2, target int32, step *int32) int32 {
 		for i := 0; i < sz; i++ {
 			*step++
 			cur := nodeQue[0]
-			if cur == nil { continue }
+			if cur == nil {
+				continue
+			}
 			if cur.Val == target {
 				return height
 			}
