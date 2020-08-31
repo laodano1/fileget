@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "any.proto";
+
+package comm;
+option go_package = "protogen/comm";
+
+service Communication {
+  rpc CommEventFunc(stream CommEvent) returns (stream CommEvent) {}
+}
+
+
+message CommEvent {
+  int32 type = 1;
+  google.protobuf.Any data = 2;
+  string jsonData = 3;
+}
