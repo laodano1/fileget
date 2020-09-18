@@ -52,7 +52,7 @@ func GenePinYinDefault(c *gin.Context) {
 	}
 }
 
-func GenePinYinHeteronym(c *gin.Context)  {
+func GenePinYinHeteronym(c *gin.Context) {
 	hans := c.Query("py")
 
 	if hans == "" {
@@ -103,14 +103,12 @@ func StartServer() {
 		c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
 	})
 
-
 	rg := e.Group("/py")
 
 	rg.GET("/deft", GenePinYinDefault)
-	rg.GET("/heteronym", GenePinYinHeteronym)
+	//rg.GET("/heteronym", GenePinYinHeteronym)
 
 	if err := e.Run(Addr); err != nil {
 		util.Lg.Errorf("server run failed: %v", err)
 	}
 }
-
