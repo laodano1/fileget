@@ -14,9 +14,7 @@ var (
 	pinyins sync.Map
 )
 
-func GenePinYinDefault(c *gin.Context) {
-	hans := c.Query("py")
-
+func HandleReq(c *gin.Context, hans string) {
 	if hans == "" {
 		c.JSON(http.StatusOK, "empty query")
 	} else {
@@ -50,6 +48,11 @@ func GenePinYinDefault(c *gin.Context) {
 		c.IndentedJSON(http.StatusOK, rsp)
 		//c.JSON(http.StatusOK, rsp)
 	}
+}
+
+func GenePinYinDefault(c *gin.Context) {
+	hans := c.Query("py")
+	HandleReq(c, hans)
 }
 
 func GenePinYinHeteronym(c *gin.Context) {
@@ -91,6 +94,16 @@ func GenePinYinHeteronym(c *gin.Context) {
 	}
 }
 
+func GeneWithPost(c *gin.Context) {
+	var rj ReqJson
+	if err := c.BindJSON(&rj); err != nil {
+		util.Lg.Errorf("bind request json error: %v", err)
+	}
+
+	HandleReq(c, rj.Msg)
+
+}
+
 func StartServer() {
 	gin.ForceConsoleColor()
 	e := gin.Default()
@@ -105,7 +118,11 @@ func StartServer() {
 
 	rg := e.Group("/py")
 
+	e.GET("/", func(c *gin.Context) {
+		c.IndentedJSON(http.StatusOK, gin.H{"msg": "Hello World"})
+	})
 	rg.GET("/deft", GenePinYinDefault)
+	rg.POST("/defpost", GeneWithPost)
 	//rg.GET("/heteronym", GenePinYinHeteronym)
 
 	if err := e.Run(Addr); err != nil {

@@ -33,7 +33,7 @@ require (
 
 require (
 	github.com/google/gopacket v1.1.18
-	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
+	golang.org/x/net v0.0.0-20200602114024-627f9648deb9
 	google.golang.org/genproto v0.0.0-20191216164720-4f79533eabd1
 	google.golang.org/grpc v1.26.0
 )
@@ -52,7 +52,6 @@ require (
 	github.com/chromedp/cdproto v0.0.0-20200424080200-0de008e41fa0
 	github.com/chromedp/chromedp v0.5.3
 	github.com/chromedp/examples v0.0.0-20200501161515-cb21abae103c // indirect
-
 	github.com/coreos/flannel v0.12.0 // indirect
 	github.com/coreos/go-iptables v0.4.5 // indirect
 	github.com/davyxu/cellnet v4.1.0+incompatible
@@ -61,7 +60,6 @@ require (
 	github.com/davyxu/protoplus v0.1.0 // indirect
 	github.com/denverdino/aliyungo v0.0.0-20200701124158-2451fe6f9270 // indirect
 	github.com/emicklei/go-restful v2.9.5+incompatible
-
 	github.com/gizak/termui v3.1.0+incompatible // indirect
 	github.com/gizak/termui/v3 v3.1.0 // indirect
 	github.com/go-redis/redis v6.15.8+incompatible
@@ -97,19 +95,17 @@ require (
 	github.com/nats-io/nats.go v1.9.2
 	github.com/nsf/termbox-go v0.0.0-20200418040025-38ba6e5628f1 // indirect
 	github.com/pborman/uuid v1.2.0
-
 	github.com/rakelkar/gonetsh v0.0.0-20190930180311-e5c5ffe4bdf0 // indirect
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.6.3
 	github.com/tealeg/xlsx v1.0.5
-	github.com/valyala/fasthttp v1.12.0
+	github.com/valyala/fasthttp v1.16.0
 	github.com/vektah/gqlparser v1.1.2
 	github.com/vishvananda/netlink v1.1.0 // indirect
 	github.com/vishvananda/netns v0.0.0-20200520041808-52d707b772fe // indirect
 	github.com/yanyiwu/gojieba v1.1.2 // indirect
 	go.mongodb.org/mongo-driver v1.3.4
-
-	gopkg.in/headzoo/surf.v1 v1.0.0
+	gopkg.in/headzoo/surf.v1 v1.0.0 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 	gopkg.in/yaml.v2 v2.2.8
 	k8s.io/api v0.18.5
