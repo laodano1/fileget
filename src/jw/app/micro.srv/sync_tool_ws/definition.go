@@ -5,6 +5,7 @@ var (
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Repo Sync tool</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="https://www.cerence.com/sites/g/files/knoqqb54601/files/favicon.ico" type="image/vnd.microsoft.icon">
