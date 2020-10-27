@@ -68,10 +68,11 @@ func syncToolPage(c *gin.Context) {
 			return
 		}
 
-		util.Lg.Infof("client sent message: '%s'", fmt.Sprintf("server received data: %v", string(message)))
+		util.Lg.Infof("client sent message: '%s'", fmt.Sprintf("%v", string(message)))
 
-		//err = wsConn.WriteMessage(mt, []byte(fmt.Sprintf("server received data: %v", message)))
-		err = wsConn.WriteMessage(mt, message)
+		rsp := fmt.Sprintf("hello client: %v", strings.Split(string(message), "!")[1])
+		//err = wsConn.WriteMessage(mt, []byte()
+		err = wsConn.WriteMessage(mt, []byte(rsp))
 		if err != nil {
 			util.Lg.Errorf("WriteMessage failed: %v", err)
 		}
