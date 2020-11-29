@@ -105,6 +105,7 @@ require (
 	github.com/vishvananda/netns v0.0.0-20200520041808-52d707b772fe // indirect
 	github.com/yanyiwu/gojieba v1.1.2 // indirect
 	go.mongodb.org/mongo-driver v1.3.4
+	go.uber.org/zap v1.16.0
 	gopkg.in/headzoo/surf.v1 v1.0.0 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 	gopkg.in/yaml.v2 v2.2.8
