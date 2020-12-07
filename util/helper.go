@@ -5,10 +5,13 @@ import (
 )
 
 var (
-	Logger *zap.Logger
+	ZLogger *zap.SugaredLogger
 )
 
 func init() {
 	//Logger, _ = zap.NewProduction()
-	Logger, _ = zap.NewDevelopment()
+
+	zlog, _ := zap.NewDevelopment()
+	ZLogger = zlog.Sugar()
+
 }

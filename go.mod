@@ -33,7 +33,7 @@ require (
 
 require (
 	github.com/google/gopacket v1.1.18
-	golang.org/x/net v0.0.0-20200602114024-627f9648deb9
+	golang.org/x/net v0.0.0-20200625001655-4c5254603344
 	google.golang.org/genproto v0.0.0-20191216164720-4f79533eabd1
 	google.golang.org/grpc v1.26.0
 )
@@ -62,11 +62,12 @@ require (
 	github.com/emicklei/go-restful v2.9.5+incompatible
 	github.com/gizak/termui v3.1.0+incompatible // indirect
 	github.com/gizak/termui/v3 v3.1.0 // indirect
+	github.com/go-kit/kit v0.10.0 // indirect
 	github.com/go-redis/redis v6.15.8+incompatible
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/gocolly/colly/v2 v2.0.1
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
-	github.com/golang/protobuf v1.4.1
+	github.com/golang/protobuf v1.4.3
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/rpc v1.2.0
 	github.com/gorilla/websocket v1.4.1
@@ -95,6 +96,7 @@ require (
 	github.com/nats-io/nats.go v1.9.2
 	github.com/nsf/termbox-go v0.0.0-20200418040025-38ba6e5628f1 // indirect
 	github.com/pborman/uuid v1.2.0
+	github.com/prometheus/client_golang v1.8.0
 	github.com/rakelkar/gonetsh v0.0.0-20190930180311-e5c5ffe4bdf0 // indirect
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.6.3
@@ -108,7 +110,7 @@ require (
 	go.uber.org/zap v1.16.0
 	gopkg.in/headzoo/surf.v1 v1.0.0 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
-	gopkg.in/yaml.v2 v2.2.8
+	gopkg.in/yaml.v2 v2.3.0
 	k8s.io/api v0.18.5
 
 )
