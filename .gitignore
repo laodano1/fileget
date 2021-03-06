@@ -18,4 +18,5 @@ labuladong
 *.html
 *.linux
 
-
+*.js
+src/jw/app/network/http/gin/world_heritage/public
